@@ -1,25 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import Header from './components/layout/header'
-import NavBar from './components/layout/NavBar'
-import Auctions from './components/layout/Auctions'
-import Footer from './components/layout/Footer'
-function App() {
-  const [message, setMessage] = useState("Loading...")
+import { Routes, Route } from "react-router-dom";
+import HomePage from './Pages/HomePage';
+import AdminPage from './Pages/AdminPage';
+import Login from './components/layout/Login';
+import Register from './components/layout/Register';
 
-  useEffect(() => {
-    fetch("/api/v1/hello")
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-  }, [])
+function App() {
   return (
-    <div>
-      <Header />
-      <NavBar />
-      <Auctions />
-      {/* <h1>{message}</h1> */}
-      <Footer />
-    </div>
-  )
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

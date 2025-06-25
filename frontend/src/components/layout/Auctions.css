@@ -35,6 +35,11 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+@media (min-width: 300px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 10fr);
+  }
+}
 @media (min-width: 1024px) {
   .card-grid {
     grid-template-columns: repeat(4, 1fr);
@@ -59,7 +64,6 @@
   height: 100%;
   object-fit: fill;
 }
-/* Placeholder / ảnh */
 .auction-image {
   background: #d1d5db;
   height: 192px;
@@ -117,8 +121,8 @@
   margin-top: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #631bff;
-  text-decoration: none;
+  color: #0055ff;
+  /* text-decoration: none; */
 }
 .see-all:hover {
   color: #4f46e5;

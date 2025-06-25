@@ -1,8 +1,8 @@
 import React from "react";
-import AuctionSection from "../components/auctions/AuctionSection";
-import Header from './components/layout/header'
-import NavBar from './components/layout/NavBar'
-
+import AuctionSection from "../components/layout/Auctions";
+import Header from '../components/layout/header'
+import NavBar from '../components/layout/NavBar'
+import Footer from '../components/layout/Footer'
 function HomePage() {
   return (
     <>
@@ -11,8 +11,8 @@ function HomePage() {
 
       <main className="homepage-content">
         <AuctionSection title="Ongoing auction" type="ongoing" />
-        <AuctionSection title="Upcoming auction" type="upcoming" />
-        <AuctionSection title="The auction has ended" type="ended" />
+        {/* <AuctionSection title="Upcoming auction" type="upcoming" />
+        <AuctionSection title="The auction has ended" type="ended" /> */}
       </main>
 
       <Footer />
