@@ -1,5 +1,5 @@
 import './Login.css';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/images/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
@@ -11,6 +11,7 @@ function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [remember, setRemember] = useState(false);
     const navigate = useNavigate();    
     const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,11 +24,11 @@ function Login() {
       const data = await response.json();
       console.log(data);
       if(response.ok && data.role === 'user') {
-        login(data);
+        login(data, remember);
         navigate('/'); 
       }
       else if(response.ok && data.role === 'admin'){
-        login(data);
+        login(data, remember);
         navigate('/admin');
       }
         else {
@@ -80,7 +81,11 @@ function Login() {
           </div>
           <div className="login-options">
             <label>
-              <input type="checkbox" /> Remember me
+                <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={e => setRemember(e.target.checked)}
+                /> Remember me
             </label>
             <a href="#" className="login-link">Forget password</a>
           </div>

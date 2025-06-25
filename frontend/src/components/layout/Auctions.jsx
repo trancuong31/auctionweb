@@ -1,7 +1,7 @@
 // Auctions.jsx
 import React from "react"
 import "./Auctions.css"
-import imagedefault from '../../assets/imagedefault.png';
+import imagedefault from '../../assets/images/imagedefault.png';
 
 export const Auctions = () => {
   // Helper để render mỗi card

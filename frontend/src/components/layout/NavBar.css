@@ -54,7 +54,7 @@
   color: inherit;
 }
 .user-greeting{
-  color: #2e2bf5;
+  color: #2e2bf5 !important;
 }
 .nav-link {
   text-decoration: none;

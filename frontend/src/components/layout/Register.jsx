@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Login.css';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/images/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faUser, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, Link } from 'react-router-dom';
