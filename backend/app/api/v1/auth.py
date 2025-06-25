@@ -62,12 +62,16 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
         username = request.username,
         created_at=datetime.now(),
         password=request.password,
-        role=request.role.value, 
-        status=request.status
+        role=request.role.value
     )
     db.add(user)
     db.commit()
     db.refresh(user)
 
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "role": UserRole(user.role).name,
+        "username": user.username
+    }

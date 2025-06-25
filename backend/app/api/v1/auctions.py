@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session, session
+from fastapi import APIRouter, Depends, Query, HTTPException
+from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.Auction import Auction
 from typing import List
-
+from uuid import UUID
 from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
@@ -23,7 +23,8 @@ class AuctionOut(BaseModel):
     status: int
 
     class Config:
-        orm_mode = True
+        # orm_mode = True
+        from_attributes = True
 
 router = APIRouter()
 
@@ -34,12 +35,22 @@ def get_auctions_by_status(
 ):
     now = datetime.utcnow()
     query = db.query(Auction)
-    if status == 0:  # Ongoing
+    if status == 0:
         query = query.filter(Auction.start_time <= now, Auction.end_time > now)
-    elif status == 1:  # Upcoming
+    elif status == 1:
         query = query.filter(Auction.start_time > now)
-    elif status == 2:  # Ended
+    elif status == 2:
         query = query.filter(Auction.end_time < now)
-    return query.all()
+    
+    results = query.all()
+    return results if results else []
+
+@router.get("/auctions/{auction_id}", response_model=AuctionOut)
+def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
+    auction = db.query(Auction).filter(Auction.id == auction_id).first()
+    if not auction:
+        raise HTTPException(status_code=404, detail="Auction not found")
+    return auction
+
 
  
