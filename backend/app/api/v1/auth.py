@@ -19,6 +19,7 @@ class Token(BaseModel):
     token_type: str
     role: str
     username: str
+    email: str
 
 class LoginRequest(BaseModel):
     email: str
@@ -43,13 +44,17 @@ def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes
             
 @router.post("/login", response_model=Token)
 def login(request: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == request.email).first()
+    user = db.query(User).filter(User.email == request.email).first()   
+
     if not user or user.password != request.password:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+    if user.status != 1 and user:
+        raise HTTPException(status_code=403, detail="User is inactive or banned")
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id})
     role = UserRole(user.role).name.lower()
     username= user.username
-    return {"access_token": access_token, "token_type": "bearer","role":role,"username":username}
+    email= user.email
+    return {"access_token": access_token, "token_type": "bearer", "role":role, "username":username, "email": email}
 
 @router.post("/register", response_model=Token)
 def register(request: RegisterRequest, db: Session = Depends(get_db)):
@@ -62,12 +67,16 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
         username = request.username,
         created_at=datetime.now(),
         password=request.password,
-        role=request.role.value, 
-        status=request.status
+        role=request.role.value
     )
     db.add(user)
     db.commit()
     db.refresh(user)
 
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "role": UserRole(user.role).name,
+        "username": user.username
+    }

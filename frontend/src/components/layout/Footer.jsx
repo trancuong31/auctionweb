@@ -1,5 +1,7 @@
 import React from "react";
 import "./Footer.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPhone, faEnvelope, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 
 export const Footer = () => {
   const companyInfo = {
@@ -10,10 +12,10 @@ export const Footer = () => {
   };
 
   const helpLinks = [
-    "Hướng dẫn đấu giá/đặt giá",
-    "Phương thức thanh toán/vận chuyển",
-    "Chính sách bảo mật",
-    "Quy chế hoạt động",
+    "Bidding & Auction Guidelines",
+    "Payment & Shipping Methods",
+    "Privacy Policy",
+    "Terms of Service / Operational Regulations",
   ];
 
   return (
@@ -23,18 +25,21 @@ export const Footer = () => {
           <h2 className="footer__title">{companyInfo.name}</h2>
           <ul className="footer__list">
             <li>
+              <FontAwesomeIcon icon={faPhone} style={{ marginRight: 8 }} />
               <span className="footer__label">Phone:</span> {companyInfo.phone}
             </li>
             <li>
+              <FontAwesomeIcon icon={faEnvelope} style={{ marginRight: 8 }} />
               <span className="footer__label">Email:</span> {companyInfo.email}
             </li>
             <li>
+              <FontAwesomeIcon icon={faMapMarkerAlt} style={{ marginRight: 8 }} />
               <span className="footer__label">Address:</span> {companyInfo.address}
             </li>
           </ul>
         </div>
         <div className="footer__section footer__help">
-          <h2 className="footer__title">Trợ giúp người đấu giá</h2>
+          <h2 className="footer__title">Auctioneer Assistance</h2>
           <ul className="footer__list footer__list--inline">
             {helpLinks.map((link, idx) => (
               <li key={idx} className="footer__item">

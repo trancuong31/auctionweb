@@ -154,3 +154,16 @@
     top: 16px;
   }
 }
+@media (min-width: 601px) and (max-width: 1920px) {
+  .login-form-container {
+    min-width: 350px;
+    max-width: 420px;
+    min-height: 0;
+    padding: 48px 40px 40px 40px;
+  }
+  .login-logo {
+    width: 120px;
+    right: 48px;
+    top: 32px;
+  }
+}

@@ -1,7 +1,7 @@
 /* Footer.css */
 
 .footer {
-  background-color: #2563EB; /* blue-600 */
+  background-color: #2563EB; 
   color: #FFFFFF;
   padding: 16px 24px;
   font-family: 'Open Sans', sans-serif;
@@ -32,7 +32,7 @@
 }
 
 .footer__list {
-  list-style: disc inside;
+  list-style: none;
   padding: 0;
   margin: 0;
 }
@@ -44,8 +44,11 @@
 
 .footer__item {
   margin-bottom: 4px;
+  text-decoration: underline;
 }
-
+.footer__item:hover {
+  color: #00ff84; 
+}
 .footer__label {
   font-weight: 600;
 }
