@@ -10,6 +10,9 @@ from datetime import datetime
 from typing import Optional
 import os
 from fastapi.responses import JSONResponse
+from app.models.Order import Order
+from app.enums import OrderStatus
+from decimal import Decimal
 
 class AuctionOut(BaseModel):
     id: UUID
@@ -23,6 +26,7 @@ class AuctionOut(BaseModel):
     end_time: datetime
     created_at: datetime
     status: int
+    highest_amount: Optional[float] = None
 
     class Config:   
         # orm_mode = True
@@ -65,7 +69,24 @@ def get_auctions_by_status(
     elif status == 2:
         query = query.filter(Auction.end_time < now)
     
-    results = query.order_by(Auction.created_at.desc()).limit(4).all()
+    results = query.order_by(Auction.created_at.desc()).limit(10).all()
+
+    # Nếu là phiên đã kết thúc, lấy highest_order_amount cho từng auction
+    auctions_out = []
+    if status == 2:
+        for auction in results:
+            highest_order = db.query(Order).filter(
+                Order.auction_id == auction.id
+            ).order_by(Order.amount.desc()).first()
+            try:
+                highest_amount = float(highest_order.amount) if (highest_order and highest_order.amount is not None) else None
+            except Exception:
+                highest_amount = None
+            auction_dict = auction.__dict__.copy()
+            auction_dict['highest_amount'] = highest_amount
+            auctions_out.append(AuctionOut(**auction_dict))
+    else:
+        auctions_out = [AuctionOut(**auction.__dict__) for auction in results]
 
     # Tính tổng từng status
     total_ongoing = db.query(Auction).filter(Auction.start_time <= now, Auction.end_time > now).count()
@@ -73,7 +94,7 @@ def get_auctions_by_status(
     total_ended = db.query(Auction).filter(Auction.end_time < now).count()
 
     return {
-        "auctions": results if results else [],
+        "auctions": auctions_out if auctions_out else [],
         "total_ongoing": total_ongoing,
         "total_upcoming": total_upcoming,
         "total_ended": total_ended

@@ -13,4 +13,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-app.include_router(api_v1_router, prefix="/api/v1") 
+app.include_router(api_v1_router, prefix="/api/v1")

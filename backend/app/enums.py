@@ -5,6 +5,5 @@ class UserRole(enum.Enum):
     ADMIN = "ADMIN"
 
 class OrderStatus(enum.Enum):
-    pending = "pending"
+    pending = "ongoing"
     completed = "completed"
-    cancelled = "cancelled" 
