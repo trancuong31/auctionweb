@@ -80,3 +80,5 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
         "role": UserRole(user.role).name,
         "username": user.username
     }
+
+    

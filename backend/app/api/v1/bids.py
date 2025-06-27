@@ -9,6 +9,8 @@ from datetime import datetime
 from typing import Optional
 from jose import jwt, JWTError
 from app.core.config import SECRET_KEY, ALGORITHM
+from app.core.auth import get_current_user_id_from_token
+
 import uuid
 
 router = APIRouter()
@@ -31,23 +33,10 @@ class BidOut(BaseModel):
     class Config:
         from_attributes = True
 
-# Lấy user_id thực từ token JWT
-async def get_current_user_id_from_token(Authorization: str = Header(...)):
-    if not Authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid authorization header")
-    token = Authorization.split(" ", 1)[1]
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id = payload.get("user_id")
-        if not user_id:
-            raise HTTPException(status_code=401, detail="User ID not found in token")
-        return user_id
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
 
 @router.post("/bids", response_model=BidOut)
 def create_bid(bid_in: BidCreate, db: Session = Depends(get_db), user_id: str = Depends(get_current_user_id_from_token)):
-    # Không cần ép kiểu UUID, dùng str trực tiếp
+
     auction = db.query(Auction).filter(Auction.id == bid_in.auction_id).first()
     if not auction:
         raise HTTPException(status_code=404, detail="Auction not found")

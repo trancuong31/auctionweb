@@ -12,11 +12,11 @@ class Auction(Base):
     description = Column(Text)
     starting_price = Column(Numeric, nullable=False)
     step_price = Column(Numeric, nullable=False)
-    image_url = Column(String)
+    image_url = Column(Text)
     file_exel = Column(String)
     start_time = Column(DateTime, nullable=False)
     end_time = Column(DateTime, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now)
     status = Column(Integer, nullable=False)
 
     bids = relationship("Bid", back_populates="auction")

@@ -14,6 +14,6 @@ class Order(Base):
     user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
     amount = Column(Numeric, nullable=False)
     status = Column(Enum(OrderStatus), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now)
     auction = relationship("Auction", back_populates="orders")
     user = relationship("User", back_populates="orders")

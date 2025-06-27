@@ -13,7 +13,7 @@ class Notification(Base):
     auction_id = Column(UUID(as_uuid=True), ForeignKey("auctions.id"), nullable=False)
     message = Column(String, nullable=False)
     is_read = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now)
 
     user = relationship("User", back_populates="notifications")
     auction = relationship("Auction", back_populates="notifications")
