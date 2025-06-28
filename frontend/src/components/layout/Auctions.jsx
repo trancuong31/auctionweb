@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import imagedefault from "../../assets/images/imagedefault.png";
 import "./Auctions.css";
+import CountdownTimer from "../../common/CountDownTime";
 import { useNavigate } from "react-router-dom";
 const AuctionSection = ({ title, type }) => {
   const [items, setItems] = useState([]);
@@ -46,10 +47,19 @@ const AuctionSection = ({ title, type }) => {
     >
       <div className="auction-image">
         <img
-          src={`http://192.168.23.197:8000${item.image_url[0]}` || imagedefault}
+          src={
+            item.image_url && item.image_url.length > 0 && item.image_url[0]
+              ? `/api/v1${item.image_url[0]}`
+              : imagedefault
+          }
           alt={item.title || "Auction"}
           className={!item.image_url ? "img-no" : ""}
         />
+        {type === "ongoing" && (
+          <div className="countdown-overlay">
+            <CountdownTimer targetTime={item.end_time} />
+          </div>
+        )}
       </div>
       <div className="auction-info">
         <p className="flex justify-between">
