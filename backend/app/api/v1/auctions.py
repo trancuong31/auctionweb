@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Query, HTTPException, File, UploadFile, status
 from sqlalchemy.orm import Session
+from starlette.status import HTTP_400_BAD_REQUEST
 from app.core.database import get_db
 from app.models.Auction import Auction
 from typing import List, Dict, Any
@@ -61,6 +62,10 @@ class AuctionCreate(BaseModel):
     start_time: datetime
     end_time: datetime
     status: int
+
+class AuctionSearchResponse(BaseModel):
+    total: int
+    auctions: List[AuctionOut]
 
 router = APIRouter()
 
@@ -133,13 +138,6 @@ def get_auctions_by_status(
         "total_upcoming": total_upcoming,
         "total_ended": total_ended
     }
-#lấy ra đấu giá theo auction_id
-@router.get("/auctions/{auction_id}", response_model=AuctionOut)
-def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
-    auction = db.query(Auction).filter(Auction.id == auction_id).first()
-    if not auction:
-        raise HTTPException(status_code=404, detail="Auction not found")
-    return auction
 
 #tạo đấu giá
 @router.post("/auctions", response_model=AuctionOut)
@@ -147,9 +145,28 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db), cur
     # chỉ admin mới được add đấu giá
     if current_user.role != UserRole.ADMIN :
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
+            status_code = HTTP_400_BAD_REQUEST,
             detail="You don't have permison create auction!"
         )
+    auction = db.query(Auction.title == auction_in).first()
+    if auction :
+        raise HTTPException(
+            status_code= HTTP_400_BAD_REQUEST,
+            detail= "Auction title already exists"
+        )
+    """
+    - status = 0 (ongoing): start_time <= now < end_time (đang diễn ra)
+    - status = 1 (upcoming): start_time > now (sắp diễn ra)
+    - status = 2 (ended): end_time <= now (đã kết thúc)
+    """
+    now = datetime.now()
+    status = 0
+    if now > auction_in.start_time and auction_in.end_time:
+        status =0
+    elif now < auction_in.start_time:
+        status = 1
+    else:
+        status = 2
     
     auction = Auction(
         title=auction_in.title,
@@ -160,7 +177,7 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db), cur
         file_exel=auction_in.file_exel,
         start_time=auction_in.start_time,
         end_time=auction_in.end_time,
-        status=auction_in.status
+        status=status
     )
     db.add(auction)
     db.commit()
@@ -238,4 +255,124 @@ def download_excel_by_auction(auction_id: str, db: Session = Depends(get_db)):
         filename=filename,
         media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
- 
+
+@router.get("/auctions/search", response_model=AuctionSearchResponse)
+def search_auctions(
+    status: Optional[int] = Query(None, description="0: ongoing, 1: upcoming, 2: ended"),
+    title: Optional[str] = Query(None, description="Tìm kiếm theo tên auction"),
+    sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: title, created_at, start_time, end_time"),
+    sort_order: Optional[str] = Query("desc", description="Thứ tự sắp xếp: asc (A-Z), desc (Z-A)"),
+    page: int = Query(1, ge=1, description="Số trang"),
+    page_size: int = Query(4, ge=1, le=100, description="Số item trên mỗi trang"),
+    db: Session = Depends(get_db)
+):
+    """
+    API tìm kiếm auction với các filter:
+    - status: lọc theo trạng thái (0: đang diễn ra, 1: sắp diễn ra, 2: đã kết thúc)
+    - title: tìm kiếm theo title auction
+    - sort_by: sắp xếp theo trường (title, created_at, start_time, end_time)
+    - sort_order: thứ tự sắp xếp (asc: A-Z, desc: Z-A)
+    - page: số trang( ví dụ trang 1 ,2,3,4,5)
+    - page_size: số item trên mỗi trang(8)
+    
+    Điều kiện xác định trạng thái:
+    - status = 0 (ongoing): start_time <= now < end_time (đang diễn ra)
+    - status = 1 (upcoming): start_time > now (sắp diễn ra)
+    - status = 2 (ended): end_time <= now (đã kết thúc)
+    """
+    now = datetime.now()
+    query = db.query(Auction)
+
+    # Filter theo trạng thái - phân tích trực tiếp điều kiện thời gian
+    if status is not None:
+        if status == 0:  # ongoing - đang diễn ra
+            # Điều kiện: start_time <= now < end_time
+            query = query.filter(Auction.start_time <= now, Auction.end_time > now)
+        elif status == 1:  # upcoming - sắp diễn ra
+            # Điều kiện: start_time > now
+            query = query.filter(Auction.start_time > now)
+        elif status == 2:  # ended - đã kết thúc
+            # Điều kiện: end_time <= now
+            query = query.filter(Auction.end_time < now)
+
+    # Filter theo tên (tìm kiếm không phân biệt hoa thường)
+    if title:
+        query = query.filter(Auction.title.ilike(f"%{title}%"))
+
+    # Sắp xếp
+    if sort_by == "title":
+        if sort_order.lower() == "asc":
+            query = query.order_by(Auction.title.asc())
+        else:
+            query = query.order_by(Auction.title.desc())
+    elif sort_by == "start_time":
+        if sort_order.lower() == "asc":
+            query = query.order_by(Auction.start_time.asc())
+        else:
+            query = query.order_by(Auction.start_time.desc())
+    elif sort_by == "end_time":
+        if sort_order.lower() == "asc":
+            query = query.order_by(Auction.end_time.asc())
+        else:
+            query = query.order_by(Auction.end_time.desc())
+    else:  # default sort by created_at
+        if sort_order.lower() == "asc":
+            query = query.order_by(Auction.created_at.asc())
+        else:
+            query = query.order_by(Auction.created_at.desc())
+    total_count = query.count()
+
+    # Kiểm tra nếu không tìm thấy kết quả nào
+    if total_count == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Auction not found"
+        )
+
+    # Phân trang
+    offset = (page - 1) * page_size
+    results = query.offset(offset).limit(page_size).all()
+
+    auctions_out = []
+
+    for auction in results:
+        data = AuctionOut.from_orm(auction).model_dump()
+
+        # Xử lý image_url lưu dưới dạng JSON string
+        raw_image = getattr(auction, "image_url", None)
+        if isinstance(raw_image, str):
+            try:
+                data["image_url"] = json.loads(raw_image)
+            except Exception:
+                data["image_url"] = []
+        else:
+            data["image_url"] = []
+
+        # Thêm highest_amount nếu là phiên đã kết thúc
+        # Phân tích trực tiếp điều kiện: end_time <= now
+        if auction.end_time < now:
+            highest_bid = db.query(Bid).filter(
+                Bid.auction_id == auction.id
+            ).order_by(Bid.bid_amount.desc()).first()
+
+            try:
+                data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
+            except Exception:
+                data["highest_amount"] = None
+
+        auctions_out.append(AuctionOut(**data))
+
+    return {
+        "total": total_count,
+        "auctions": auctions_out
+    }
+
+
+
+ #lấy ra đấu giá theo auction_id
+@router.get("/auctions/{auction_id}", response_model=AuctionOut)
+def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
+    auction = db.query(Auction).filter(Auction.id == auction_id).first()
+    if not auction:
+        raise HTTPException(status_code=404, detail="Auction not found")
+    return auction
