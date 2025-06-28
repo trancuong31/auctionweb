@@ -25,7 +25,7 @@ const AuctionSection = ({ title, type }) => {
         }
 
         const data = await res.json();
-        setItems(Array.isArray(data) ? data : []);
+        setItems(data.auctions || []);
       } catch (err) {
         console.error("Error fetching auctions:", err);
         setError("Không thể tải dữ liệu.");
@@ -38,34 +38,67 @@ const AuctionSection = ({ title, type }) => {
   }, [type]);
 
   const renderCard = (item) => (
-    <div className="auction-card"  key={item.id} onClick={() => handleClick(item.id)} style={{ cursor: "pointer" }}>
+    <div
+      className="auction-card"
+      key={item.id}
+      onClick={() => handleClick(item.id)}
+      style={{ cursor: "pointer" }}
+    >
       <div className="auction-image">
         <img
-          src={item.image_url || imagedefault}
+          src={`http://192.168.23.197:8000${item.image_url[0]}` || imagedefault}
           alt={item.title || "Auction"}
           className={!item.image_url ? "img-no" : ""}
         />
       </div>
       <div className="auction-info">
-        <p><span className="label">Name:</span> {item.title}</p>
-        <p><span className="label">Starting price:</span> {item.starting_price}</p>
-        <p><span className="label">Start time:</span> {new Date(item.start_time).toLocaleString()}</p>
-        <p><span className="label">End time:</span> {new Date(item.end_time).toLocaleString()}</p>
-        <p><span className="label">Price step:</span> {item.step_price}</p>
+        <p className="flex justify-between">
+          <span className="label">Name:</span> {item.title}
+        </p>
+        <p className="flex justify-between">
+          <span className="label">Starting price:</span> {item.starting_price}
+        </p>
+        <p className="flex justify-between">
+          <span className="label">Start time:</span>{" "}
+          {new Date(item.start_time).toLocaleString()}
+        </p>
+        <p className="flex justify-between">
+          <span className="label">End time:</span>{" "}
+          {new Date(item.end_time).toLocaleString()}
+        </p>
+        <p className="flex justify-between">
+          <span className="label">Price step:</span> {item.step_price}
+        </p>
+        {item.highest_amount !== null ? (
+          <p className="flex justify-between">
+            <span className="label">Highest Price:</span> {item.highest_amount}
+          </p>
+        ) : type === "ended" ? (
+          <p className="flex justify-between">
+            <span className="label">Highest Price:</span> Đấu giá thất bại
+          </p>
+        ) : null}
       </div>
     </div>
   );
 
-  if (loading) return <p className="loading">Đang tải {title.toLowerCase()}...</p>;
+  if (loading)
+    return <p className="loading">Đang tải {title.toLowerCase()}...</p>;
   if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="section">
       <h2 className="section-title">{title}</h2>
       <div className="card-grid">
-        {items.length > 0 ? items.map(renderCard) : <p>Không có phiên đấu giá nào.</p>}
+        {items.length > 0 ? (
+          items.map(renderCard)
+        ) : (
+          <p>Không có phiên đấu giá nào.</p>
+        )}
       </div>
-      <a href="#" className="see-all">See all</a>
+      <a href="#" className="see-all">
+        See all
+      </a>
     </div>
   );
 };
