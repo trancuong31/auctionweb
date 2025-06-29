@@ -33,6 +33,7 @@ class AuctionOut(BaseModel):
     created_at: datetime
     status: int
     highest_amount: Optional[float] = None
+    winner_info: Optional[Dict] = None  # Thông tin người trúng thầu
     @field_validator("image_url", mode="before")
     @classmethod
     def parse_image_url(cls, value):
@@ -367,12 +368,39 @@ def search_auctions(
         "auctions": auctions_out
     }
 
-
-
- #lấy ra đấu giá theo auction_id
+#lấy ra đấu giá theo auction_id
 @router.get("/auctions/{auction_id}", response_model=AuctionOut)
 def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
     auction = db.query(Auction).filter(Auction.id == auction_id).first()
     if not auction:
         raise HTTPException(status_code=404, detail="Auction not found")
-    return auction
+    
+    # Thêm thông tin người trúng thầu nếu có
+    winner_bid = db.query(Bid).filter(
+        Bid.auction_id == auction_id,
+        Bid.is_winner == True
+    ).first()
+    
+    auction_data = AuctionOut.from_orm(auction).model_dump()
+    
+    # Xử lý image_url
+    if isinstance(auction.image_url, str):
+        try:
+            auction_data["image_url"] = json.loads(auction.image_url)
+        except Exception:
+            auction_data["image_url"] = []
+    else:
+        auction_data["image_url"] = []
+    
+    # Thêm thông tin người trúng thầu
+    if winner_bid:
+        winner_user = db.query(User).filter(User.id == winner_bid.user_id).first()
+        auction_data["winner_info"] = {
+            "bid_id": winner_bid.id,
+            "user_id": winner_bid.user_id,
+            "user_name": winner_user.name if winner_user else "Unknown",
+            "bid_amount": float(winner_bid.bid_amount),
+            "created_at": winner_bid.created_at
+        }
+    
+    return AuctionOut(**auction_data)
