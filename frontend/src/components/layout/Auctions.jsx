@@ -4,6 +4,7 @@ import imagedefault from "../../assets/images/imagedefault.png";
 import "./Auctions.css";
 import CountdownTimer from "../../common/CountDownTime";
 import { useNavigate } from "react-router-dom";
+import RenderCardAuction from "../ui/CardComponent";
 const AuctionSection = ({ title, type }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,74 +39,15 @@ const AuctionSection = ({ title, type }) => {
     fetchData();
   }, [type]);
 
-  const renderCard = (item) => (
-    <div
-      className="auction-card"
-      key={item.id}
-      onClick={() => handleClick(item.id)}
-      style={{ cursor: "pointer" }}
-    >
-      <div className="auction-image">
-        <img
-          src={
-            item.image_url && item.image_url.length > 0 && item.image_url[0]
-              ? `/api/v1${item.image_url[0]}`
-              : imagedefault
-          }
-          alt={item.title || "Auction"}
-          className={!item.image_url ? "img-no" : ""}
-        />
-        {type === "ongoing" && (
-          <div className="countdown-overlay">
-            <CountdownTimer targetTime={item.end_time} />
-          </div>
-        )}
-      </div>
-      <div className="auction-info">
-        <p className="flex justify-between">
-          <span className="label">Name:</span> {item.title}
-        </p>
-        <p className="flex justify-between">
-          <span className="label">Starting price:</span> {item.starting_price}
-        </p>
-        <p className="flex justify-between">
-          <span className="label">Start time:</span>{" "}
-          {new Date(item.start_time).toLocaleString()}
-        </p>
-        <p className="flex justify-between">
-          <span className="label">End time:</span>{" "}
-          {new Date(item.end_time).toLocaleString()}
-        </p>
-        <p className="flex justify-between">
-          <span className="label">Price step:</span> {item.step_price}
-        </p>
-        {item.highest_amount !== null ? (
-          <p className="flex justify-between">
-            <span className="label">Highest Price:</span> {item.highest_amount}
-          </p>
-        ) : type === "ended" ? (
-          <p className="flex justify-between">
-            <span className="label">Highest Price:</span> Đấu giá thất bại
-          </p>
-        ) : null}
-      </div>
-    </div>
-  );
-
-  if (loading)
-    return <p className="loading">Đang tải {title.toLowerCase()}...</p>;
-  if (error) return <p className="error">{error}</p>;
+ 
+  // if (loading)
+  //   return <p className="loading">Đang tải {title.toLowerCase()}...</p>;
+  // if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="section">
       <h2 className="section-title">{title}</h2>
-      <div className="card-grid">
-        {items.length > 0 ? (
-          items.map(renderCard)
-        ) : (
-          <p>Không có phiên đấu giá nào.</p>
-        )}
-      </div>
+      <RenderCardAuction numberCol={4} />
       <a href="#" className="see-all">
         See all
       </a>
