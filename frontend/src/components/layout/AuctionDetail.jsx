@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ModalAuction from "../ui/formAuction";
+import clsx from "clsx";
 import {
   faTags,
   faMoneyBill,
@@ -11,45 +12,53 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import NavBar from "./NavBar";
 import imagedefault from "../../assets/images/imagedefault.png";
+import { getOne } from "../../services/api";
 const AuctionDetail = () => {
   const { id } = useParams();
   const [auction, setAuction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [selectImg, setselectImg] = useState(0);
   const userData = JSON.parse(localStorage.getItem("user"));
   const sliderRef = useRef(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const datafake = {
+    id: 1,
+    title: "Antique Vase",
+    image_url: [
+      "https://i.pinimg.com/736x/88/c6/de/88c6de0c0e083478ee5584556518aeeb.jpg",
+      "https://images2.thanhnien.vn/zoom/686_429/Uploaded/vietthong/2019_07_19/thumb_SZDT.jpg",
+      "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_31.jpg",
+    ],
+    end_time: "2025-07-10T23:59:59Z",
+    starting_price: 5000000,
+    step_price: 200000,
+    status: "Active",
+  };
 
   useEffect(() => {
-    fetch(`/api/v1/auctions/${id}`)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => setAuction(data))
-      .catch((err) => console.error("Error:", err))
+    getOne("auction", id)
+      .then((data) => setAuction(datafake))
+      .catch((err) => setAuction(datafake))
       .finally(() => setLoading(false));
   }, [id]);
+
+  // Ref to store interval id
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     if (!auction?.image_url) return;
 
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex + 1 >= auction.image_url.length ? 0 : prevIndex + 1
-      );
-    }, 3000);
+    resestInterval();
 
-    return () => clearInterval(interval);
+    return () => clearInterval(intervalRef.current);
   }, [auction]);
 
   useEffect(() => {
     if (sliderRef.current) {
-      sliderRef.current.style.transform = `translateX(-${currentIndex * 100}%)`;
+      sliderRef.current.style.transform = `translateX(-${selectImg * 100}%)`;
     }
-  }, [currentIndex]);
+  }, [selectImg]);
 
   if (loading) return <p>Loading...</p>;
   if (!auction) return <p>Không tìm thấy dữ liệu</p>;
@@ -76,6 +85,35 @@ const AuctionDetail = () => {
     }
   };
 
+  const handleSelectImg = (index) => {
+    setselectImg(index);
+    // Reset interval when user selects an image
+    resestInterval();
+  };
+
+  const resestInterval = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setselectImg((prevIndex) =>
+        prevIndex + 1 >= auction.image_url.length ? 0 : prevIndex + 1
+      );
+    }, 3000);
+  };
+
+  const clickPreButton = () => {
+    resestInterval();
+    setselectImg((prevIndex) =>
+      prevIndex - 1 < 0 ? auction.image_url.length - 1 : prevIndex - 1
+    );
+  };
+
+  const clickNextButton = () => {
+    resestInterval();
+    setselectImg((prevIndex) =>
+      prevIndex + 1 >= auction.image_url.length ? 0 : prevIndex + 1
+    );
+  };
+
   return (
     <>
       <NavBar />
@@ -84,7 +122,20 @@ const AuctionDetail = () => {
           Title: {auction.title}
         </h1>
         <div className="flex items-center">
-          <div className="flex-1 mr-12 overflow-hidden">
+          <div className="flex-1 mr-12 overflow-hidden relative">
+            {/* <!-- Next and previous buttons --> */}
+            <button
+              onClick={() => clickPreButton()}
+              className="hover:bg-[rgba(0,0,0,0.8)] z-10 cursor-pointer absolute top-1/2 -translate-y-1/2 px-4 text-white font-bold text-[50px] transition ease-in-out duration-500 rounded-r select-none"
+            >
+              &#10094;
+            </button>
+            <button
+              onClick={() => clickNextButton()}
+              className="hover:bg-[rgba(0,0,0,0.8)] z-10 cursor-pointer absolute top-1/2 -translate-y-1/2 px-4 text-white font-bold text-[50px] transition ease-in-out duration-500 rounded-r select-none right-0 rounded-l"
+            >
+              &#10095;
+            </button>
             <div
               ref={sliderRef}
               className="flex transition-transform duration-700 ease-in-out"
@@ -93,40 +144,55 @@ const AuctionDetail = () => {
                 ? auction.image_url.map((imageUrl) => (
                     <img
                       key={imageUrl}
-                      src={`http://192.168.23.197:8000${imageUrl}`}
+                      src={imageUrl}
                       alt={auction.title}
                       className="min-w-full h-[400px] object-cover rounded-lg shadow-lg"
                     />
                   ))
                 : imagedefault}
             </div>
+            <div className="text-center mt-2">
+              {auction.image_url.length > 0 &&
+                auction.image_url.map((imageUrl, index) => (
+                  <button
+                    key={imageUrl}
+                    onClick={() => handleSelectImg(index)}
+                    className={clsx(
+                      "cursor-pointer h-[15px] w-[15px] mx-[4px] rounded-full inline-block transition-colors duration-500 ease-in-out",
+                      selectImg === index
+                        ? "bg-[#717171]"
+                        : "bg-[#bbb] hover:bg-[#717171]"
+                    )}
+                  />
+                ))}
+            </div>
           </div>
-          <div className="flex-1 text-[40px] font-bold">
-            <p>
+          <div className="flex-1 text-[34px] font-bold">
+            <p className="my-[20px]">
               <FontAwesomeIcon icon={faTags} className="mr-[20px]" />
               Deadline: {new Date(auction.end_time).toLocaleDateString()}
             </p>
-            <p>
+            <p className="my-[20px]">
               <FontAwesomeIcon icon={faMoneyBill} className="mr-[20px]" />
               Starting price: {auction.starting_price.toLocaleString()}
             </p>
-            <p>
+            <p className="my-[20px]">
               {" "}
               <FontAwesomeIcon icon={faLayerGroup} className="mr-[20px]" />
               Step price: {auction.step_price}
             </p>
-            <p>
+            <p className="my-[20px]">
               <FontAwesomeIcon icon={faSignal5} className="mr-[20px]" />
               Status: {auction.status}
             </p>
-            <p>
+            <p className="my-[20px]">
               <FontAwesomeIcon icon={faFileText} className="mr-[40px]" />
               Attached file:{" "}
               <button
                 onClick={() => handleDownload(auction.id)}
                 className="text-blue-500 hover:underline"
               >
-                Download
+                {auction.excel}
               </button>
             </p>
           </div>
