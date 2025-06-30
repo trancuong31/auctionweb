@@ -12,12 +12,12 @@ export const create = async (resource, data, isAuth) => {
 };
 
 
-export const getAll = async (resource, isAuth) => {
-     if (isAuth) {
-       return await axiosWithToken.get(`/${resource}`);
-    } else {
-       return await axiosDefault.get(`/${resource}`);
-    }
+export const getAll = async (resource, isAuth, params = {}) => {
+  if (isAuth) {
+    return await axiosWithToken.get(`/${resource}`, { params });
+  } else {
+    return await axiosDefault.get(`/${resource}`, { params });
+  }
 };
 
 

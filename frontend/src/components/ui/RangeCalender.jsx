@@ -23,7 +23,7 @@ function RangeCalender({ onChange, value }) {
     <input
       ref={calendarRef}
       placeholder="Chọn khoảng thời gian"
-      className="border w-[50%] p-2"
+      className="border w-full p-2"
     />
   );
 }

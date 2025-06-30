@@ -39,15 +39,18 @@ const AuctionSection = ({ title, type }) => {
     fetchData();
   }, [type]);
 
- 
-  // if (loading)
-  //   return <p className="loading">Đang tải {title.toLowerCase()}...</p>;
-  // if (error) return <p className="error">{error}</p>;
+  if (loading)
+    return <p className="loading">Đang tải {title.toLowerCase()}...</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="section">
       <h2 className="section-title">{title}</h2>
-      <RenderCardAuction numberCol={4} />
+      <RenderCardAuction
+        arrAuction={items}
+        numberCol={4}
+        clickCard={handleClick}
+      />
       <a href="#" className="see-all">
         See all
       </a>
