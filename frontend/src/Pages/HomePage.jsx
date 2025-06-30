@@ -6,12 +6,9 @@ function HomePage() {
   return (
     <>
       <NavBar />
-
-      <main className="homepage-content p-20">
-        <AuctionSection title="Ongoing auctions" type="ongoing" />
-        <AuctionSection title="Upcoming auctions" type="upcoming" />
-        <AuctionSection title="Ended auctions" type="ended" />
-      </main>
+      <AuctionSection title="Ongoing auctions" type="ongoing" />
+      <AuctionSection title="Upcoming auctions" type="upcoming" />
+      <AuctionSection title="Ended auctions" type="ended" />
     </>
   );
 }

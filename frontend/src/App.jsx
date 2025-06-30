@@ -4,23 +4,26 @@ import AdminPage from "./Pages/AdminPage";
 import Login from "./components/layout/Login";
 import Register from "./components/layout/Register";
 import AuctionDetail from "./components/layout/AuctionDetail";
-import Footer from "./components/layout/Footer";
-import Header from "./components/layout/Header.jsx";
 import CreateAuctionForm from "./components/layout/AuctionCreate.jsx";
+import AuctionSearch from "./components/layout/AuctionSearch.jsx";
+import MainLayout from "./components/layout/MainLayout.jsx";
+import OverViewAdmin from "./components/layout/OverviewAdmin.jsx";
 function App() {
   return (
-    <>
-      <Header />
-      <Routes>
+    <Routes>
+      <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/auctions/:id" element={<AuctionDetail />} />
-        <Route path="/create" element={<CreateAuctionForm />} />
-      </Routes>
-      <Footer />
-    </>
+        <Route path="/auctions/create" element={<CreateAuctionForm />} />
+        <Route path="/auctions/search" element={<AuctionSearch />} />
+        <Route path="/admin" element={<OverViewAdmin />} />
+      </Route>
+
+      {/* Not use layout */}
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/login" element={<Login />} />
+    </Routes>
   );
 }
 
