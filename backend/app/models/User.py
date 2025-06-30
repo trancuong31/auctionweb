@@ -15,5 +15,5 @@ class User(Base):
     status = Column(Integer, nullable=False, default=1)
     # Relationships
     bids = relationship("Bid", back_populates="user")
-    notifications = relationship("Notification", back_populates="user")
-    orders = relationship("Order", back_populates="user")
+    notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
+    orders = relationship("Order", back_populates="user", cascade="all, delete-orphan")

@@ -1,3 +1,4 @@
+from email import message
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Header
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -10,7 +11,7 @@ from typing import Optional
 from jose import jwt, JWTError
 from app.core.config import SECRET_KEY, ALGORITHM
 from app.core.auth import get_current_user_id_from_token
-
+from app.models.Notification import Notification
 import uuid
 
 router = APIRouter()
@@ -74,4 +75,14 @@ def create_bid(bid_in: BidCreate, db: Session = Depends(get_db), user_id: str = 
     db.add(bid)
     db.commit()
     db.refresh(bid)
+
+    notification = Notification(
+        user_id=user_id,
+        auction_id = bid_in.auction_id,
+        message=f"Bạn đã đặt giá thành công {bid_in.bid_amount:,.0f}$ cho phiên đấu giá {auction.title}.",
+        created_at=datetime.now(),
+        is_read=False
+    )
+    db.add(notification)
+    db.commit()
     return bid
