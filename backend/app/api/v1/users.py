@@ -19,7 +19,7 @@ class UserOut(BaseModel):
     email: Optional[str]
     role: str
     created_at: datetime
-
+    status : int
     class Config:
         # orm_mode = True
         from_attributes = True
@@ -51,7 +51,7 @@ def get_users(db: Session = Depends(get_db), current_user: User = Depends(get_cu
 def get_user(db: Session = Depends(get_db)):
     users = db.query(User).first()
     return users
-    
+
 @router.patch("/users/{user_id}/status")
 def set_user_status(
     user_id: str,

@@ -1,17 +1,33 @@
 import { Routes, Route } from "react-router-dom";
-import HomePage from './Pages/HomePage';
-import AdminPage from './Pages/AdminPage';
-import Login from './components/layout/Login';
-import Register from './components/layout/Register';
-import AuctionDetail from './components/layout/AuctionDetail';
+import HomePage from "./Pages/HomePage";
+import AdminPage from "./Pages/AdminPage";
+import Login from "./components/layout/Login";
+import Register from "./components/layout/Register";
+import AuctionDetail from "./components/layout/AuctionDetail";
+import CreateAuctionForm from "./components/layout/AuctionCreate.jsx";
+import AuctionSearch from "./components/layout/AuctionSearch.jsx";
+import MainLayout from "./components/layout/MainLayout.jsx";
+import OverViewAdmin from "./components/layout/OverviewAdmin.jsx";
+import Rule from "./components/layout/Rule.jsx";
+import Tutorial from "./components/layout/Tutorial.jsx";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route element={<MainLayout />}>
+           
+        <Route path="/auctions/:id" element={<AuctionDetail />} />
+        <Route path="/auctions/create" element={<CreateAuctionForm />} />
+        <Route path="/auctions/search" element={<AuctionSearch />} />
+        <Route path="/admin" element={<OverViewAdmin />} />
+      </Route>
+
+      {/* Not use layout */}
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/auctions/:id" element={<AuctionDetail />} />
+      <Route path="/policy" element={<Rule/>} />
+      <Route path="/guide" element={<Tutorial/>} />
+      <Route path="/" element={<HomePage />} />  
     </Routes>
   );
 }

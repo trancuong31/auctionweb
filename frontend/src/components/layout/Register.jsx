@@ -4,7 +4,7 @@ import logo from '../../assets/images/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faUser, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, Link } from 'react-router-dom';
-
+import Pattern from './Background';
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -41,6 +41,7 @@ function Register() {
 
   return (
     <div className="login-bg">
+      <Pattern />
       <img src={logo} alt="Logo" className="login-logo" />
       <div className="login-form-container">
         <h1 className="login-title">Register</h1>
