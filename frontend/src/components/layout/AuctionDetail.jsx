@@ -22,26 +22,20 @@ const AuctionDetail = () => {
   const userData = JSON.parse(localStorage.getItem("user"));
   const sliderRef = useRef(null);
 
-  const datafake = {
-    id: 1,
-    title: "Antique Vase",
-    image_url: [
-      "https://i.pinimg.com/736x/88/c6/de/88c6de0c0e083478ee5584556518aeeb.jpg",
-      "https://images2.thanhnien.vn/zoom/686_429/Uploaded/vietthong/2019_07_19/thumb_SZDT.jpg",
-      "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_31.jpg",
-    ],
-    end_time: "2025-07-10T23:59:59Z",
-    starting_price: 5000000,
-    step_price: 200000,
-    status: "Active",
-  };
-
   useEffect(() => {
-    getOne("auction", id)
-      .then((data) => setAuction(datafake))
-      .catch((err) => setAuction(datafake))
-      .finally(() => setLoading(false));
+    getAuction();
   }, [id]);
+
+  const getAuction = async () => {
+    try {
+      const response = await getOne("auctions", id);
+      setAuction(response.data);
+      setLoading(false);
+    } catch (error) {
+      alert("có lỗi khi get auction");
+      console.log(error);
+    }
+  };
 
   // Ref to store interval id
   const intervalRef = useRef(null);
@@ -143,7 +137,7 @@ const AuctionDetail = () => {
               ? auction.image_url.map((imageUrl) => (
                   <img
                     key={imageUrl}
-                    src={imageUrl}
+                    src={`${import.meta.env.VITE_BASE_URL}${imageUrl}`}
                     alt={auction.title}
                     className="min-w-full h-[400px] object-cover rounded-lg shadow-lg"
                   />
