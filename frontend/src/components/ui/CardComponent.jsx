@@ -23,14 +23,14 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
             className="bg-white border border-[#7d8085] rounded-[12px] overflow-hidden transition-transform duration-300 ease-in-out shadow-[0_1px_2px_rgba(0,0,0,0.05)] flex flex-col h-full"
             key={item.id}
             style={{ cursor: "pointer" }}
-            onClick={() => clickCard}
+            onClick={() => clickCard(item.id)}
           >
             <div className="bg-gray-300 h-[200px] flex items-center justify-center relative">
               <img
                 src={
                   item.image_url && item.image_url.length > 0
                     ? `${import.meta.env.VITE_BASE_URL}${item.image_url[0]}`
-                    : imagedefault
+                    : "https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/11/tai-hinh-nen-dep-mien-phi.jpg"
                 }
                 alt={item.title || "Auction"}
                 className={
