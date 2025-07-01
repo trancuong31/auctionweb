@@ -398,7 +398,7 @@ def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
         auction_data["winner_info"] = {
             "bid_id": winner_bid.id,
             "user_id": winner_bid.user_id,
-            "user_name": winner_user.name if winner_user else "Unknown",
+            "user_name": winner_user.username if winner_user else "Unknown",
             "bid_amount": float(winner_bid.bid_amount),
             "created_at": winner_bid.created_at
         }
