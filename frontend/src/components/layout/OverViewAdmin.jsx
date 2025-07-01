@@ -20,6 +20,7 @@ const OverViewAdmin = () => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [displayCreateForm, setDisplayCreateForm] = useState(false);
+  const [searchAuctionTitle, setSearchAuctionTitle] = useState("");
   const navigate = useNavigate();
 
   const getOverView = async () => {
@@ -79,6 +80,10 @@ const OverViewAdmin = () => {
       console.log(error);
     }
   };
+
+  const filteredAuctions = auctionData?.filter((auction) =>
+    auction.title.toLowerCase().includes(searchAuctionTitle.toLowerCase())
+  );
 
   const handelClickEdit = (user, idx) => {
     setCurrentEditing(idx);
@@ -271,6 +276,7 @@ const OverViewAdmin = () => {
             type="text"
             placeholder="Title"
             className="border px-2 py-1 rounded"
+            onChange={(e) => setSearchAuctionTitle(e.target.value)}
           />
         </div>
         <button
@@ -297,41 +303,38 @@ const OverViewAdmin = () => {
         <div className="max-h-[400px] overflow-y-auto">
           <table className="min-w-full border border-gray-300">
             <tbody>
-              {auctionData &&
-                auctionData.map((auction, idx) => {
-                  let statusText = "Ended";
-                  if (auction.status === 0) {
-                    statusText = "Upcoming";
-                  } else if (auction.status === 1) {
-                    statusText = "Ongoing";
-                  }
-                  return (
-                    <tr
-                      key={auction.id || idx}
-                      className="hover:bg-blue-400 hover:text-white transition"
+              {filteredAuctions?.map((auction, idx) => {
+                let statusText = "Ended";
+                if (auction.status === 0) {
+                  statusText = "Upcoming";
+                } else if (auction.status === 1) {
+                  statusText = "Ongoing";
+                }
+                return (
+                  <tr
+                    key={auction.id || idx}
+                    className="hover:bg-blue-400 hover:text-white transition"
+                  >
+                    <td className="border px-2 py-1 text-center">{idx + 1}</td>
+                    <td className="border px-2 py-1">{auction.title}</td>
+                    <td className="border px-2 py-1">{auction.start_time}</td>
+                    <td className="border px-2 py-1">{auction.end_time}</td>
+                    <td className="border px-2 py-1">
+                      {auction.starting_price}
+                    </td>
+                    <td className="border px-2 py-1">
+                      {auction.highest_amount}
+                    </td>
+                    <td className="border px-2 py-1">{statusText}</td>
+                    <td
+                      onClick={() => navigate(`/auctions/${auction.id}`)}
+                      className="border px-2 py-1 text-blue-500 underline cursor-pointer"
                     >
-                      <td className="border px-2 py-1 text-center">
-                        {idx + 1}
-                      </td>
-                      <td className="border px-2 py-1">{auction.title}</td>
-                      <td className="border px-2 py-1">{auction.start_time}</td>
-                      <td className="border px-2 py-1">{auction.end_time}</td>
-                      <td className="border px-2 py-1">
-                        {auction.starting_price}
-                      </td>
-                      <td className="border px-2 py-1">
-                        {auction.highest_amount}
-                      </td>
-                      <td className="border px-2 py-1">{statusText}</td>
-                      <td
-                        onClick={() => navigate(`/auctions/${auction.id}`)}
-                        className="border px-2 py-1 text-blue-500 underline cursor-pointer"
-                      >
-                        View
-                      </td>
-                    </tr>
-                  );
-                })}
+                      View
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
