@@ -1,7 +1,9 @@
 import RangeCalender from "../ui/RangeCalender";
 import { useState } from "react";
 import { create } from "../../services/api";
-import { data } from "autoprefixer";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 const CreateAuctionForm = ({ isOpen, onClickClose }) => {
   const [calender, setCalender] = useState([]);
@@ -9,53 +11,65 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
   const [description, setDescription] = useState("");
   const [startingPrice, setStartingPrice] = useState(0);
   const [stepPrice, setStepPrice] = useState(0);
-  const [status, setStatus] = useState(0);
-  const [imgs, setImgs] = useState([]);
   const [imgFiles, setImgFiles] = useState([]);
+  const [excelFile, setExcelFile] = useState(null);
+
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
 
   if (!isOpen) return null;
 
-  const submitHandler = (event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
-    handlerUploadImgs();
+    const arrLinkImg = await handlerUploadImgs();
+    const linkExcel = await handleUpLoadExcel();
 
-    create("auctions", data, true)
-      .then((response) => {
-        alert("Auction created successfully!");
-      })
-      .catch((error) => {
-        console.error(error);
-        alert(error.response.data.detail);
-      });
+    try {
+      const data = {
+        title: title,
+        description: description,
+        starting_price: Number(startingPrice),
+        step_price: Number(stepPrice),
+        image_url: arrLinkImg,
+        file_exel: linkExcel,
+        start_time: dayjs(calender[0]).tz("Asia/Ho_Chi_Minh").format(),
+        end_time: dayjs(calender[1]).tz("Asia/Ho_Chi_Minh").format(),
+      };
+
+      await create("auctions", data, true);
+    } catch (error) {
+      alert("có lỗi khi thêm auction");
+      console.log(error);
+    }
   };
 
   const handlerUploadImgs = async () => {
     const formData = new FormData();
-    console.log("Image Files:", imgFiles);
     imgFiles.forEach((img) => {
       formData.append("files", img);
     });
-    create("upload/image", formData, true)
-      .then((response) => {
-        if (response) {
-          setImgs(response.data.image_urls);
-          const data = {
-            title: title,
-            description: description,
-            starting_price: Number(startingPrice),
-            step_price: Number(stepPrice),
-            image_url: imgs,
-            file_excel: "",
-            start_time: calender[0] ? calender[0] : "",
-            end_time: calender[1] ? calender[1] : "",
-            status: Number(status),
-          };
-          console.log("Auction Data:", data);
-        }
-      })
-      .catch((error) => {
-        alert("Error uploading images:", error);
-      });
+    try {
+      const response = await create("upload/image", formData, true);
+      return response.data.image_urls;
+    } catch (error) {
+      alert("có lỗi khi upload ảnh");
+      console.error(error);
+    }
+  };
+
+  const handleUpLoadExcel = async () => {
+    if (!excelFile) return alert("Vui lòng chọn file Excel");
+
+    const formData = new FormData();
+    formData.append("file", excelFile);
+
+    try {
+      const response = await create("upload/excel", formData, true);
+      return response.data.file_excel;
+    } catch (error) {
+      console.log(error);
+      alert("có lỗi khi upload excel");
+    }
   };
 
   return (
@@ -133,22 +147,10 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                 type="file"
                 accept=".xlsx,.xls"
                 className="w-full p-2 rounded shadow bg-white"
+                onChange={(e) => setExcelFile(e.target.files[0])}
               />
             </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-semibold mb-1">
-              STATUS<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Ongoing/Upcoming/Ended"
-              className="w-full p-2 rounded shadow"
-              onChange={(e) => setStatus(e.target.value)}
-            />
-          </div>
-
           <div className="flex justify-center pt-4">
             <button
               className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
