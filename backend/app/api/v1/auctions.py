@@ -407,19 +407,6 @@ def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
     else:
         auction_data["image_url"] = []
     
-    # Thêm thông tin người trúng thầu
-    if winner_bid:
-        winner_user = db.query(User).filter(User.id == winner_bid.user_id).first()
-        auction_data["winner_info"] = {
-            "bid_id": winner_bid.id,
-            "user_id": winner_bid.user_id,
-            "user_name": winner_user.username if winner_user else "Unknown",
-            "bid_amount": float(winner_bid.bid_amount),
-            "created_at": winner_bid.created_at
-        }
-    
-    return AuctionOut(**auction_data)
-
     highest_bid = db.query(Bid).filter(
         Bid.auction_id == auction_id
     ).order_by(Bid.bid_amount.desc()).first()
