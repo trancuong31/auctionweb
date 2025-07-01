@@ -5,7 +5,7 @@ import Footer from "./Footer";
 const MainLayout = () => (
   <>
     <Header />
-    <main className="">
+    <main className="px-4 md:px-8">
       <Outlet />
     </main>
     <Footer />

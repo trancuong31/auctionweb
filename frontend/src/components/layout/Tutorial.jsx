@@ -10,20 +10,21 @@ function Tutorial() {
     <>
         <Header />
         <NavBar />
-        <main className="rule-content">
+        <main className="tutorial-content">
         <div style={{
             background: "#fff",
             borderRadius: "6px",
             padding: "32px",
             maxWidth: "1200px",
             margin: "40px auto",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.18)"
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.18)",
+            
         }}>
             <h3 style={{fontStyle: "italic", fontWeight: "bold", marginBottom: "24px"}}>Hướng dẫn tham gia đấu giá</h3>
             <ol style={{ fontSize: "18px", color: "#222", fontStyle: "italic", lineHeight: "2" }}>
                 <li>
                     <b>Bước 1: Đăng ký tài khoản</b> tại Trang thông tin điện tử đấu giá trực tuyến, điền các thông tin cơ bản bao gồm email, username, mật khẩu. Đăng ký bước đầu chỉ với username và email để có tài khoản cơ bản, đủ điều kiện theo dõi các phiên đấu giá trực tuyến.
-                    <img style={{
+                    <img className="img" style={{
                         maxWidth: "60%",
                         height: "auto",
                         maxHeight: "400px",
@@ -35,7 +36,7 @@ function Tutorial() {
                     <b>Bước 2: Đăng nhập và cập nhật thông tin tài khoản</b><br />
                     Nhập tài khoản và mật khẩu để đăng nhập hệ thống.<br />
                     Sau khi có tài khoản, thực hiện điền đầy đủ thông tin để cập nhật tài khoản. Sau khi cập nhật thành công, cá nhân, tổ chức sẽ có tài khoản với đầy đủ các tính năng người dùng.<br />
-                    <img style={{
+                    <img className="img" style={{
                         maxWidth: "60%",
                         height: "auto",
                         maxHeight: "400px",
@@ -67,7 +68,7 @@ function Tutorial() {
                     Người đã đăng ký tham gia đấu giá thành công đăng nhập vào hệ thống đấu giá trực tuyến, bấm chọn vào vị trí logo có thông tin về tài sản đã nộp hồ sơ tham gia đấu giá, thực hiện bấm nút Điểm danh để có thể tiến hành trả giá.<br />
                     Tại giao diện màn hình trả giá, nhập số tiền muốn trả hoặc bấm nút dấu + để tăng/ dấu - để giảm bước giá và bấm vào nút “Trả giá”.
                 </li>
-                </ol>
+            </ol>
         </div>
         </main>
         <Footer />
