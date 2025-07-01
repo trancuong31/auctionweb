@@ -1,6 +1,5 @@
 // src/components/layout/AuctionSection.jsx
 import React, { useEffect, useState } from "react";
-import imagedefault from "../../assets/images/imagedefault.png";
 import "./Auctions.css";
 import CountdownTimer from "../../common/CountDownTime";
 import { useNavigate } from "react-router-dom";
@@ -21,13 +20,18 @@ const AuctionSection = ({ title, type }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/v1/auctions?status=${statusMap[type]}`);
+        const res = await fetch(
+          `/api/v1/auctions?status=${statusMap[type]}&sort_by=created_at&sort_order=desc`
+        );
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
 
         const data = await res.json();
-        setItems(data.auctions || []);
+        // Lấy 4 phần tử đầu tiên
+        const firstFour = (data.auctions || []).slice(0, 4);
+        setItems(firstFour);
+        console.log(items);
       } catch (err) {
         console.error("Error fetching auctions:", err);
         setError("Không thể tải dữ liệu.");
