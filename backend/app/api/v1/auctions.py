@@ -20,6 +20,7 @@ from app.models.User import User
 from app.core.auth import get_current_user_id_from_token
 from app.enums import UserRole
 from pydantic import field_validator
+from zoneinfo import ZoneInfo
 
 class AuctionOut(BaseModel):
     id: UUID
@@ -142,7 +143,6 @@ def get_auctions_by_status(
             highest_bid = db.query(Bid).filter(
                 Bid.auction_id == auction.id
             ).order_by(Bid.bid_amount.desc()).first()
-
             try:
                 data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
             except Exception:
@@ -182,7 +182,7 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db), cur
     - status = 1 (upcoming): start_time > now (sắp diễn ra)
     - status = 2 (ended): end_time <= now (đã kết thúc)
     """
-    now = datetime.now()
+    now = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh"))
     status = 0
     if now > auction_in.start_time and auction_in.end_time:
         status =0

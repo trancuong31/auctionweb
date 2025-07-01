@@ -4,6 +4,7 @@ import RangeCalender from "../ui/RangeCalender";
 import RenderCardAuction from "../ui/CardComponent";
 import { useState } from "react";
 import { getAll } from "../../services/api";
+import NavBar from "./NavBar";
 import clsx from "clsx";
 
 const AuctionSearch = () => {
@@ -41,6 +42,7 @@ const AuctionSearch = () => {
   };
 
   return (
+    
     <div className="bg-gray-100 p-4">
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <div className="relative flex-1 min-w-[200px]">

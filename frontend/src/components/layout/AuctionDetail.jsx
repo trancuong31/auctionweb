@@ -55,7 +55,7 @@ const AuctionDetail = () => {
   }, [selectImg]);
 
   if (loading) return <p>Loading...</p>;
-  if (!auction) return <p>Không tìm thấy dữ liệu</p>;
+  if (!auction) return <p>Not data available</p>;
 
   const openAuctionForm = () => {
     setIsOpen(true);
@@ -139,10 +139,17 @@ const AuctionDetail = () => {
                     key={imageUrl}
                     src={`${import.meta.env.VITE_BASE_URL}${imageUrl}`}
                     alt={auction.title}
-                    className="min-w-full h-[400px] object-cover rounded-lg shadow-lg"
+                    className="min-w-full h-[400px] object-cover rounded-lg shadow-lg border-2 border-gray-300"
                   />
                 ))
-              : imagedefault}
+              : (
+                <img
+                  src={imagedefault}
+                  alt="default"
+                  className="min-w-full h-[400px] object-cover rounded-lg shadow-lg border-2 border-gray-300"
+                />
+              )
+          }
           </div>
           <div className="text-center mt-2">
             {auction.image_url.length > 0 &&
@@ -163,20 +170,27 @@ const AuctionDetail = () => {
         <div className="flex-1 text-[34px] font-bold">
           <p className="my-[20px]">
             <FontAwesomeIcon icon={faTags} className="mr-[20px]" />
-            Deadline: {new Date(auction.end_time).toLocaleDateString()}
+            Deadline: {new Date(auction.end_time).toLocaleString()}
           </p>
           <p className="my-[20px]">
             <FontAwesomeIcon icon={faMoneyBill} className="mr-[20px]" />
-            Starting price: {auction.starting_price.toLocaleString()}
+            Starting price: {auction.starting_price?.toLocaleString("en-US", { style: "currency", currency: "USD" })}
           </p>
           <p className="my-[20px]">
             {" "}
             <FontAwesomeIcon icon={faLayerGroup} className="mr-[20px]" />
-            Step price: {auction.step_price}
+            Step price: {auction.step_price?.toLocaleString("en-US", { style: "currency", currency: "USD" })}
           </p>
           <p className="my-[20px]">
             <FontAwesomeIcon icon={faSignal5} className="mr-[20px]" />
-            Status: {auction.status}
+            Status:{" "}
+            {auction.status === 0
+              ? "Ongoing"
+              : auction.status === 1
+              ? "Upcoming"
+              : auction.status === 2
+              ? "Ended"
+              : auction.status}
           </p>
           <p className="my-[20px]">
             <FontAwesomeIcon icon={faFileText} className="mr-[40px]" />

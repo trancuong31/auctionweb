@@ -11,7 +11,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import Pattern from "./Background";
+
 function Login() {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -19,6 +19,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const navigate = useNavigate();
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -42,11 +43,11 @@ function Login() {
       console.error("Login error:", error);
     }
   };
+  
 
   return (
     
     <div className="login-bg">
-      <Pattern />
       <img src={logo} alt="Logo" className="login-logo" />
       <div className="login-form-container">
         <h1 className="login-title">Login</h1>

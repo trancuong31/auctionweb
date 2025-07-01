@@ -4,6 +4,7 @@ import "./Auctions.css";
 import CountdownTimer from "../../common/CountDownTime";
 import { useNavigate } from "react-router-dom";
 import RenderCardAuction from "../ui/CardComponent";
+import imagedefault from "../../assets/images/imagedefault.png";
 const AuctionSection = ({ title, type }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
