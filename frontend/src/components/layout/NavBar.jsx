@@ -7,8 +7,7 @@ function NavBar() {
     <nav className="nav-wrapper">
       <div className="nav-left">
         <NavLink to="/" className="nav-link">Home</NavLink>
-        <NavLink to="/auctions" className="nav-link">Auction</NavLink>
-        <NavLink to="/news" className="nav-link">News</NavLink>
+        <NavLink to="/auctions/search" className="nav-link">Auction</NavLink>
         <NavLink to="/about" className="nav-link">Infomation</NavLink>
         <NavLink to="/history" className="nav-link">History</NavLink>
         <NavLink to="/contact" className="nav-link">Contact</NavLink>

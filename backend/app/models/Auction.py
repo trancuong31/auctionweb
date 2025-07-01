@@ -18,7 +18,6 @@ class Auction(Base):
     end_time = Column(DateTime, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     status = Column(Integer, nullable=False)
-    admin_approved_at = Column(DateTime, nullable=True)
 
     bids = relationship("Bid", back_populates="auction")
     notifications = relationship("Notification", back_populates="auction")

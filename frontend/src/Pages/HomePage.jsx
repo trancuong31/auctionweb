@@ -1,9 +1,9 @@
 import React from "react";
-import AuctionSection from "../components/layout/Auctions"; 
-import Header from '../components/layout/header';
-import NavBar from '../components/layout/NavBar';
-import Footer from '../components/layout/Footer';
-
+import AuctionSection from "../components/layout/Auctions";
+import NavBar from "../components/layout/NavBar";
+import Header from "../components/layout/Header";
+import Footer from "../components/layout/Footer";
+// import Header
 function HomePage() {
   return (
     <>
@@ -14,7 +14,6 @@ function HomePage() {
         <AuctionSection title="Upcoming auctions" type="upcoming" />    
         <AuctionSection title="Ended auctions" type="ended" />
       </main>
-
       <Footer />
     </>
   );

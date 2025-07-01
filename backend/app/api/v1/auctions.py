@@ -10,6 +10,7 @@ from uuid import UUID
 from datetime import datetime
 from typing import Optional
 import os
+from sqlalchemy import func
 from fastapi.responses import JSONResponse
 from app.models.Bid import Bid
 from app.enums import OrderStatus
@@ -19,6 +20,7 @@ from app.models.User import User
 from app.core.auth import get_current_user_id_from_token
 from app.enums import UserRole
 from pydantic import field_validator
+from zoneinfo import ZoneInfo
 
 class AuctionOut(BaseModel):
     id: UUID
@@ -33,7 +35,7 @@ class AuctionOut(BaseModel):
     created_at: datetime
     status: int
     highest_amount: Optional[float] = None
-    winner_info: Optional[Dict] = None  # Thông tin người trúng thầu
+    # bids: Optional[List] = None  
     @field_validator("image_url", mode="before")
     @classmethod
     def parse_image_url(cls, value):
@@ -47,6 +49,20 @@ class AuctionOut(BaseModel):
         # orm_mode = True
         from_attributes = True
 
+class AuctionDetailOut(BaseModel):
+    id: UUID
+    title: str
+    description: Optional[str]
+    starting_price: float
+    step_price: float
+    image_url: Optional[List[str]] = None
+    file_exel: Optional[str]
+    start_time: datetime
+    end_time: datetime
+    created_at: datetime
+    status: int
+    highest_amount: Optional[float] = None
+    bids : Optional[List]
 class AuctionsWithTotalOut(BaseModel):
     auctions: List[AuctionOut]
     total_ongoing: int
@@ -68,6 +84,13 @@ class AuctionSearchResponse(BaseModel):
     total: int
     auctions: List[AuctionOut]
 
+class OverviewStats(BaseModel):
+    total_user: int
+    total_auction: int
+    total_successful_auctions: int
+    total_auction_in_progress: int
+    total_unsuccessful_auctions: int
+    total_upcoming_auctions: int
 router = APIRouter()
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
@@ -120,7 +143,6 @@ def get_auctions_by_status(
             highest_bid = db.query(Bid).filter(
                 Bid.auction_id == auction.id
             ).order_by(Bid.bid_amount.desc()).first()
-
             try:
                 data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
             except Exception:
@@ -149,7 +171,7 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db), cur
             status_code = HTTP_400_BAD_REQUEST,
             detail="You don't have permison create auction!"
         )
-    auction = db.query(Auction.title == auction_in).first()
+    auction = db.query(Auction).filter(Auction.title == auction_in.title).first()
     if auction :
         raise HTTPException(
             status_code= HTTP_400_BAD_REQUEST,
@@ -160,7 +182,7 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db), cur
     - status = 1 (upcoming): start_time > now (sắp diễn ra)
     - status = 2 (ended): end_time <= now (đã kết thúc)
     """
-    now = datetime.now()
+    now = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh"))
     status = 0
     if now > auction_in.start_time and auction_in.end_time:
         status =0
@@ -260,11 +282,13 @@ def download_excel_by_auction(auction_id: str, db: Session = Depends(get_db)):
 @router.get("/auctions/search", response_model=AuctionSearchResponse)
 def search_auctions(
     status: Optional[int] = Query(None, description="0: ongoing, 1: upcoming, 2: ended"),
-    title: Optional[str] = Query(None, description="Tìm kiếm theo tên auction"),
+    title: Optional[str] = Query(None, description="Tìm kiếm theo title auction"),
     sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: title, created_at, start_time, end_time"),
     sort_order: Optional[str] = Query("desc", description="Thứ tự sắp xếp: asc (A-Z), desc (Z-A)"),
     page: int = Query(1, ge=1, description="Số trang"),
-    page_size: int = Query(4, ge=1, le=100, description="Số item trên mỗi trang"),
+    page_size: int = Query(8, ge=1, le=100, description="Số item trên mỗi trang"),
+    start_time: datetime = Query(None, description="Từ ngày"),
+    end_time: datetime = Query(None, description="Đến ngày"),
     db: Session = Depends(get_db)
 ):
     """
@@ -273,7 +297,7 @@ def search_auctions(
     - title: tìm kiếm theo title auction
     - sort_by: sắp xếp theo trường (title, created_at, start_time, end_time)
     - sort_order: thứ tự sắp xếp (asc: A-Z, desc: Z-A)
-    - page: số trang( ví dụ trang 1 ,2,3,4,5)
+    - page: số trang( ví dụ trang 1,2,3,4,5)
     - page_size: số item trên mỗi trang(8)
     
     Điều kiện xác định trạng thái:
@@ -299,7 +323,12 @@ def search_auctions(
     # Filter theo tên (tìm kiếm không phân biệt hoa thường)
     if title:
         query = query.filter(Auction.title.ilike(f"%{title}%"))
-
+    # Lọc từ ngày bắt đầu và kết thúc trong khoảng time đó có các auction thì truy vấn ra
+    if start_time and end_time:
+        query = query.filter(
+            Auction.end_time >= start_time,
+            Auction.start_time <= end_time
+        )
     # Sắp xếp
     if sort_by == "title":
         if sort_order.lower() == "asc":
@@ -321,21 +350,13 @@ def search_auctions(
             query = query.order_by(Auction.created_at.asc())
         else:
             query = query.order_by(Auction.created_at.desc())
-    total_count = query.count()
-
-    # Kiểm tra nếu không tìm thấy kết quả nào
-    if total_count == 0:
-        raise HTTPException(
-            status_code=404,
-            detail="Auction not found"
-        )
 
     # Phân trang
     offset = (page - 1) * page_size
     results = query.offset(offset).limit(page_size).all()
 
     auctions_out = []
-
+    
     for auction in results:
         data = AuctionOut.from_orm(auction).model_dump()
 
@@ -362,24 +383,18 @@ def search_auctions(
                 data["highest_amount"] = None
 
         auctions_out.append(AuctionOut(**data))
-
+    total = query.order_by(None).count()
     return {
-        "total": total_count,
+        "total": total,
         "auctions": auctions_out
     }
 
-#lấy ra đấu giá theo auction_id
-@router.get("/auctions/{auction_id}", response_model=AuctionOut)
+#lấy ra đấu giá chi tiết gồm các user đã đấu giá theo auction_id
+@router.get("/auctions/{auction_id}", response_model=AuctionDetailOut)
 def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
     auction = db.query(Auction).filter(Auction.id == auction_id).first()
     if not auction:
         raise HTTPException(status_code=404, detail="Auction not found")
-    
-    # Thêm thông tin người trúng thầu nếu có
-    winner_bid = db.query(Bid).filter(
-        Bid.auction_id == auction_id,
-        Bid.is_winner == True
-    ).first()
     
     auction_data = AuctionOut.from_orm(auction).model_dump()
     
@@ -404,3 +419,70 @@ def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
         }
     
     return AuctionOut(**auction_data)
+
+    highest_bid = db.query(Bid).filter(
+        Bid.auction_id == auction_id
+    ).order_by(Bid.bid_amount.desc()).first()
+    auction_data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
+
+    bids = db.query(Bid).filter(Bid.auction_id == auction_id).order_by(Bid.bid_amount.desc()).all()
+    bid_list = []
+    for bid in bids:
+        user = db.query(User).filter(User.id == bid.user_id).first()
+        bid_list.append({
+            "id": bid.id,
+            "user_id": bid.user_id,
+            "user_name": user.username if user else "Unknown",
+            "bid_amount": float(bid.bid_amount),
+            "created_at": bid.created_at,
+            "note": bid.note,
+            "address": bid.address,
+            "is_winner": bid.is_winner
+        })
+    auction_data["bids"] = bid_list
+
+    return auction_data
+
+
+@router.get("/overview", response_model=OverviewStats)
+def get_overview_stats(db: Session = Depends(get_db)):
+    now = datetime.now()
+
+    # Tổng số user
+    total_user = db.query(func.count(User.id)).scalar()
+
+    # Tổng số phiên đấu giá
+    total_auction = db.query(func.count(Auction.id)).scalar()
+
+    # Tổng số phiên đấu giá đang diễn ra
+    total_auction_in_progress = db.query(Auction).filter(
+        Auction.start_time <= now, Auction.end_time > now
+    ).count()
+
+    # Tổng số phiên đấu giá thành công
+    total_successful_auctions = db.query(Auction).filter(
+        Auction.end_time < now,
+        db.query(Bid).filter(
+            Bid.auction_id == Auction.id,
+            Bid.is_winner == 1
+        ).exists()
+    ).count()
+    # Tổng phiên đấu giá chưa diễn ra
+    total_upcoming_auctions = db.query(Auction).filter(Auction.start_time > now).count()
+    # Tổng số phiên đấu giá thất bại
+    total_unsuccessful_auctions = db.query(Auction).filter(
+        Auction.end_time < now,
+        ~db.query(Bid).filter(
+            Bid.auction_id == Auction.id,
+            Bid.is_winner == 1
+        ).exists()
+    ).count()
+
+    return {
+        "total_user": total_user,
+        "total_auction": total_auction,
+        "total_successful_auctions": total_successful_auctions,
+        "total_auction_in_progress": total_auction_in_progress,
+        "total_unsuccessful_auctions": total_unsuccessful_auctions,
+        "total_upcoming_auctions": total_upcoming_auctions
+    }
