@@ -3,7 +3,7 @@ import { useState } from "react";
 import { create } from "../../services/api";
 import { data } from "autoprefixer";
 
-const CreateAuctionForm = () => {
+const CreateAuctionForm = ({ isOpen, onClickClose }) => {
   const [calender, setCalender] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -13,18 +13,20 @@ const CreateAuctionForm = () => {
   const [imgs, setImgs] = useState([]);
   const [imgFiles, setImgFiles] = useState([]);
 
+  if (!isOpen) return null;
+
   const submitHandler = (event) => {
     event.preventDefault();
     handlerUploadImgs();
 
-    // create("auctions", data, true)
-    //   .then((response) => {
-    //     alert("Auction created successfully!");
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //     alert(error.response.data.detail);
-    //   });
+    create("auctions", data, true)
+      .then((response) => {
+        alert("Auction created successfully!");
+      })
+      .catch((error) => {
+        console.error(error);
+        alert(error.response.data.detail);
+      });
   };
 
   const handlerUploadImgs = async () => {
@@ -59,7 +61,10 @@ const CreateAuctionForm = () => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-gray-200 w-full max-w-2xl max-h-[95vh] p-8 rounded-lg relative">
-        <button className="absolute top-2 right-3 text-black font-bold text-xl">
+        <button
+          onClick={() => onClickClose()}
+          className="absolute top-2 right-3 text-black font-bold text-xl"
+        >
           ×
         </button>
 
