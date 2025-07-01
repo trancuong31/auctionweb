@@ -32,7 +32,6 @@ const AuctionSection = ({ title, type }) => {
         // Lấy 4 phần tử đầu tiên
         const firstFour = (data.auctions || []).slice(0, 4);
         setItems(firstFour);
-        console.log(items);
       } catch (err) {
         console.error("Error fetching auctions:", err);
         setError("Không thể tải dữ liệu.");
