@@ -25,7 +25,7 @@ function RangeCalender({ onChange, value }) {
   }, []);
 
   return (
-    <div className="flex items-center border rounded h-12 overflow-hidden">
+    <div className="flex items-center border rounded h-10 overflow-hidden">
       <div
         onClick={handleFocus}
         className="bg-blue-400 h-full flex items-center px-3"
@@ -37,7 +37,7 @@ function RangeCalender({ onChange, value }) {
       </div>
       <input
         ref={calendarRef}
-        placeholder="Chọn khoảng thời gian"
+        placeholder="Select a time range"
         className="p-2 w-full h-full focus:outline-none"
       />
     </div>
