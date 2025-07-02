@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import NavBar from "./NavBar";
 import imagedefault from "../../assets/images/imagedefault.png";
 import { getOne } from "../../services/api";
+
 const AuctionDetail = () => {
   const { id } = useParams();
   const [auction, setAuction] = useState(null);
@@ -21,6 +22,7 @@ const AuctionDetail = () => {
   const [selectImg, setselectImg] = useState(0);
   const userData = JSON.parse(localStorage.getItem("user"));
   const sliderRef = useRef(null);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     getAuction();
@@ -32,19 +34,14 @@ const AuctionDetail = () => {
       setAuction(response.data);
       setLoading(false);
     } catch (error) {
-      alert("có lỗi khi get auction");
+      alert("Có lỗi khi lấy dữ liệu auction");
       console.log(error);
     }
   };
 
-  // Ref to store interval id
-  const intervalRef = useRef(null);
-
   useEffect(() => {
     if (!auction?.image_url) return;
-
-    resestInterval();
-
+    resetInterval();
     return () => clearInterval(intervalRef.current);
   }, [auction]);
 
@@ -54,21 +51,14 @@ const AuctionDetail = () => {
     }
   }, [selectImg]);
 
-  if (loading) return <p>Loading...</p>;
-  if (!auction) return <p>Not data available</p>;
-
-  const openAuctionForm = () => {
-    setIsOpen(true);
-  };
+  const openAuctionForm = () => setIsOpen(true);
 
   const handleDownload = async (id) => {
     try {
       const res = await fetch(`/api/v1/download/excel/by-auction/${id}`);
       if (!res.ok) throw new Error("Tải file thất bại");
-
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
-
       const a = document.createElement("a");
       a.href = url;
       a.download = `auction-${id}.xlsx`;
@@ -81,204 +71,200 @@ const AuctionDetail = () => {
 
   const handleSelectImg = (index) => {
     setselectImg(index);
-    // Reset interval when user selects an image
-    resestInterval();
+    resetInterval();
   };
 
-  const resestInterval = () => {
+  const resetInterval = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
-      setselectImg((prevIndex) =>
-        prevIndex + 1 >= auction.image_url.length ? 0 : prevIndex + 1
+      setselectImg((prev) =>
+        prev + 1 >= auction.image_url.length ? 0 : prev + 1
       );
     }, 3000);
   };
 
   const clickPreButton = () => {
-    resestInterval();
-    setselectImg((prevIndex) =>
-      prevIndex - 1 < 0 ? auction.image_url.length - 1 : prevIndex - 1
+    resetInterval();
+    setselectImg((prev) =>
+      prev - 1 < 0 ? auction.image_url.length - 1 : prev - 1
     );
   };
 
   const clickNextButton = () => {
-    resestInterval();
-    setselectImg((prevIndex) =>
-      prevIndex + 1 >= auction.image_url.length ? 0 : prevIndex + 1
+    resetInterval();
+    setselectImg((prev) =>
+      prev + 1 >= auction.image_url.length ? 0 : prev + 1
     );
   };
+
+  if (loading) return <p>Loading...</p>;
+  if (!auction) return <p>No data available</p>;
 
   return (
     <>
       <NavBar />
-      <h1 className="text-[50px] font-[600] mb-[50px]">
-        Title: {auction.title}
-      </h1>
-      <div className="flex items-center">
-        <div className="flex-1 mr-12 overflow-hidden relative">
-          {/* <!-- Next and previous buttons --> */}
-          <button
-            onClick={() => clickPreButton()}
-            className="hover:bg-[rgba(0,0,0,0.8)] z-10 cursor-pointer absolute top-1/2 -translate-y-1/2 px-4 text-white font-bold text-[50px] transition ease-in-out duration-500 rounded-r select-none"
-          >
-            &#10094;
-          </button>
-          <button
-            onClick={() => clickNextButton()}
-            className="hover:bg-[rgba(0,0,0,0.8)] z-10 cursor-pointer absolute top-1/2 -translate-y-1/2 px-4 text-white font-bold text-[50px] transition ease-in-out duration-500 rounded-r select-none right-0 rounded-l"
-          >
-            &#10095;
-          </button>
-          <div
-            ref={sliderRef}
-            className="flex transition-transform duration-700 ease-in-out"
-          >
-            {auction.image_url.length > 0
-              ? auction.image_url.map((imageUrl) => (
+      <div className="px-10">
+        <h1 className="text-5xl font-bold mb-12 text-center text-blue-700 drop-shadow">
+          {auction.title}
+        </h1>
+
+        <div className="flex flex-col lg:flex-row items-start gap-10">
+          {/* Slider Image */}
+          <div className="flex-1 overflow-hidden relative rounded-lg shadow-lg border border-gray-300">
+            {/* Prev Button */}
+            <button
+              onClick={clickPreButton}
+              className="absolute left-0 top-1/2 -translate-y-1/2 px-4 py-2 bg-black/50 text-white text-3xl rounded-r hover:bg-black/70 z-10"
+            >
+              &#10094;
+            </button>
+            {/* Next Button */}
+            <button
+              onClick={clickNextButton}
+              className="absolute right-0 top-1/2 -translate-y-1/2 px-4 py-2 bg-black/50 text-white text-3xl rounded-l hover:bg-black/70 z-10"
+            >
+              &#10095;
+            </button>
+
+            <div
+              ref={sliderRef}
+              className="flex transition-transform duration-700 ease-in-out"
+            >
+              {auction.image_url.length > 0 ? (
+                auction.image_url.map((imageUrl) => (
                   <img
                     key={imageUrl}
                     src={`${import.meta.env.VITE_BASE_URL}${imageUrl}`}
                     alt={auction.title}
-                    className="min-w-full h-[400px] object-cover rounded-lg shadow-lg border-2 border-gray-300"
+                    className="min-w-full h-[400px] object-cover"
                   />
                 ))
-              : (
+              ) : (
                 <img
                   src={imagedefault}
                   alt="default"
-                  className="min-w-full h-[400px] object-cover rounded-lg shadow-lg border-2 border-gray-300"
+                  className="min-w-full h-[400px] object-cover"
                 />
-              )
-          }
+              )}
+            </div>
+
+            <div className="text-center my-4">
+              {auction.image_url.length > 0 &&
+                auction.image_url.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSelectImg(index)}
+                    className={clsx(
+                      "inline-block w-4 h-4 mx-1 rounded-full",
+                      selectImg === index
+                        ? "bg-blue-700"
+                        : "bg-gray-300 hover:bg-blue-500"
+                    )}
+                  />
+                ))}
+            </div>
           </div>
-          <div className="text-center mt-2">
-            {auction.image_url.length > 0 &&
-              auction.image_url.map((imageUrl, index) => (
-                <button
-                  key={imageUrl}
-                  onClick={() => handleSelectImg(index)}
-                  className={clsx(
-                    "cursor-pointer h-[15px] w-[15px] mx-[4px] rounded-full inline-block transition-colors duration-500 ease-in-out",
-                    selectImg === index
-                      ? "bg-[#717171]"
-                      : "bg-[#bbb] hover:bg-[#717171]"
-                  )}
-                />
-              ))}
+
+          {/* Auction Info */}
+          <div className="flex-1 text-xl font-medium space-y-6 text-gray-800">
+            <p>
+              <FontAwesomeIcon icon={faTags} className="mr-4 text-blue-500" />
+              Deadline:{" "}
+              <span className="font-semibold">
+                {new Date(auction.end_time).toLocaleString()}
+              </span>
+            </p>
+            <p>
+              <FontAwesomeIcon
+                icon={faMoneyBill}
+                className="mr-4 text-green-500"
+              />
+              Starting price:{" "}
+              <span className="font-semibold text-green-700">
+                {auction.starting_price?.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                })}
+              </span>
+            </p>
+            <p>
+              <FontAwesomeIcon
+                icon={faLayerGroup}
+                className="mr-4 text-yellow-500"
+              />
+              Step price:{" "}
+              <span className="font-semibold text-yellow-700">
+                {auction.step_price?.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                })}
+              </span>
+            </p>
+            <p>
+              <FontAwesomeIcon
+                icon={faSignal5}
+                className="mr-4 text-purple-500"
+              />
+              Status:{" "}
+              <span className="font-semibold">
+                {auction.status === 0
+                  ? "Ongoing"
+                  : auction.status === 1
+                  ? "Upcoming"
+                  : auction.status === 2
+                  ? "Ended"
+                  : auction.status}
+              </span>
+            </p>
+            <p>
+              <FontAwesomeIcon
+                icon={faFileText}
+                className="mr-4 text-cyan-500"
+              />
+              Attached file:{" "}
+              <button
+                onClick={() => handleDownload(auction.id)}
+                className="text-blue-600 hover:underline font-medium"
+              >
+                {auction.excel}
+              </button>
+            </p>
           </div>
         </div>
-        <div className="flex-1 text-[34px] font-bold">
-          <p className="my-[20px]">
-            <FontAwesomeIcon icon={faTags} className="mr-[20px]" />
-            Deadline: {new Date(auction.end_time).toLocaleString()}
-          </p>
-          <p className="my-[20px]">
-            <FontAwesomeIcon icon={faMoneyBill} className="mr-[20px]" />
-            Starting price: {auction.starting_price?.toLocaleString("en-US", { style: "currency", currency: "USD" })}
-          </p>
-          <p className="my-[20px]">
-            {" "}
-            <FontAwesomeIcon icon={faLayerGroup} className="mr-[20px]" />
-            Step price: {auction.step_price?.toLocaleString("en-US", { style: "currency", currency: "USD" })}
-          </p>
-          <p className="my-[20px]">
-            <FontAwesomeIcon icon={faSignal5} className="mr-[20px]" />
-            Status:{" "}
-            {auction.status === 0
-              ? "Ongoing"
-              : auction.status === 1
-              ? "Upcoming"
-              : auction.status === 2
-              ? "Ended"
-              : auction.status}
-          </p>
-          <p className="my-[20px]">
-            <FontAwesomeIcon icon={faFileText} className="mr-[40px]" />
-            Attached file:{" "}
-            <button
-              onClick={() => handleDownload(auction.id)}
-              className="text-blue-500 hover:underline"
-            >
-              {auction.excel}
-            </button>
-          </p>
+
+        {/* Mô tả dài */}
+        <div className="w-full max-h-[300px] overflow-y-auto p-6 mt-12 bg-gray-100 rounded-lg text-base leading-relaxed shadow-inner text-gray-700">
+
+          Mùa hè kết thúc tháng bảy nhường chỗ cho tháng tám. vậy là tôi lớn thêm một tuổi lên thêm một lớp, năm học mới sắp bắt đầu ,nhìn mọi người ai nấy lo sách vở quần áo nhất là các em học sinh chuẩn bị vào lớp 1, tôi lại nhớ đến bản thân mình ngày xưa cách đây cũng lâu lắm rồi. cái ngày mà tôi chập chững vào lớp 1 để tập viết tập đọc
+
+Cách ngày khai giảng trước 1 tuần mẹ đã đưa tôi mua quần áo sắm sửa sách vở rồi về đến nhà tôi cùng mẹ bao vở dán tem cho sách giáo khoa, tập viết cho thật tỉ mĩ gọn gàng. trong lòng tôi có hơi bồi hồi 1 chút vì hết đêm nay đến ngày mai tôi đã chính thức trở thành học sinh lớp 1. đối với bản thân và khi ấy tôi chỉ là một đứa trẻ 1 đứa trẻ với tâm trạng sắp đối diện với sự kiện quan trọng nhất trong cuộc đời của chính bản thân mình.
+
+Tôi dậy sớm vào sáng hôm sau vệ sinh cá nhân rồi mặc vào người bộ đồng phục còn thơm mùi quần áo mới. tôi, đã sẵn sàng cho ngày đầu tiên đi học,tôi theo mẹ lên xe ngồi sau xe ôm chặt mẹ. lòng tôi háo hức vô cùng, cuối thu nên trời rất mát gió pha lẫn với nắng tạo nên bầu không khí ấm áp khiến người người cảm thấy thoải mái dễ chịu khi bước ra đường. đường đi quang cảnh xung quanh vẫn không thay đổi mọi thứ vẫn như thế chỉ có người thay đổi là tôi. ngồi trên xe với mẹ tôi hí hửng mong tới trường bởi vì bây giờ tôi đã là học sinh lớp 1
+
+Trường học là nơi mà tôi sẽ gắn bó suốt những tháng năm trưởng thành và bây giờ thứ đang đứng trước mặt tôi là cổng trường, chung quanh là các anh chị lớn hơn đang vui vẻ cười nói với nhau hơn sau 3 tháng không gặp. còn những đứa mới vào lớp 1 như tôi thì bé tí mặc ai cũng ngu ngơ khờ khạo. có mấy đứa còn rụt rè. tôi bước vào sân trường chớp mắt quay đầu qua lại nhìn xung quanh trước mặt tôi hiện giờ là cảnh quan vô cùng mới lớp học hàng cây con người cả bầu không khí nữa tôi cảm thấy bản thân như bước vào thế giới mới. rồi tiếng trống đầu tiên của đời học sinh to vang lên háo hức ngoảnh đầu lại nhìn mẹ tạm biệt rồi theo các bạn theo cô giáo vào lớp học.
+
+Với bao nhiêu đều suy nghĩ trong tôi có cả niềm vui xen lẫn điều kiêu hãnh và cả sự thẹn thùng bỡ ngỡ một chút lo lắng... bấy nhiêu cảm xúc của những ngày đầu tiên đó dưới mái trường tiểu học chắc chắn sẽ đọng lại trong lòng tôi một dấu ấn không thể phai mờ.
         </div>
-      </div>
 
-      <div className="w-full overflow-y-auto p-4 max-h-[300px] bg-gray-500 mt-[50px] rounded">
-        1000+ bài văn mẫu lớp 9 (hay nhất) Tài liệu 500 bài văn hay lớp 9 sách
-        mới Chân trời sáng tạo, Kết nối tri thức, Cánh diều được chọn lọc, tổng
-        hợp từ những bài văn hay của học sinh lớp 9 và Giáo viên trên cả nước
-        đầy đủ các bài văn phân tích, cảm nhận, thuyết minh, nghị luận, .... Hi
-        vọng với các bài văn mẫu này, các em học sinh lớp 9 sẽ viết văn hay hơn,
-        đủ ý hơn để đạt điểm cao trong các bài thi môn Ngữ văn lớp 9. 1000+ bài
-        văn mẫu lớp 9 (hay nhất) 1000+ bài văn mẫu siêu hay (điểm cao) Văn mẫu 9
-        Kết nối tri thức Xem chi tiết Văn mẫu 9 Chân trời sáng tạo Xem chi tiết
-        Văn mẫu 9 Cánh diều Xem chi tiết Văn mẫu lớp 9 tổng hợp Top 50 Phân tích
-        Mùa xuân nho nhỏ (hay nhất) Top 40 Phân tích Viếng Lăng Bác (hay nhất)
-        Top 40 Phân tích Nói với con (hay nhất) Top 40 Cảm nhận về nhân vật
-        Phương Định (siêu hay) Top 40 Chứng minh câu tục ngữ Có chí thì nên (hay
-        nhất) Top 40 Phân tích Những ngôi sao xa xôi (hay nhất) Top 40 Cảm nhận
-        về nhân vật anh thanh niên (hay nhất) 1000+ bài văn mẫu lớp 9 (hay nhất)
-        Tài liệu 500 bài văn hay lớp 9 sách mới Chân trời sáng tạo, Kết nối tri
-        thức, Cánh diều được chọn lọc, tổng hợp từ những bài văn hay của học
-        sinh lớp 9 và Giáo viên trên cả nước đầy đủ các bài văn phân tích, cảm
-        nhận, thuyết minh, nghị luận, .... Hi vọng với các bài văn mẫu này, các
-        em học sinh lớp 9 sẽ viết văn hay hơn, đủ ý hơn để đạt điểm cao trong
-        các bài thi môn Ngữ văn lớp 9. 1000+ bài văn mẫu lớp 9 (hay nhất) 1000+
-        bài văn mẫu siêu hay (điểm cao) Văn mẫu 9 Kết nối tri thức Xem chi tiết
-        Văn mẫu 9 Chân trời sáng tạo Xem chi tiết Văn mẫu 9 Cánh diều Xem chi
-        tiết Văn mẫu lớp 9 tổng hợp Top 50 Phân tích Mùa xuân nho nhỏ (hay nhất)
-        Top 40 Phân tích Viếng Lăng Bác (hay nhất) Top 40 Phân tích Nói với con
-        (hay nhất) Top 40 Cảm nhận về nhân vật Phương Định (siêu hay) Top 40
-        Chứng minh câu tục ngữ Có chí thì nên (hay nhất) Top 40 Phân tích Những
-        ngôi sao xa xôi (hay nhất) Top 40 Cảm nhận về nhân vật anh thanh niên
-        (hay nhất) 1000+ bài văn mẫu lớp 9 (hay nhất) Tài liệu 500 bài văn hay
-        lớp 9 sách mới Chân trời sáng tạo, Kết nối tri thức, Cánh diều được chọn
-        lọc, tổng hợp từ những bài văn hay của học sinh lớp 9 và Giáo viên trên
-        cả nước đầy đủ các bài văn phân tích, cảm nhận, thuyết minh, nghị luận,
-        .... Hi vọng với các bài văn mẫu này, các em học sinh lớp 9 sẽ viết văn
-        hay hơn, đủ ý hơn để đạt điểm cao trong các bài thi môn Ngữ văn lớp 9.
-        1000+ bài văn mẫu lớp 9 (hay nhất) 1000+ bài văn mẫu siêu hay (điểm cao)
-        Văn mẫu 9 Kết nối tri thức Xem chi tiết Văn mẫu 9 Chân trời sáng tạo Xem
-        chi tiết Văn mẫu 9 Cánh diều Xem chi tiết Văn mẫu lớp 9 tổng hợp Top 50
-        Phân tích Mùa xuân nho nhỏ (hay nhất) Top 40 Phân tích Viếng Lăng Bác
-        (hay nhất) Top 40 Phân tích Nói với con (hay nhất) Top 40 Cảm nhận về
-        nhân vật Phương Định (siêu hay) Top 40 Chứng minh câu tục ngữ Có chí thì
-        nên (hay nhất) Top 40 Phân tích Những ngôi sao xa xôi (hay nhất) Top 40
-        Cảm nhận về nhân vật anh thanh niên (hay nhất) 1000+ bài văn mẫu lớp 9
-        (hay nhất) Tài liệu 500 bài văn hay lớp 9 sách mới Chân trời sáng tạo,
-        Kết nối tri thức, Cánh diều được chọn lọc, tổng hợp từ những bài văn hay
-        của học sinh lớp 9 và Giáo viên trên cả nước đầy đủ các bài văn phân
-        tích, cảm nhận, thuyết minh, nghị luận, .... Hi vọng với các bài văn mẫu
-        này, các em học sinh lớp 9 sẽ viết văn hay hơn, đủ ý hơn để đạt điểm cao
-        trong các bài thi môn Ngữ văn lớp 9. 1000+ bài văn mẫu lớp 9 (hay nhất)
-        1000+ bài văn mẫu siêu hay (điểm cao) Văn mẫu 9 Kết nối tri thức Xem chi
-        tiết Văn mẫu 9 Chân trời sáng tạo Xem chi tiết Văn mẫu 9 Cánh diều Xem
-        chi tiết Văn mẫu lớp 9 tổng hợp Top 50 Phân tích Mùa xuân nho nhỏ (hay
-        nhất) Top 40 Phân tích Viếng Lăng Bác (hay nhất) Top 40 Phân tích Nói
-        với con (hay nhất) Top 40 Cảm nhận về nhân vật Phương Định (siêu hay)
-        Top 40 Chứng minh câu tục ngữ Có chí thì nên (hay nhất) Top 40 Phân tích
-        Những ngôi sao xa xôi (hay nhất) Top 40 Cảm nhận về nhân vật anh thanh
-        niên (hay nhất)
-      </div>
+        {/* Nút đấu giá */}
+        <div className="flex justify-center mt-12">
+          <button
+            onClick={openAuctionForm}
+            className="px-10 py-5 bg-blue-600 text-white text-2xl font-semibold rounded-lg hover:bg-blue-800 transition duration-300"
+          >
+            AUCTION
+          </button>
+        </div>
 
-      <div className="flex justify-center mt-[50px]">
-        <button
-          onClick={openAuctionForm}
-          className="p-[20px] bg-[#3270f7] w-[300px] rounded-lg text-white text-[30px] font-bold hover:bg-[#1a4bbd] transition duration-300"
-        >
-          AUCTION
-        </button>
+        {/* Modal đấu giá */}
+        <ModalAuction
+          canOpen={isOpen}
+          email={userData?.email}
+          username={userData?.username}
+          auctionId={auction.id}
+          onClose={() => setIsOpen(false)}
+        />
       </div>
-
-      <ModalAuction
-        canOpen={isOpen}
-        email={userData?.email}
-        username={userData?.username}
-        auctionId={auction.id}
-        onClose={() => setIsOpen(false)}
-      />
     </>
   );
 };
