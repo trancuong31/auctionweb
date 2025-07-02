@@ -24,7 +24,7 @@ function ModalAuction({ canOpen, onClose, email, username, auctionId }) {
 
     create("bids", data, true)
       .then((response) => {
-        alert("Đã gửi đấu giá thành công!");
+        // alert("Đã gửi đấu giá thành công!");
       })
       .catch((error) => {
         console.error(error);

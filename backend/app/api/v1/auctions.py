@@ -138,8 +138,16 @@ def get_auctions_by_status(
         else:
             data["image_url"] = []
 
+        # Tính lại status động
+        if now < auction.start_time:
+            data["status"] = 1  # upcoming
+        elif auction.start_time <= now < auction.end_time:
+            data["status"] = 0  # ongoing
+        else:
+            data["status"] = 2  # ended
+
         # Thêm highest_amount nếu là phiên đã kết thúc
-        if status == 2:
+        if data["status"] == 2:
             highest_bid = db.query(Bid).filter(
                 Bid.auction_id == auction.id
             ).order_by(Bid.bid_amount.desc()).first()
@@ -212,30 +220,44 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db), cur
 #admin upload ảnh khi thêm auction
 @router.post("/upload/image")
 def upload_image(files: List[UploadFile] = File(...)):
-    
-    allowed_exts = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
-    max_size = 5 * 1024 * 1024  # 5MB
-    image_urls = []
+    try:
+        allowed_exts = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+        max_size = 5 * 1024 * 1024  # 5MB
+        image_urls = []
 
-    if not files:
-        return JSONResponse(status_code=400, content={"detail": "No files provided"})
+        if not files:
+            return JSONResponse(status_code=400, content={"detail": "No files provided"})
 
-    if not os.path.exists(UPLOAD_IMAGE_DIR):
-        os.makedirs(UPLOAD_IMAGE_DIR)
+        if not os.path.exists(UPLOAD_IMAGE_DIR):
+            os.makedirs(UPLOAD_IMAGE_DIR)
 
-    for file in files:
-        ext = os.path.splitext(file.filename)[1].lower()
-        if ext not in allowed_exts:
-            return JSONResponse(status_code=400, content={"detail": f"Invalid image file type: {file.filename}"})
-        contents = file.file.read()
-        if len(contents) > max_size:
-            return JSONResponse(status_code=400, content={"detail": f"Image file too large (max 5MB): {file.filename}"})
-        file_location = os.path.join(UPLOAD_IMAGE_DIR, file.filename)
-        with open(file_location, "wb") as f:
-            f.write(contents)
-        image_urls.append(f"/uploads/images/{file.filename}")
+        for file in files:
+            if not file.filename or not isinstance(file.filename, str):
+                return JSONResponse(status_code=400, content={"detail": "Invalid file name."})
+            ext = os.path.splitext(file.filename)[1].lower()
+            if ext not in allowed_exts:
+                return JSONResponse(status_code=400, content={"detail": f"Invalid image file type: {file.filename}"})
+            contents = file.file.read()
+            if len(contents) > max_size:
+                return JSONResponse(status_code=400, content={"detail": f"Image file too large (max 5MB): {file.filename}"})
 
-    return {"image_urls": image_urls}
+            # Xử lý trùng tên file
+            base_name, ext = os.path.splitext(file.filename)
+            file_location = os.path.join(UPLOAD_IMAGE_DIR, f"{base_name}{ext}")
+            counter = 1
+            while os.path.exists(file_location):
+                new_filename = f"{base_name}_{counter}{ext}"
+                file_location = os.path.join(UPLOAD_IMAGE_DIR, new_filename)
+                counter += 1
+
+            with open(file_location, "wb") as f_out:
+                f_out.write(contents)
+            saved_filename = os.path.basename(file_location)
+            image_urls.append(f"/uploads/images/{saved_filename}")
+
+        return {"image_urls": image_urls}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"detail": f"Internal server error: {str(e)}"})
 
 #admin upload excel khi thêm auction
 @router.post("/upload/excel")
@@ -252,10 +274,21 @@ def upload_excel(file: UploadFile = File(...)):
         return JSONResponse(status_code=400, content={"detail": "Excel file too large (max 10MB)"})
     if not os.path.exists(UPLOAD_EXCEL_DIR):
         os.makedirs(UPLOAD_EXCEL_DIR)
-    file_location = os.path.join(UPLOAD_EXCEL_DIR, str(file.filename))
+    
+    # Xử lý trùng tên file
+    base_name, ext = os.path.splitext(file.filename)
+    file_location = os.path.join(UPLOAD_EXCEL_DIR, file.filename)
+    counter = 1
+    while os.path.exists(file_location):
+        new_filename = f"{base_name}_{counter}{ext}"
+        file_location = os.path.join(UPLOAD_EXCEL_DIR, new_filename)
+        counter += 1
+
+    # Lưu file với tên không trùng
     with open(file_location, "wb") as f:
         f.write(contents)
-    return {"file_excel": f"/uploads/excels/{file.filename}"}
+    saved_filename = os.path.basename(file_location)
+    return {"file_excel": f"/uploads/excels/{saved_filename}"}
 
 #user down excel auction_id
 @router.get("/download/excel/by-auction/{auction_id}")
@@ -318,8 +351,8 @@ def search_auctions(
             query = query.filter(Auction.start_time > now)
         elif status == 2:  # ended - đã kết thúc
             # Điều kiện: end_time <= now
-            query = query.filter(Auction.end_time < now)
-
+            query = query.filter(Auction.end_time <= now)
+    
     # Filter theo tên (tìm kiếm không phân biệt hoa thường)
     if title:
         query = query.filter(Auction.title.ilike(f"%{title}%"))
@@ -370,13 +403,19 @@ def search_auctions(
         else:
             data["image_url"] = []
 
+        # Tính lại status động
+        if now < auction.start_time:
+            data["status"] = 1  # upcoming
+        elif auction.start_time <= now < auction.end_time:
+            data["status"] = 0  # ongoing
+        else:
+            data["status"] = 2  # ended
+
         # Thêm highest_amount nếu là phiên đã kết thúc
-        # Phân tích trực tiếp điều kiện: end_time <= now
-        if auction.end_time < now:
+        if data["status"] == 2:
             highest_bid = db.query(Bid).filter(
                 Bid.auction_id == auction.id
             ).order_by(Bid.bid_amount.desc()).first()
-
             try:
                 data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
             except Exception:
@@ -407,6 +446,15 @@ def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
     else:
         auction_data["image_url"] = []
     
+    # Tính lại status động
+    now = datetime.now()
+    if now < auction.start_time:
+        auction_data["status"] = 1  # upcoming
+    elif auction.start_time <= now < auction.end_time:
+        auction_data["status"] = 0  # ongoing
+    else:
+        auction_data["status"] = 2  # ended
+
     highest_bid = db.query(Bid).filter(
         Bid.auction_id == auction_id
     ).order_by(Bid.bid_amount.desc()).first()
