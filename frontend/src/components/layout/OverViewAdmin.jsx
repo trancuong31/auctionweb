@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAll, update, deleteOne } from "../../services/api";
-import { useNavigate } from "react-router-dom";
 import CreateAuctionForm from "./AuctionCreate";
+import ModalDetailAuction from "./ModalDetailAuction";
 import {
   faUsers,
   faGavel,
@@ -21,7 +21,8 @@ const OverViewAdmin = () => {
   const [email, setEmail] = useState("");
   const [displayCreateForm, setDisplayCreateForm] = useState(false);
   const [searchAuctionTitle, setSearchAuctionTitle] = useState("");
-  const navigate = useNavigate();
+  const [idAuction, setIdAuction] = useState("");
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const getOverView = async () => {
     try {
@@ -31,6 +32,10 @@ const OverViewAdmin = () => {
       alert(" có lỗi khi lấy dữ liệu");
       console.log(error);
     }
+  };
+
+  const handleClickClose = () => {
+    setIsOpenModal(false);
   };
 
   const getAllUser = async () => {
@@ -79,6 +84,11 @@ const OverViewAdmin = () => {
       alert("xóa user thất bại");
       console.log(error);
     }
+  };
+
+  const openDetailBid = (id) => {
+    setIdAuction(id);
+    setIsOpenModal(true);
   };
 
   const filteredAuctions = auctionData?.filter((auction) =>
@@ -137,15 +147,6 @@ const OverViewAdmin = () => {
             <FontAwesomeIcon icon={faGear} />
           </p>
         </div>
-        <div className="bg-red-300 p-4 rounded shadow text-center">
-          <p className="font-semibold">Total unsuccessful auctions</p>
-          <p className="text-2xl font-bold">
-            {overViewData.total_unsuccessful_auctions}
-          </p>
-          <p className="text-xl">
-            <FontAwesomeIcon icon={faXmark} />
-          </p>
-        </div>
         <div className="bg-cyan-100 p-4 rounded shadow text-center">
           <p className="font-semibold">Total upcoming auctions</p>
           <p className="text-2xl font-bold">
@@ -153,6 +154,15 @@ const OverViewAdmin = () => {
           </p>
           <p className="text-xl">
             <FontAwesomeIcon icon={faClock} />
+          </p>
+        </div>
+        <div className="bg-red-300 p-4 rounded shadow text-center">
+          <p className="font-semibold">Total unsuccessful auctions</p>
+          <p className="text-2xl font-bold">
+            {overViewData.total_unsuccessful_auctions}
+          </p>
+          <p className="text-xl">
+            <FontAwesomeIcon icon={faXmark} />
           </p>
         </div>
       </div>
@@ -306,9 +316,9 @@ const OverViewAdmin = () => {
               {filteredAuctions?.map((auction, idx) => {
                 let statusText = "Ended";
                 if (auction.status === 0) {
-                  statusText = "Upcoming";
-                } else if (auction.status === 1) {
                   statusText = "Ongoing";
+                } else if (auction.status === 1) {
+                  statusText = "Upcoming";
                 }
                 return (
                   <tr
@@ -327,7 +337,7 @@ const OverViewAdmin = () => {
                     </td>
                     <td className="border px-2 py-1">{statusText}</td>
                     <td
-                      onClick={() => navigate(`/auctions/${auction.id}`)}
+                      onClick={() => openDetailBid(auction.id)}
                       className="border px-2 py-1 text-blue-500 underline cursor-pointer"
                     >
                       View
@@ -338,6 +348,11 @@ const OverViewAdmin = () => {
             </tbody>
           </table>
         </div>
+        <ModalDetailAuction
+          isOpen={isOpenModal}
+          clickClose={handleClickClose}
+          idAuction={idAuction}
+        />
       </div>
     </div>
   );
