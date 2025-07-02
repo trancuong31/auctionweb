@@ -37,12 +37,12 @@ function ModalAuction({ canOpen, onClose, email, username, auctionId }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md sm:max-w-lg transform transition-all duration-300">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 z-50">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md sm:max-w-lg  transform transition-all duration-300">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 sm:p-6 rounded-t-2xl relative">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white sm:p-1 rounded-t-2xl relative">
           <h2 className="text-lg sm:text-2xl font-bold text-center">Submit Your Bid</h2>
-          <p className="text-blue-100 text-center mt-1 text-sm sm:text-base">Enter your auction details below</p>
+          <p className="text-blue-100 text-center text-sm sm:text-base">Enter your auction details below</p>
           <button
             onClick={onClose}
             className="absolute top-3 right-3 sm:top-4 sm:right-4 w-6 h-6 sm:w-8 sm:h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-all duration-200 text-white hover:text-gray-200"
@@ -157,18 +157,18 @@ function ModalAuction({ canOpen, onClose, email, username, auctionId }) {
             </label>
             <textarea
               onChange={(e) => setNote(e.target.value)}
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-md sm:rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 resize-none"
+              className="w-full px-4 sm:px-2 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-md sm:rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 resize-none"
               rows="3"
               placeholder="Add any special requirements or comments..."
             />
           </div>
 
           {/* Submit Button */}
-          <div className="pt-2 sm:pt-4">
+          <div className="pt-2">
             <button
               onClick={handleSubmit}
               disabled={isSubmitting || !address || !amount}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 text-sm sm:text-base rounded-md sm:rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center space-x-2"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-3 sm:py-4 px-4 sm:px-3 text-sm sm:text-base rounded-md sm:rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center space-x-2"
             >
               {isSubmitting ? (
                 <>
