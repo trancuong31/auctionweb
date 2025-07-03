@@ -1,19 +1,23 @@
 // src/components/layout/AuctionSection.jsx
 import React, { useEffect, useState } from "react";
 import "./Auctions.css";
-import CountdownTimer from "../../common/CountDownTime";
 import { useNavigate } from "react-router-dom";
 import RenderCardAuction from "../ui/CardComponent";
-import imagedefault from "../../assets/images/imagedefault.png";
 const AuctionSection = ({ title, type }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [total, setTotal] = useState(0);
   const navigate = useNavigate();
   const statusMap = {
     ongoing: 0,
     upcoming: 1,
     ended: 2,
+  };
+  const totalMap = {
+    ongoing: "total_ongoing",
+    upcoming: "total_upcoming",
+    ended: "total_ended",
   };
   const handleClick = (id) => {
     navigate(`/auctions/${id}`);
@@ -32,6 +36,7 @@ const AuctionSection = ({ title, type }) => {
         // Lấy 4 phần tử đầu tiên
         const firstFour = (data.auctions || []).slice(0, 4);
         setItems(firstFour);
+        setTotal(data[totalMap[type]] || 0);
       } catch (err) {
         console.error("Error fetching auctions:", err);
         setError("Không thể tải dữ liệu.");
@@ -50,13 +55,23 @@ const AuctionSection = ({ title, type }) => {
   return (
     <div className="section">
       <h2 className="section-title">{title}</h2>
+      <span
+        style={{
+          fontWeight: "normal",
+          color: "#8c8e94",
+          fontSize: "12px",
+          padding: "0px 0px 5px 0px",
+        }}
+      >
+        Total: {total} asset
+      </span>
       <RenderCardAuction
         arrAuction={items}
         numberCol={4}
         clickCard={handleClick}
       />
 
-      <a href="#" className="see-all">
+      <a href="/auctions/search" className="see-all">
         See all
       </a>
     </div>
