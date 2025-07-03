@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import clsx from "clsx";
 
-const CountdownTimer = ({ targetTime }) => {
+const CountdownTimer = ({ targetTime, className = {} }) => {
   const calculateTimeLeft = () => {
     const now = new Date().getTime();
     const distance = new Date(targetTime).getTime() - now;
@@ -31,7 +32,12 @@ const CountdownTimer = ({ targetTime }) => {
 
   const { days, hours, minutes, seconds } = timeLeft;
   return (
-    <div className="countdown-timer">
+    <div
+      className={clsx(
+        "bg-black bg-opacity-70 text-white z-[1000] absolute top-0 right-0 rounded-l-2xl p-[10px_30px] text-sm font-medium shadow-md",
+        className
+      )}
+    >
       {days}d {hours}h {minutes}m {seconds}s
     </div>
   );

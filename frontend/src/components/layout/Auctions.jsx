@@ -55,7 +55,7 @@ const AuctionSection = ({ title, type }) => {
         numberCol={4}
         clickCard={handleClick}
       />
-      
+
       <a href="#" className="see-all">
         See all
       </a>

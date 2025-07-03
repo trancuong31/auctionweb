@@ -55,6 +55,17 @@ const AuctionSearch = () => {
     handleSearch(value + 1);
   };
 
+  //   const handleClickPre = () => {
+  //   setCurrentIndex = currentIndex === 0 ?
+  //   setCurrentIndex(value);
+  //   handleSearch(value + 1);
+  // };
+
+  //   const handleClickNext = () => {
+  //   setCurrentIndex(value);
+  //   handleSearch(value + 1);
+  // };
+
   return (
     <div className="bg-gray-100 p-4 text-xs">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4 items-end">
@@ -156,32 +167,95 @@ const AuctionSearch = () => {
       />
 
       <div className="flex justify-center mt-10">
-        <span className="p-3 hover:bg-[#2563eb] group cursor-pointer">
-          <FontAwesomeIcon
-            icon={faAnglesLeft}
-            className="group-hover:text-white"
-          />{" "}
-        </span>
-        {Array.from({ length: totalPage }, (_, i) => (
-          <button
-            onClick={(e) => handleClickPagination(i)}
-            key={i}
-            className={clsx(
-              "px-5 font-semibold",
-              currentIndex === i
-                ? "bg-[#2563eb] text-white"
-                : "bg-[#bbb] hover:bg-[#2563eb] hover:text-white"
-            )}
-          >
-            {i + 1}
-          </button>
-        ))}
-        <span className="p-3 hover:bg-[#2563eb] group cursor-pointer">
-          <FontAwesomeIcon
-            icon={faAnglesRight}
-            className="group-hover:text-white"
-          />
-        </span>
+        {currentIndex !== 0 && (
+          <span className="p-3 hover:bg-[#2563eb] group cursor-pointer">
+            <FontAwesomeIcon
+              icon={faAnglesLeft}
+              className="group-hover:text-white"
+            />
+          </span>
+        )}
+
+        {Array.from({ length: totalPage }, (_, i) => {
+          const pagesToShow = [];
+          if (totalPage > 5) {
+            // Luôn hiển thị trang 1
+            if (i === 0) pagesToShow.push(i);
+            // Hiển thị trang trước và sau currentIndex (tối đa 3 trang liên tiếp)
+            for (
+              let j = Math.max(0, currentIndex - 1);
+              j <= Math.min(totalPage - 1, currentIndex + 1);
+              j++
+            ) {
+              if (!pagesToShow.includes(j)) pagesToShow.push(j);
+            }
+            // Luôn hiển thị trang cuối
+            if (i === totalPage - 1 && !pagesToShow.includes(totalPage - 1))
+              pagesToShow.push(totalPage - 1);
+            // Thêm ... khi cần
+            if (currentIndex > 2 && i === 1) pagesToShow.push("...");
+            if (
+              currentIndex < totalPage - 3 &&
+              i === currentIndex + 2 &&
+              i < totalPage - 1
+            )
+              pagesToShow.push("...");
+
+            if (
+              pagesToShow.includes(i) ||
+              (i === currentIndex + 1 && currentIndex < totalPage - 2)
+            ) {
+              return (
+                <button
+                  onClick={(e) => handleClickPagination(i)}
+                  key={i}
+                  className={clsx(
+                    "px-5 font-semibold",
+                    currentIndex === i
+                      ? "bg-[#2563eb] text-white"
+                      : "bg-[#bbb] hover:bg-[#2563eb] hover:text-white"
+                  )}
+                >
+                  {i + 1}
+                </button>
+              );
+            } else if (
+              pagesToShow.includes("...") &&
+              (i === 1 || i === currentIndex + 2)
+            ) {
+              return (
+                <span key={i} className="px-5">
+                  ...
+                </span>
+              );
+            }
+          } else {
+            return (
+              <button
+                onClick={(e) => handleClickPagination(i)}
+                key={i}
+                className={clsx(
+                  "px-5 font-semibold",
+                  currentIndex === i
+                    ? "bg-[#2563eb] text-white"
+                    : "bg-[#bbb] hover:bg-[#2563eb] hover:text-white"
+                )}
+              >
+                {i + 1}
+              </button>
+            );
+          }
+          return null;
+        })}
+
+        {currentIndex !== totalPage - 1 && (
+          <span className="p-3 hover:bg-[#2563eb] group cursor-pointer">
+            <FontAwesomeIcon
+              icon={faAnglesRight}
+              className="group-hover:text-white"
+            />
+          </span>
+        )}
       </div>
     </div>
   );
