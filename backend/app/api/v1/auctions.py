@@ -35,6 +35,7 @@ class AuctionOut(BaseModel):
     created_at: datetime
     status: int
     highest_amount: Optional[float] = None
+    winner_info: Optional[dict] = None
     # bids: Optional[List] = None  
     @field_validator("image_url", mode="before")
     @classmethod
@@ -148,13 +149,35 @@ def get_auctions_by_status(
 
         # Thêm highest_amount nếu là phiên đã kết thúc
         if data["status"] == 2:
-            highest_bid = db.query(Bid).filter(
-                Bid.auction_id == auction.id
-            ).order_by(Bid.bid_amount.desc()).first()
-            try:
-                data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
-            except Exception:
-                data["highest_amount"] = None
+            # Ưu tiên lấy người trúng thầu (is_winner = true)
+            winner_bid = db.query(Bid).filter(
+                Bid.auction_id == auction.id,
+                Bid.is_winner == True
+            ).first()
+            
+            if winner_bid:
+                # Hiển thị thông tin người trúng thầu
+                winner_user = db.query(User).filter(User.id == winner_bid.user_id).first()
+                data["winner_info"] = {
+                    "bid_id": winner_bid.id,
+                    "user_id": winner_bid.user_id,
+                    "user_name": winner_user.username if winner_user else "Unknown",
+                    "bid_amount": float(winner_bid.bid_amount),
+                    "created_at": winner_bid.created_at
+                }
+                data["highest_amount"] = float(winner_bid.bid_amount)
+            else:
+                # Nếu chưa có người trúng thầu, lấy giá cao nhất trong số những người đấu giá hợp lệ
+                min_valid_bid = float(auction.starting_price) + float(auction.step_price)
+                highest_valid_bid = db.query(Bid).filter(
+                    Bid.auction_id == auction.id,
+                    Bid.bid_amount >= min_valid_bid
+                ).order_by(Bid.bid_amount.desc()).first()
+                
+                try:
+                    data["highest_amount"] = float(highest_valid_bid.bid_amount) if highest_valid_bid else None
+                except Exception:
+                    data["highest_amount"] = None
 
         auctions_out.append(AuctionOut(**data))
 
@@ -413,13 +436,35 @@ def search_auctions(
 
         # Thêm highest_amount nếu là phiên đã kết thúc
         if data["status"] == 2:
-            highest_bid = db.query(Bid).filter(
-                Bid.auction_id == auction.id
-            ).order_by(Bid.bid_amount.desc()).first()
-            try:
-                data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
-            except Exception:
-                data["highest_amount"] = None
+            # Ưu tiên lấy người trúng thầu (is_winner = true)
+            winner_bid = db.query(Bid).filter(
+                Bid.auction_id == auction.id,
+                Bid.is_winner == True
+            ).first()
+            
+            if winner_bid:
+                # Hiển thị thông tin người trúng thầu
+                winner_user = db.query(User).filter(User.id == winner_bid.user_id).first()
+                data["winner_info"] = {
+                    "bid_id": winner_bid.id,
+                    "user_id": winner_bid.user_id,
+                    "user_name": winner_user.username if winner_user else "Unknown",
+                    "bid_amount": float(winner_bid.bid_amount),
+                    "created_at": winner_bid.created_at
+                }
+                data["highest_amount"] = float(winner_bid.bid_amount)
+            else:
+                # Nếu chưa có người trúng thầu, lấy giá cao nhất trong số những người đấu giá hợp lệ
+                min_valid_bid = float(auction.starting_price) + float(auction.step_price)
+                highest_valid_bid = db.query(Bid).filter(
+                    Bid.auction_id == auction.id,
+                    Bid.bid_amount >= min_valid_bid
+                ).order_by(Bid.bid_amount.desc()).first()
+                
+                try:
+                    data["highest_amount"] = float(highest_valid_bid.bid_amount) if highest_valid_bid else None
+                except Exception:
+                    data["highest_amount"] = None
 
         auctions_out.append(AuctionOut(**data))
     total = query.order_by(None).count()
@@ -521,3 +566,105 @@ def get_overview_stats(db: Session = Depends(get_db)):
         "total_unsuccessful_auctions": total_unsuccessful_auctions,
         "total_upcoming_auctions": total_upcoming_auctions
     }
+
+# Test endpoint để kiểm tra auto-approve task
+@router.get("/test/auto-approve-status")
+def test_auto_approve_status(db: Session = Depends(get_db)):
+    """
+    Endpoint test để kiểm tra trạng thái auto-approve task
+    """
+    now = datetime.now()
+    
+    # Lấy tất cả auction đã kết thúc
+    ended_auctions = db.query(Auction).filter(Auction.end_time < now).all()
+    
+    result = []
+    for auction in ended_auctions:
+        # Kiểm tra có winner chưa
+        winner_bid = db.query(Bid).filter(
+            Bid.auction_id == auction.id,
+            Bid.is_winner == True
+        ).first()
+        
+        # Lấy bid cao nhất
+        highest_bid = db.query(Bid).filter(
+            Bid.auction_id == auction.id
+        ).order_by(Bid.bid_amount.desc()).first()
+        
+        auction_info = {
+            "auction_id": auction.id,
+            "title": auction.title,
+            "end_time": auction.end_time,
+            "has_winner": winner_bid is not None,
+            "winner_bid_id": winner_bid.id if winner_bid else None,
+            "winner_amount": float(winner_bid.bid_amount) if winner_bid else None,
+            "highest_bid_id": highest_bid.id if highest_bid else None,
+            "highest_amount": float(highest_bid.bid_amount) if highest_bid else None,
+            "total_bids": db.query(Bid).filter(Bid.auction_id == auction.id).count()
+        }
+        result.append(auction_info)
+    
+    return {
+        "current_time": now,
+        "ended_auctions": result,
+        "total_ended": len(result)
+    }
+
+# Endpoint để chạy thủ công auto-approve task
+@router.post("/test/run-auto-approve")
+def run_auto_approve_manual(db: Session = Depends(get_db)):
+    """
+    Endpoint để chạy thủ công auto-approve task
+    """
+    try:
+        from app.tasks.auto_approve import auto_set_winner_task
+        import asyncio
+        
+        # Tạo event loop mới nếu chưa có
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+        
+        # Chạy task một lần
+        now = datetime.now()
+        ended_auctions = db.query(Auction).filter(Auction.end_time < now).all()
+        
+        approved_count = 0
+        approved_auctions = []
+        
+        for auction in ended_auctions:
+            winner_bid = db.query(Bid).filter(
+                Bid.auction_id == auction.id,
+                Bid.is_winner == True
+            ).first()
+            
+            if not winner_bid:
+                highest_bid = db.query(Bid).filter(
+                    Bid.auction_id == auction.id
+                ).order_by(Bid.bid_amount.desc()).first()
+                
+                if highest_bid:
+                    # Reset tất cả bid về is_winner = False
+                    db.query(Bid).filter(Bid.auction_id == auction.id).update({"is_winner": False})
+                    highest_bid.is_winner = True
+                    approved_count += 1
+                    approved_auctions.append({
+                        "auction_id": auction.id,
+                        "title": auction.title,
+                        "winner_bid_id": highest_bid.id,
+                        "winner_amount": float(highest_bid.bid_amount)
+                    })
+        
+        db.commit()
+        
+        return {
+            "message": f"Auto-approve completed. Approved {approved_count} auctions.",
+            "approved_count": approved_count,
+            "approved_auctions": approved_auctions
+        }
+        
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error running auto-approve: {str(e)}")

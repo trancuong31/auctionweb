@@ -14,7 +14,7 @@
 
 /* ---------- Mỗi section ---------- */
 .section {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   display: flex;
   padding: 0 2em;
   flex-direction: column;
@@ -24,7 +24,7 @@
 .section-title {
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-top: 8px;
   color: #1f2937;
 }
 
