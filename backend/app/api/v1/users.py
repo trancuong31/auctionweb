@@ -31,21 +31,26 @@ class UserUpdate(BaseModel):
     username: Optional[str]
     email: Optional[str]
 
+class UsersListOut(BaseModel):
+    users: list[UserOut]
+    total_users: int
+
 def get_current_user(db: Session = Depends(get_db), user_id: str = Depends(get_current_user_id_from_token)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     return user
-@router.get("/users", response_model=list[UserOut])
+    
+@router.get("/users", response_model=UsersListOut)
 def get_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     users = db.query(User).all()
-
-    if current_user.role != UserRole.ADMIN :
+    total_users = db.query(User).count()
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
-            status_code = HTTP_400_BAD_REQUEST,
+            status_code=HTTP_400_BAD_REQUEST,
             detail="You don't have permison watch users!"
         )
-    return users
+    return {"users": users, "total_users": total_users}
 
 @router.get("/users/{user_id}", response_model=UserOut)
 def get_user(db: Session = Depends(get_db)):

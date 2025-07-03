@@ -9,9 +9,9 @@ function NavBar() {
         <NavLink to="/" className="nav-link">Home</NavLink>
         <NavLink to="/auctions/search" className="nav-link">Auction</NavLink>
         <NavLink to="/about" className="nav-link">Infomation</NavLink>
-        <NavLink to="/history" className="nav-link">History</NavLink>
-        <NavLink to="/contact" className="nav-link">Contact</NavLink>
+        <NavLink to="/history" className="nav-link">History</NavLink>        
         <NavLink to="/guide" className="nav-link">Tutorial</NavLink>
+        <NavLink to="/contact" className="nav-link">Contact</NavLink>
         <NavLink to="/policy" className="nav-link">Rule</NavLink>
       </div>
       <div className="nav-right">

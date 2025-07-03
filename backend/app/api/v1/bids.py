@@ -48,9 +48,7 @@ def create_bid(bid_in: BidCreate, db: Session = Depends(get_db), user_id: str = 
     if not user:
         raise HTTPException(status_code=403, detail="User not allowed to bid")
     highest_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id).order_by(Bid.bid_amount.desc()).first()
-    min_bid = float(getattr(auction, 'starting_price', 0))
-    if highest_bid:
-        min_bid = float(getattr(highest_bid, 'bid_amount', 0)) + float(getattr(auction, 'step_price', 0))
+    min_bid = float(getattr(highest_bid, 'starting_price', 0)) + float(getattr(auction, 'step_price', 0))
     if float(bid_in.bid_amount) < min_bid:
         raise HTTPException(
             status_code=400,
