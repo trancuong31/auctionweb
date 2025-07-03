@@ -16,7 +16,7 @@
 .section {
   margin-bottom: 10px;
   display: flex;
-  padding: 0 2em;
+  /* padding: 0 2em; */
   flex-direction: column;
   border-bottom: 1px solid #9f9f9fcd;
 }

@@ -34,7 +34,7 @@ const CountdownTimer = ({ targetTime, className = {} }) => {
   return (
     <div
       className={clsx(
-        "bg-black bg-opacity-70 text-white z-[1000] absolute top-0 right-0 rounded-l-2xl p-[10px_30px] text-sm font-medium shadow-md",
+        "bg-black bg-opacity-35 text-white z-[1000] absolute top-0 right-0 rounded-l p-[10px] text-xs font-medium shadow-md",
         className
       )}
     >

@@ -8,8 +8,8 @@ import register from "../../assets/images/register.png";
 function Tutorial() {
   return (
     <>
-        <Header />
-        <NavBar />
+        {/* <Header /> */}
+        {/* <NavBar /> */}
         <main className="tutorial-content">
         <div style={{
             background: "#fff",
@@ -71,7 +71,7 @@ function Tutorial() {
             </ol>
         </div>
         </main>
-        <Footer />
+        {/* <Footer /> */}
         </>
     );
 }

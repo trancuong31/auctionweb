@@ -5,8 +5,8 @@ import Footer from "./Footer";
 function Rule() {
   return (
     <>
-        <Header />
-        <NavBar />
+        {/* <Header /> */}
+        {/* <NavBar /> */}
         <main className="rule-content">
         <div style={{
             background: "#fff",
@@ -25,7 +25,7 @@ function Rule() {
             </ol>
         </div>
         </main>
-        <Footer />
+        {/* <Footer /> */}
         </>
     );
 }
