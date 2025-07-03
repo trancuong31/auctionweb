@@ -8,8 +8,8 @@ import register from "../../assets/images/register.png";
 function Tutorial() {
   return (
     <>
-        <Header />
-        <NavBar />
+        {/* <Header /> */}
+        {/* <NavBar /> */}
         <main className="history-content">
         <div
           style={{
@@ -73,7 +73,7 @@ function Tutorial() {
           </div>
         </div>
       </main>
-        <Footer />
+        {/* <Footer /> */}
         </>
     );
 }

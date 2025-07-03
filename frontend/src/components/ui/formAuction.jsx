@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { create } from "../../services/api";
-
+import { toast } from 'react-hot-toast';
 function ModalAuction({ canOpen, onClose, email, username, auctionId }) {
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState(0);
@@ -24,11 +24,11 @@ function ModalAuction({ canOpen, onClose, email, username, auctionId }) {
 
     create("bids", data, true)
       .then((response) => {
-        // alert("Đã gửi đấu giá thành công!");
+        toast.success("Bid submitted successfully!");
       })
       .catch((error) => {
-        console.error(error);
-        alert(error.response.data.detail);
+        console.error(error.response.data.detail);
+        toast.error(`Bid submitted error by ${error.response.data.detail}!`);
       })
       .finally(() => {
         setIsSubmitting(false);

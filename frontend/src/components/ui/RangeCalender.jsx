@@ -13,7 +13,7 @@ function RangeCalender({ onChange, value }) {
   useEffect(() => {
     const fp = flatpickr(calendarRef.current, {
       mode: "range",
-      minDate: "today",
+      minDate: null,
       dateFormat: "d-m-Y",
       defaultDate: value || [],
       onChange: (selectedDates) => {
@@ -25,10 +25,10 @@ function RangeCalender({ onChange, value }) {
   }, []);
 
   return (
-    <div className="flex items-center border rounded h-10 overflow-hidden">
+    <div className="flex items-center border rounded overflow-hidden">
       <div
         onClick={handleFocus}
-        className="bg-blue-400 h-full flex items-center px-3"
+        className="bg-blue-500 h-8 flex items-center px-3"
       >
         <FontAwesomeIcon
           icon={faCalendar}
