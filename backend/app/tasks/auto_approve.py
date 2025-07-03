@@ -19,25 +19,29 @@ async def auto_set_winner_task():
             now = datetime.now()
             # Lấy các auction đã kết thúc mà chưa có bid nào is_winner
             ended_auctions = db.query(Auction).filter(Auction.end_time < now).all()
+            
             for auction in ended_auctions:
                 winner_bid = db.query(Bid).filter(
                     Bid.auction_id == auction.id,
                     Bid.is_winner == True
                 ).first()
+                
                 if not winner_bid:
                     highest_bid = db.query(Bid).filter(
                         Bid.auction_id == auction.id
                     ).order_by(Bid.bid_amount.desc()).first()
+                    
                     if highest_bid:
                         # Reset tất cả bid về is_winner = False
                         db.query(Bid).filter(Bid.auction_id == auction.id).update({"is_winner": False})
                         highest_bid.is_winner = True
-                        logger.info(f"Set winner for auction {auction.id}: bid {highest_bid.id}")
+                        logger.info(f"Auto-set winner for auction {auction.id}: bid {highest_bid.id} with amount {highest_bid.bid_amount}")
+            
             db.commit()
             db.close()
         except Exception as e:
             logger.error(f"Error in auto_set_winner_task: {str(e)}")
-        await asyncio.sleep(300)  # 5 phút
+        await asyncio.sleep(60)  # 5 phút
 
 def start_auto_set_winner_task():
     try:

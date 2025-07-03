@@ -13,7 +13,9 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
     }
   );
   return (
+    
     <div className={gridClass}>
+      
       {!arrAuction || arrAuction.length === 0 ? (
         <p className="text-gray-600 col-span-full text-center">
           No data available
@@ -32,7 +34,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 src={
                   item.image_url && item.image_url.length > 0
                     ? `${import.meta.env.VITE_BASE_URL}${item.image_url[0]}`
-                    : "https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/11/tai-hinh-nen-dep-mien-phi.jpg"
+                    : imagedefault
                 }
                 alt={item.title || "Auction"}
                 className={
