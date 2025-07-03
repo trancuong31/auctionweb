@@ -17,22 +17,22 @@ import Information from "./components/layout/Information.jsx";
 function App() {
   return (
     <Routes>
-      <Route element={<MainLayout />}>           
+      <Route element={<MainLayout />}>
         <Route path="/auctions/:id" element={<AuctionDetail />} />
         <Route path="/auctions/create" element={<CreateAuctionForm />} />
         <Route path="/auctions/search" element={<AuctionSearch />} />
         <Route path="/admin" element={<OverViewAdmin />} />
+        <Route path="/" element={<HomePage />} />
       </Route>
       {/* Not use layout */}
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/about" element={<Information/>} />
-      <Route path="/history" element={<History/>} />
-      <Route path="/policy" element={<Rule/>} />
-      <Route path="/guide" element={<Tutorial/>} />
-      <Route path="/contact" element={<Contact/>} />
-      <Route path="/" element={<HomePage />} />  
+      <Route path="/about" element={<Information />} />
+      <Route path="/history" element={<History />} />
+      <Route path="/policy" element={<Rule />} />
+      <Route path="/guide" element={<Tutorial />} />
+      <Route path="/contact" element={<Contact />} />
     </Routes>
   );
 }
