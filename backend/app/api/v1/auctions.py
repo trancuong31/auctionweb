@@ -79,7 +79,7 @@ class AuctionCreate(BaseModel):
     file_exel: Optional[str] = None
     start_time: datetime
     end_time: datetime
-    status: int
+    # status: int
 
 class AuctionSearchResponse(BaseModel):
     total: int

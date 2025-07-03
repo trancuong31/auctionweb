@@ -1,5 +1,5 @@
 import datetime
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
@@ -42,14 +42,40 @@ def get_current_user(db: Session = Depends(get_db), user_id: str = Depends(get_c
     return user
     
 @router.get("/users", response_model=UsersListOut)
-def get_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    users = db.query(User).all()
-    total_users = db.query(User).count()
+def get_users(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    username: Optional[str] = Query(None, description="Tìm kiếm theo username"),
+    email: Optional[str] = Query(None, description="Tìm kiếm theo email"),
+    sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: username, email, created_at"),
+    sort_order: Optional[str] = Query("desc", description="Thứ tự sắp xếp: asc, desc"),
+    page: int = Query(1, ge=1, description="Số trang"),
+    page_size: int = Query(8, ge=1, le=100, description="Số user mỗi trang")
+):
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST,
+            status_code=403,
             detail="You don't have permison watch users!"
         )
+    query = db.query(User)
+    if username:
+        query = query.filter(User.username.ilike(f"%{username}%"))
+    if email:
+        query = query.filter(User.email.ilike(f"%{email}%"))
+    # Sắp xếp
+    if sort_by == "username":
+        order_col = User.username
+    elif sort_by == "email":
+        order_col = User.email
+    else:
+        order_col = User.created_at
+    if sort_order == "asc":
+        query = query.order_by(order_col.asc())
+    else:
+        query = query.order_by(order_col.desc())
+    total_users = query.count()
+    offset = (page - 1) * page_size
+    users = query.offset(offset).limit(page_size).all()
     return {"users": users, "total_users": total_users}
 
 @router.get("/users/{user_id}", response_model=UserOut)

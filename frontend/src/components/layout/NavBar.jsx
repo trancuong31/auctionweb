@@ -1,8 +1,14 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./NavBar.css";
 import { useAuth } from "../../contexts/AuthContext";
 function NavBar() {
   const {user, logout} = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
   return (
     <nav className="nav-wrapper">
       <div className="nav-left">
@@ -20,7 +26,7 @@ function NavBar() {
             <span className="user-greeting nav-link ">
             Hello {user.role === "admin" ? "admin" : "user"} {user.username}!
             </span>
-            <button className="nav-link button-link" onClick={logout}>Logout</button>
+            <button className="nav-link button-link" onClick={handleLogout}>Logout</button>
           </>
         ) : (
           <>

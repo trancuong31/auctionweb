@@ -52,7 +52,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="font-semibold text-gray-600">
+                <span className="font-semibold text-gray-500">
                   Starting price:
                 </span>{" "}
                 {item.starting_price?.toLocaleString("en-US", {
@@ -61,36 +61,42 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 })}
               </p>
               <p className="flex justify-between">
-                <span className="font-semibold text-gray-600">Start time:</span>{" "}
+                <span className="font-semibold text-gray-500">Start time:</span>{" "}
                 <span className="font-[600]">
                   {new Date(item.start_time).toLocaleString()}
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="font-semibold text-gray-600">End time:</span>{" "}
+                <span className="font-semibold text-gray-500">End time:</span>{" "}
                 <span className="font-[600]">
                   {new Date(item.end_time).toLocaleString()}
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="font-semibold text-gray-600">Price step:</span>{" "}
+                <span className="font-semibold text-gray-500">Price step:</span>{" "}
                 {item.step_price?.toLocaleString("en-US", {
                   style: "currency",
                   currency: "USD",
                 })}
               </p>
-              {item.highest_amount !== null ? (
-                <p className="flex justify-between">
-                  <span className="font-semibold text-gray-600">
-                    Highest Price:
-                  </span>{" "}
-                  <span className="text-[#4B48DA] font-bold">
-                    {item.highest_amount?.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    })}
-                  </span>
-                </p>
+              {item.status === 2 ? (
+                item.highest_amount !== null && item.winner_info !== null ? (
+                  <p className="flex justify-between">
+                    <span className="font-semibold text-gray-500">
+                      Highest Price:
+                    </span>{" "}
+                    <span className="text-red-500 font-bold">
+                      {item.highest_amount?.toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      })}
+                    </span>
+                  </p>
+                ) : (
+                  <p className="flex justify-end">
+                    <span className="font-semibold text-red-500">Unsuccessful</span>
+                  </p>
+                )
               ) : null}
             </div>
           </button>

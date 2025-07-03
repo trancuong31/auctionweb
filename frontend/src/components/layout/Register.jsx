@@ -4,6 +4,7 @@ import logo from '../../assets/images/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faUser, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -27,14 +28,14 @@ function Register() {
       });
       const data = await response.json();
       if (response.ok) {
-        alert('Register successful!');
+        toast.success("Register successful!");
         navigate('/login');
       } else {
-        alert(data.message || 'Register failed!');
+        toast.error(data.message || 'Register failed!');
       }
     } catch (error) {
-      alert('Register error!');
-      console.error(error);
+      console.error(error.detail);
+      
     }
   };
 

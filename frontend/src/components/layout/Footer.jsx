@@ -2,6 +2,7 @@ import React from "react";
 import "./Footer.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone, faEnvelope, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   const companyInfo = {
@@ -12,11 +13,11 @@ export const Footer = () => {
   };
 
   const helpLinks = [
-    "Bidding & Auction Guidelines",
-    "Payment & Shipping Methods",
-    "Privacy Policy",
-    "Terms of Service / Operational Regulations",
-  ];
+  { label: "Register for Account Pricing", to: "/guide" },
+  { label: "Online Pricing Rules Policy Security", to: "/policy" },
+  { label: "Vision & Development Orientation", to: "/about" },
+  { label: "History of Partron Vina Company Limited", to: "/history" },
+];
 
   return (
     <footer className="footer">
@@ -43,7 +44,9 @@ export const Footer = () => {
           <ul className="footer__list footer__list--inline">
             {helpLinks.map((link, idx) => (
               <li key={idx} className="footer__item">
-                {link}
+                <Link to={link.to} className="footer__link">
+                  {link.label}
+                </Link>
               </li>
             ))}
           </ul>
