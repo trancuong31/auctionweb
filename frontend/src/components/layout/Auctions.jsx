@@ -49,7 +49,7 @@ const AuctionSection = ({ title, type }) => {
   }, [type]);
 
   if (loading)
-    return <p className="loading">Đang tải {title.toLowerCase()}...</p>;
+    return <p className="loading">Loading {title.toLowerCase()}...</p>;
   if (error) return <p className="error">{error}</p>;
 
   return (
@@ -70,7 +70,6 @@ const AuctionSection = ({ title, type }) => {
         numberCol={4}
         clickCard={handleClick}
       />
-
       <a href="/auctions/search" className="see-all">
         See all
       </a>

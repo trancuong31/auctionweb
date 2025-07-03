@@ -6,6 +6,7 @@ import {
   faMoneyBill,
   faSignal5,
   faFileText,
+  faUser,
   faLayerGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, useRef } from "react";
@@ -113,14 +114,14 @@ const AuctionDetail = () => {
           {/* Prev Button */}
           <button
             onClick={clickPreButton}
-            className="absolute left-0 top-1/2 -translate-y-1/2 px-4 py-2 bg-black/50 text-white text-3xl rounded-r hover:bg-black/70 z-10"
+            className="absolute left-0 top-1/2 -translate-y-1/2 px-4 py-2 text-white text-3xl rounded-r hover:bg-black/70 z-10"
           >
             &#10094;
           </button>
           {/* Next Button */}
           <button
             onClick={clickNextButton}
-            className="absolute right-0 top-1/2 -translate-y-1/2 px-4 py-2 bg-black/50 text-white text-3xl rounded-l hover:bg-black/70 z-10"
+            className="absolute right-0 top-1/2 -translate-y-1/2 px-4 py-2  text-white text-3xl rounded-l hover:bg-black/70 z-10"
           >
             &#10095;
           </button>
@@ -219,13 +220,32 @@ const AuctionDetail = () => {
           <p>
             <FontAwesomeIcon icon={faFileText} className="mr-4 text-cyan-500" />
             Attached file:{" "}
-            <button
-              onClick={() => handleDownload(auction.id)}
-              className="text-blue-600 hover:underline font-medium"
-            >
-              {auction.excel}
-            </button>
+            {auction.file_exel ? (
+              <button
+                onClick={() => handleDownload(auction.id)}
+                className="text-blue-600 hover:underline font-medium"
+              ><p>{auction.file_exel.split("/").pop()}</p>                
+              </button>
+            ) : (
+              <span className="text-gray-400 italic">No file</span>
+            )}
           </p>
+          {auction.status === 2 && (
+            <p>
+              <FontAwesomeIcon
+                icon={faUser}
+                className="mr-4 text-black-500"
+              />
+              Winner:{" "}
+              {Array.isArray(auction.bids) && auction.bids.find(bid => bid.is_winner) ? (
+                <span className="font-semibold text-green-700">
+                  {auction.bids.find(bid => bid.is_winner).user_name}
+                </span>
+              ) : (
+                <span className="text-red-500 font-semibold">No winner</span>
+              )}
+            </p>
+          )}
         </div>
       </div>
       <div className="w-full max-h-[300px] overflow-y-auto p-6 mt-12 bg-gray-100 rounded-lg text-base leading-relaxed shadow-inner text-gray-700">

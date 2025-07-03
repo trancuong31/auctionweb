@@ -11,7 +11,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-
+import { toast } from 'react-hot-toast';
 function Login() {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -32,12 +32,46 @@ function Login() {
       console.log(data);
       if (response.ok && data.role === "user") {
         login(data, remember);
+        toast.success('Login successfully!', {
+          style: {
+            border: '1px solid #4ade80',
+            padding: '12px 16px',
+            color: '#16a34a',
+            fontWeight: '500',
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '15px',
+            borderRadius: '12px',
+            background: '#f0fdf4',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+          },
+          iconTheme: {
+            primary: '#16a34a',
+            secondary: '#ecfdf5',
+          },
+        });
         navigate("/");
       } else if (response.ok && data.role === "admin") {
         login(data, remember);
         navigate("/admin");
+        toast.success('Login successfully!', {
+          style: {
+            border: '1px solid #4ade80',
+            padding: '12px 16px',
+            color: '#16a34a',
+            fontWeight: '500',
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '15px',
+            borderRadius: '12px',
+            background: '#f0fdf4',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+          },
+          iconTheme: {
+            primary: '#16a34a',
+            secondary: '#ecfdf5',
+          },
+        });
       } else {
-        alert(data.message || "Login failed. Please try again.");
+        toast.error(data.detail || "Login failed. Please try again.");
       }
     } catch (error) {
       console.error("Login error:", error);

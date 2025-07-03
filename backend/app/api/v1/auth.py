@@ -86,11 +86,14 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
     db.refresh(user)
 
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id})
+    refresh_token = create_refresh_token(data={"sub": user.email, "user_id": user.id})
     return {
         "access_token": access_token,
+        "refresh_token": refresh_token,
         "token_type": "bearer",
-        "role": UserRole(user.role).name,
-        "username": user.username
+        "role": UserRole(user.role).name.lower(),
+        "username": user.username,
+        "email": user.email
     }
 
 @router.post("/refresh-token")
