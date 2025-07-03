@@ -1,15 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSearch,
-  faAnglesLeft,
-  faAnglesRight,
-} from "@fortawesome/free-solid-svg-icons";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import RangeCalender from "../ui/RangeCalender";
 import RenderCardAuction from "../ui/CardComponent";
 import { useEffect, useState } from "react";
 import { getAll } from "../../services/api";
-import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../ui/Pagination";
 
 const AuctionSearch = () => {
   const [searchText, setSearchText] = useState("");
@@ -18,7 +14,6 @@ const AuctionSearch = () => {
   const [sortOder, setSortOder] = useState("");
   const [arrAuction, setArrAuction] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
   const handleSearch = async (page = 1) => {
@@ -36,7 +31,6 @@ const AuctionSearch = () => {
       setTotalPage(
         Math.ceil(response.data.total / Number(import.meta.env.VITE_PAGE_SIZE))
       );
-      setCurrentIndex(page - 1);
     } catch (err) {
       alert(err);
     }
@@ -49,22 +43,6 @@ const AuctionSearch = () => {
   useEffect(() => {
     handleSearch();
   }, []);
-
-  const handleClickPagination = (value) => {
-    setCurrentIndex(value);
-    handleSearch(value + 1);
-  };
-
-  //   const handleClickPre = () => {
-  //   setCurrentIndex = currentIndex === 0 ?
-  //   setCurrentIndex(value);
-  //   handleSearch(value + 1);
-  // };
-
-  //   const handleClickNext = () => {
-  //   setCurrentIndex(value);
-  //   handleSearch(value + 1);
-  // };
 
   return (
     <div className="bg-gray-100 p-4 text-xs">
@@ -165,98 +143,7 @@ const AuctionSearch = () => {
         numberCol={4}
         clickCard={handleClick}
       />
-
-      <div className="flex justify-center mt-10">
-        {currentIndex !== 0 && (
-          <span className="p-3 hover:bg-[#2563eb] group cursor-pointer">
-            <FontAwesomeIcon
-              icon={faAnglesLeft}
-              className="group-hover:text-white"
-            />
-          </span>
-        )}
-
-        {Array.from({ length: totalPage }, (_, i) => {
-          const pagesToShow = [];
-          if (totalPage > 5) {
-            // Luôn hiển thị trang 1
-            if (i === 0) pagesToShow.push(i);
-            // Hiển thị trang trước và sau currentIndex (tối đa 3 trang liên tiếp)
-            for (
-              let j = Math.max(0, currentIndex - 1);
-              j <= Math.min(totalPage - 1, currentIndex + 1);
-              j++
-            ) {
-              if (!pagesToShow.includes(j)) pagesToShow.push(j);
-            }
-            // Luôn hiển thị trang cuối
-            if (i === totalPage - 1 && !pagesToShow.includes(totalPage - 1))
-              pagesToShow.push(totalPage - 1);
-            // Thêm ... khi cần
-            if (currentIndex > 2 && i === 1) pagesToShow.push("...");
-            if (
-              currentIndex < totalPage - 3 &&
-              i === currentIndex + 2 &&
-              i < totalPage - 1
-            )
-              pagesToShow.push("...");
-
-            if (
-              pagesToShow.includes(i) ||
-              (i === currentIndex + 1 && currentIndex < totalPage - 2)
-            ) {
-              return (
-                <button
-                  onClick={(e) => handleClickPagination(i)}
-                  key={i}
-                  className={clsx(
-                    "px-5 font-semibold",
-                    currentIndex === i
-                      ? "bg-[#2563eb] text-white"
-                      : "bg-[#bbb] hover:bg-[#2563eb] hover:text-white"
-                  )}
-                >
-                  {i + 1}
-                </button>
-              );
-            } else if (
-              pagesToShow.includes("...") &&
-              (i === 1 || i === currentIndex + 2)
-            ) {
-              return (
-                <span key={i} className="px-5">
-                  ...
-                </span>
-              );
-            }
-          } else {
-            return (
-              <button
-                onClick={(e) => handleClickPagination(i)}
-                key={i}
-                className={clsx(
-                  "px-5 font-semibold",
-                  currentIndex === i
-                    ? "bg-[#2563eb] text-white"
-                    : "bg-[#bbb] hover:bg-[#2563eb] hover:text-white"
-                )}
-              >
-                {i + 1}
-              </button>
-            );
-          }
-          return null;
-        })}
-
-        {currentIndex !== totalPage - 1 && (
-          <span className="p-3 hover:bg-[#2563eb] group cursor-pointer">
-            <FontAwesomeIcon
-              icon={faAnglesRight}
-              className="group-hover:text-white"
-            />
-          </span>
-        )}
-      </div>
+      <Pagination totalPage={totalPage} onPageChange={handleSearch} />
     </div>
   );
 };
