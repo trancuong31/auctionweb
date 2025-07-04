@@ -1,8 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getAll, update, deleteOne } from "../../services/api";
+import { getAll, update, deleteOne, updateSatus } from "../../services/api";
 import CreateAuctionForm from "./AuctionCreate";
 import ModalDetailAuction from "./ModalDetailAuction";
 import Pagination from "../ui/Pagination";
+import ConfirmDialog from "../ui/ConfirmDialog";
 import {
   faUsers,
   faGavel,
@@ -11,6 +12,7 @@ import {
   faXmark,
   faClock,
   faSearch,
+  faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 
@@ -23,6 +25,7 @@ const OverViewAdmin = () => {
   const [email, setEmail] = useState("");
   const [displayCreateForm, setDisplayCreateForm] = useState(false);
   const [searchAuctionTitle, setSearchAuctionTitle] = useState("");
+  const [searchTextUser, setSearchTextUser] = useState("");
   const [idAuction, setIdAuction] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [sortUserBy, setSortUserBy] = useState("");
@@ -31,6 +34,13 @@ const OverViewAdmin = () => {
   const [sortAuctionBy, setSortAuctionBy] = useState("");
   const [sortAuctionOrder, setSortAuctionOrder] = useState("");
   const [totalPageAuction, setTotalPageAuction] = useState(0);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState({
+    title: "",
+    message: "",
+    icon: null,
+    onConfirm: () => {},
+  });
 
   const getOverView = async () => {
     try {
@@ -51,6 +61,7 @@ const OverViewAdmin = () => {
       sort_by: sortUserBy,
       sort_order: sortUserOder,
       page: page,
+      search_text: searchTextUser,
     };
     try {
       const response = await getAll("users", true, param);
@@ -71,6 +82,7 @@ const OverViewAdmin = () => {
       sort_by: sortAuctionBy,
       sort_order: sortAuctionOrder,
       page: page,
+      title: searchAuctionTitle,
     };
     try {
       const response = await getAll("auctions/search", true, param);
@@ -102,24 +114,61 @@ const OverViewAdmin = () => {
     }
   };
 
-  const handleDeleteUser = async (id) => {
-    try {
-      await deleteOne("users", id, true);
-      alert("xóa user thành công");
-    } catch (error) {
-      alert("xóa user thất bại");
-      console.log(error);
-    }
+  const handleDeleteUser = (id) => {
+    setConfirmConfig({
+      title: "Delete user",
+      message:
+        "Are you sure you want to delete this user? This action cannot be undone.",
+      icon: (
+        <FontAwesomeIcon
+          className="text-red-500 h-6"
+          icon={faTriangleExclamation}
+        />
+      ),
+      onConfirm: async () => {
+        try {
+          await deleteOne("users", id, true);
+          alert("xóa user thành công");
+          getPageUser();
+        } catch (error) {
+          alert("xóa user thất bại");
+          console.log(error);
+        }
+      },
+    });
+    setConfirmOpen(true);
+  };
+
+  const handleDeactiveUser = (user) => {
+    setConfirmConfig({
+      title: user.status ? "Deactive user" : "Active user",
+      icon: (
+        <FontAwesomeIcon
+          className="text-yellow-500 h-6"
+          icon={faTriangleExclamation}
+        />
+      ),
+      message: user.status
+        ? "Are you sure you want to Deactive this user?"
+        : "Are you sure you want to Active this user?",
+      onConfirm: async () => {
+        try {
+          await updateSatus("users", user.id, { status: !user.status }, true);
+          alert("cập nhật trạng thái user thành công");
+          getPageUser();
+        } catch (error) {
+          alert("cập nhật trạng thái user thất bại");
+          console.log(error);
+        }
+      },
+    });
+    setConfirmOpen(true);
   };
 
   const openDetailBid = (id) => {
     setIdAuction(id);
     setIsOpenModal(true);
   };
-
-  const filteredAuctions = auctionData?.filter((auction) =>
-    auction.title.toLowerCase().includes(searchAuctionTitle.toLowerCase())
-  );
 
   const handelClickEdit = (user, idx) => {
     setCurrentEditing(idx);
@@ -135,27 +184,37 @@ const OverViewAdmin = () => {
 
   return (
     <div>
+      <ConfirmDialog
+        open={confirmOpen}
+        icon={confirmConfig.icon}
+        setOpen={setConfirmOpen}
+        onConfirm={() => {
+          confirmConfig.onConfirm();
+        }}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+      />
       <CreateAuctionForm
         isOpen={displayCreateForm}
         onClickClose={() => setDisplayCreateForm(false)}
       />
       {/* <!-- OVERVIEW --> */}
       <div className="grid grid-cols-6 gap-4 mb-6">
-        <div className="bg-blue-200 p-4 rounded shadow text-center">
+        <div className="bg-blue-200 p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
           <p className="font-semibold">Total User</p>
           <p className="text-2xl font-bold">{overViewData.total_user}</p>
           <p className="text-xl">
             <FontAwesomeIcon icon={faUsers} />{" "}
           </p>
         </div>
-        <div className="bg-yellow-200 p-4 rounded shadow text-center">
+        <div className="bg-yellow-200 p-4 rounded shadow text-center aspect-[4/3] max-lg:aspect-[4/2] flex flex-col justify-between">
           <p className="font-semibold">Total auction</p>
           <p className="text-2xl font-bold">{overViewData.total_auction}</p>
           <p className="text-xl">
             <FontAwesomeIcon icon={faCheck} />
           </p>
         </div>
-        <div className="bg-green-200 p-4 rounded shadow text-center">
+        <div className="bg-green-200 p-4 rounded shadow text-center aspect-[4/3] max-lg:aspect-[4/2] flex flex-col justify-between">
           <p className="font-semibold">Total successful auctions</p>
           <p className="text-2xl font-bold">
             {overViewData.total_successful_auctions}
@@ -164,7 +223,7 @@ const OverViewAdmin = () => {
             <FontAwesomeIcon icon={faGavel} />
           </p>
         </div>
-        <div className="bg-yellow-100 p-4 rounded shadow text-center">
+        <div className="bg-yellow-100 p-4 rounded shadow text-center aspect-[4/3] max-lg:aspect-[4/2] flex flex-col justify-between">
           <p className="font-semibold">Total auction in progress</p>
           <p className="text-2xl font-bold">
             {overViewData.total_auction_in_progress}
@@ -173,7 +232,7 @@ const OverViewAdmin = () => {
             <FontAwesomeIcon icon={faGear} />
           </p>
         </div>
-        <div className="bg-cyan-100 p-4 rounded shadow text-center">
+        <div className="bg-cyan-100 p-4 rounded shadow text-center aspect-[4/3] max-lg:aspect-[4/2] flex flex-col justify-between">
           <p className="font-semibold">Total upcoming auctions</p>
           <p className="text-2xl font-bold">
             {overViewData.total_upcoming_auctions}
@@ -182,7 +241,7 @@ const OverViewAdmin = () => {
             <FontAwesomeIcon icon={faClock} />
           </p>
         </div>
-        <div className="bg-red-300 p-4 rounded shadow text-center">
+        <div className="bg-red-300 p-4 rounded shadow text-center aspect-[4/3] max-lg:aspect-[4/2] flex flex-col justify-between">
           <p className="font-semibold">Total unsuccessful auctions</p>
           <p className="text-2xl font-bold">
             {overViewData.total_unsuccessful_auctions}
@@ -195,10 +254,10 @@ const OverViewAdmin = () => {
 
       {/* <!-- MANAGER USERS --> */}
 
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className="bg-blue-100 p-4 rounded shadow mb-6">
         <div className="flex justify-between mb-3 items-center">
           <p className="text-lg font-bold">MANAGER USERS</p>
-          <div className="bg-white px-[120px] flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full">
+          <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end">
             {/* <!-- Search Input --> */}
             <div className="w-[60%]">
               <div className="relative">
@@ -206,6 +265,7 @@ const OverViewAdmin = () => {
                   type="text"
                   placeholder="Search for category, name, company, etc"
                   className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) => setSearchTextUser(e.target.value)}
                 />
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <FontAwesomeIcon icon={faSearch} />
@@ -250,17 +310,19 @@ const OverViewAdmin = () => {
             </div>
 
             {/* <!-- Search Button --> */}
-            <div className="w-full md:w-auto flex justify-end md:justify-center mt-2 md:mt-6">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold ml-3">
-                SEARCH
-              </button>
-            </div>
+            <button
+              onClick={() => getPageUser()}
+              className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-full font-bold text-white text-base
+             border border-transparent
+             shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
+             transition-transform duration-300
+             bg-gradient-to-r from-indigo-700 to-indigo-300
+             hover:border-gray-100 active:scale-95"
+            >
+              <FontAwesomeIcon icon={faSearch} />
+              <span>SEARCH</span>
+            </button>
           </div>
-          <Pagination
-            totalPage={totalPageUser}
-            onPageChange={getPageUser}
-            className={"mt-0"}
-          />
         </div>
 
         <div className="overflow-x-auto border border-gray-300 rounded">
@@ -280,7 +342,7 @@ const OverViewAdmin = () => {
               {userData?.map((user, idx) => (
                 <tr
                   key={user.id || idx}
-                  className="hover:bg-blue-400 hover:text-white transition"
+                  className="odd:bg-white even:bg-gray-100 hover:bg-blue-400 hover:text-white transition"
                 >
                   <td className="border px-2 py-1 text-center">{idx + 1}</td>
                   <td className="border px-2 py-1">
@@ -314,13 +376,19 @@ const OverViewAdmin = () => {
                   <td className="border px-2 py-1">
                     <div className="flex justify-center">
                       {user.status ? (
-                        <span className="bg-blue-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded">
+                        <button
+                          onClick={() => handleDeactiveUser(user)}
+                          className="bg-blue-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded"
+                        >
                           Active
-                        </span>
+                        </button>
                       ) : (
-                        <span className="bg-red-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded">
+                        <button
+                          onClick={() => handleDeactiveUser(user)}
+                          className="bg-red-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded"
+                        >
                           Disactive
-                        </span>
+                        </button>
                       )}
                     </div>
                   </td>
@@ -329,13 +397,13 @@ const OverViewAdmin = () => {
                       <>
                         <button
                           onClick={() => handleEditUser(user)}
-                          className="bg-green-500 text-white text-xs px-3 py-2 rounded min-w-[60px]"
+                          className="bg-teal-100 text-teal-600 text-xs font-semibold px-3 py-2 min-w-16 rounded-md border border-teal-200 hover:bg-teal-300 transition"
                         >
                           Save
                         </button>
                         <button
                           onClick={() => setCurrentEditing(null)}
-                          className="bg-orange-500 text-white text-xs px-3 py-2 rounded min-w-[60px]"
+                          className="bg-orange-100 text-orange-600 font-semibold text-xs px-3 py-2 rounded-md min-w-[60px] border border-orange-200 hover:bg-orange-300 transition"
                         >
                           Cancel
                         </button>
@@ -344,13 +412,13 @@ const OverViewAdmin = () => {
                       <>
                         <button
                           onClick={() => handelClickEdit(user, idx)}
-                          className="bg-blue-500 text-white text-xs px-3 py-2 rounded min-w-[60px]"
+                          className="bg-indigo-100 hover:bg-indigo-200 font-semibold text-indigo-700 text-xs px-3 py-2 rounded min-w-[60px] transition"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteUser(user.id)}
-                          className="bg-red-500 text-white text-xs px-3 py-2 rounded min-w-[60px]"
+                          className="bg-red-100 text-red-600 text-xs font-semibold px-3 py-2 rounded-md border border-red-200 hover:bg-red-300 transition"
                         >
                           Delete
                         </button>
@@ -363,15 +431,20 @@ const OverViewAdmin = () => {
           </table>
         </div>
       </div>
+      <Pagination
+        totalPage={totalPageUser}
+        onPageChange={getPageUser}
+        className={"flex mt-0 justify-end"}
+      />
 
       {/* <!-- MANAGER AUCTIONS --> */}
 
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-amber-50 p-4 rounded shadow">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold">MANAGER AUCTIONS</h2>
         </div>
-        <div className="bg-white flex-1 flex flex-col md:flex-row justify-between items-center md:space-y-0 md:space-x-4 w-full">
-          <div className="flex gap-10 w-[70%] items-center">
+        <div className="flex-1 flex flex-col md:flex-row justify-between items-center md:space-y-0 md:space-x-4 w-full">
+          <div className="flex gap-10 w-full items-center">
             <button
               onClick={() => setDisplayCreateForm(true)}
               className="bg-blue-500 text-white px-3 py-2 rounded"
@@ -385,6 +458,7 @@ const OverViewAdmin = () => {
                   type="text"
                   placeholder="Search for category, name, company, etc"
                   className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) => setSearchAuctionTitle(e.target.value)}
                 />
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <FontAwesomeIcon icon={faSearch} />
@@ -400,8 +474,8 @@ const OverViewAdmin = () => {
                 <select
                   onChange={(e) => {
                     const selectedOption = e.target.selectedOptions[0];
-                    setSortBy(selectedOption.value);
-                    setSortOder(selectedOption.dataset.order);
+                    setSortAuctionBy(selectedOption.value);
+                    setSortAuctionOrder(selectedOption.dataset.order);
                   }}
                   className="border border-gray-400 rounded-lg px-3 py-2 w-full"
                 >
@@ -435,17 +509,21 @@ const OverViewAdmin = () => {
 
             {/* <!-- Search Button --> */}
             <div className="">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold ml-3">
-                SEARCH
+              <button
+                onClick={() => getPageAuction()}
+                className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-full font-bold text-white text-base
+             border border-transparent
+             shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
+             transition-transform duration-300
+             bg-gradient-to-r from-indigo-700 to-indigo-300
+             hover:border-gray-100 active:scale-95"
+              >
+                <FontAwesomeIcon icon={faSearch} />
+                <span>SEARCH</span>
               </button>
             </div>
           </div>
-          <Pagination
-            totalPage={totalPageAuction}
-            onPageChange={getPageAuction}
-          />
         </div>
-
         <div className="overflow-x-auto border border-gray-300 rounded">
           <table className="min-w-full border-collapse">
             <thead className="bg-gray-200">
@@ -461,7 +539,7 @@ const OverViewAdmin = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredAuctions?.map((auction, idx) => {
+              {auctionData?.map((auction, idx) => {
                 let statusText = "Ended";
                 if (auction.status === 0) statusText = "Ongoing";
                 else if (auction.status === 1) statusText = "Upcoming";
@@ -469,22 +547,32 @@ const OverViewAdmin = () => {
                 return (
                   <tr
                     key={auction.id || idx}
-                    className="hover:bg-blue-400 hover:text-white transition"
+                    className="odd:bg-white even:bg-gray-100 hover:bg-blue-400 hover:text-white transition"
                   >
-                    <td className="border px-2 py-1 text-center">{idx + 1}</td>
-                    <td className="border px-2 py-1">{auction.title}</td>
-                    <td className="border px-2 py-1">{auction.start_time}</td>
-                    <td className="border px-2 py-1">{auction.end_time}</td>
-                    <td className="border px-2 py-1">
+                    <td className="border px-2 py-1 max-w-96 text-center break-words">
+                      {idx + 1}
+                    </td>
+                    <td className="border px-2 py-1 max-w-96 break-words">
+                      {auction.title}
+                    </td>
+                    <td className="border px-2 py-1 max-w-96 break-words">
+                      {auction.start_time}
+                    </td>
+                    <td className="border px-2 py-1 max-w-96 break-words">
+                      {auction.end_time}
+                    </td>
+                    <td className="border px-2 py-1 max-w-96 break-words">
                       {auction.starting_price}
                     </td>
-                    <td className="border px-2 py-1">
+                    <td className="border px-2 py-1 max-w-96 break-words">
                       {auction.highest_amount}
                     </td>
-                    <td className="border px-2 py-1">{statusText}</td>
+                    <td className="border px-2 py-1 max-w-96 break-words">
+                      {statusText}
+                    </td>
                     <td
                       onClick={() => openDetailBid(auction.id)}
-                      className="border px-2 py-1 text-blue-500 underline cursor-pointer"
+                      className="border px-2 py-1 max-w-96 text-blue-500 underline cursor-pointer break-words"
                     >
                       View
                     </td>
@@ -501,6 +589,11 @@ const OverViewAdmin = () => {
           idAuction={idAuction}
         />
       </div>
+      <Pagination
+        totalPage={totalPageAuction}
+        onPageChange={getPageAuction}
+        className="flex mt-4 justify-end"
+      />
     </div>
   );
 };

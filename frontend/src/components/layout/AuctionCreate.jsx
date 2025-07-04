@@ -118,7 +118,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
             />
           </div>
 
-          <RangeCalender onChange={setCalender} />
+          <RangeCalender onChange={setCalender} allowMinDate={false} />
 
           <div>
             <label className="block text-sm font-semibold mb-1">
