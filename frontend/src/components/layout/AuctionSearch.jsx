@@ -15,6 +15,7 @@ const AuctionSearch = () => {
   const [arrAuction, setArrAuction] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
   const [dateRange, setDateRange] = useState([]);
+  const [total, setTotal] = useState(0);
   const navigate = useNavigate();
 
   const handleSearch = async (page = 1) => {
@@ -30,6 +31,8 @@ const AuctionSearch = () => {
 
     try {
       const response = await getAll("auctions/search", false, param);
+
+      setTotal(response.data.total);
       setArrAuction(response.data.auctions);
       setTotalPage(
         Math.ceil(response.data.total / Number(import.meta.env.VITE_PAGE_SIZE))
@@ -95,6 +98,7 @@ const AuctionSearch = () => {
             }}
             className="border border-gray-400 rounded-lg px-3 py-2 w-full"
           >
+            <option value="">-- Select sort --</option>
             <option value="title" data-order="asc">
               Title from A to Z
             </option>
@@ -142,6 +146,10 @@ const AuctionSearch = () => {
             Search
           </button>
         </div>
+      </div>
+
+      <div className="text-gray-600 text-sm font-medium mb-4">
+        Results found: <span className="font-bold text-red-500">{total}</span>
       </div>
 
       <RenderCardAuction

@@ -48,14 +48,21 @@ def create_bid(bid_in: BidCreate, db: Session = Depends(get_db), user_id: str = 
     if not user:
         raise HTTPException(status_code=403, detail="User not allowed to bid")
     # Luôn yêu cầu bid_amount >= starting_price + step_price
-    min_bid = float(auction.starting_price or 0) + float(auction.step_price or 0)
+    highest_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id).order_by(Bid.bid_amount.desc()).first()
+    if highest_bid:
+        min_bid = float(highest_bid.bid_amount) + float(auction.step_price or 0)
+        min_bid_msg = f"(which is the current highest bid plus the step price)."
+    else:
+        min_bid = float(auction.starting_price or 0)
+        min_bid_msg = f"(which is the starting price)."
+
     if float(bid_in.bid_amount) < min_bid:
         raise HTTPException(
             status_code=400,
             detail=(
                 f"Bid amount is invalid. "
                 f"Your bid must be at least {min_bid:,.0f}$ "
-                f"(which is the starting price plus the step price)."
+                f"{min_bid_msg}"
             )
         )
     # Kiểm tra user đã đặt bid cho auction này chưa

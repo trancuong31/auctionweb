@@ -23,7 +23,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
       ) : (
         arrAuction.map((item) => (
           <button
-            className="bg-[#18181c] rounded-[8px] overflow-hidden transition-transform duration-300 ease-in-out shadow-[0_4px_16px_rgba(0,0,0,0.40)] flex flex-col h-full hover:shadow-[0_8px_32px_rgba(76,81,255,0.25)] group"
+            className="bg-[#18181c] rounded-[10px] overflow-hidden transition-transform duration-300 ease-in-out shadow-[0_4px_16px_rgba(0,0,0,0.40)] flex flex-col h-full hover:shadow-[0_8px_32px_rgba(76,81,255,0.35)] group"
             key={item.id}
             style={{ cursor: "pointer" }}
             onClick={() => clickCard(item.id)}

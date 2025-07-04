@@ -512,6 +512,7 @@ def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
         bid_list.append({
             "id": bid.id,
             "user_id": bid.user_id,
+            "email": user.email,
             "user_name": user.username if user else "Unknown",
             "bid_amount": float(bid.bid_amount),
             "created_at": bid.created_at,
