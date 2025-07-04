@@ -28,7 +28,13 @@ function ModalAuction({ canOpen, onClose, email, username, auctionId }) {
       })
       .catch((error) => {
         console.error(error.response.data.detail);
-        toast.error(`Bid submitted error by ${error.response.data.detail}!`);
+        toast.error(`Bid submitted error by ${error.response.data.detail}!`,
+        {
+          style: {
+            textAlign: 'center',
+        }
+        }
+        );
       })
       .finally(() => {
         setIsSubmitting(false);

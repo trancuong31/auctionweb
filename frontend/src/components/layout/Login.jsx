@@ -77,7 +77,11 @@ function Login() {
       console.error("Login error:", error);
     }
   };
-  
+  let emails = JSON.parse(localStorage.getItem("login_emails") || "[]");
+  if (!emails.includes(email)) {
+    emails.push(email);
+    localStorage.setItem("login_emails", JSON.stringify(emails));
+  }
 
   return (
     
@@ -133,7 +137,16 @@ function Login() {
               className="login-link"
               onClick={e => {
                 e.preventDefault();
-                alert("Please contact admin to retrieve password.");
+                toast('Please contact admin to retrieve password!',
+                  {
+                    style: {
+                      borderRadius: '10px',
+                      background: '#333',
+                      color: '#fff',
+                      textAlign: 'center',
+                    },
+                  }
+                );
               }}
             >
               Forget password

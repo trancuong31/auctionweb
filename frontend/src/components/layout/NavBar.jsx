@@ -1,14 +1,52 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import "./NavBar.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../../contexts/AuthContext";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
+import { useState, useRef, useEffect } from "react";
+import axiosClient from '../../services/axiosClient';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import NotificationDropdown from "./NotificationDropdown";
+
+dayjs.extend(relativeTime);
+
 function NavBar() {
   const {user, logout} = useAuth();
   const navigate = useNavigate();
-
+  const [showNotification, setShowNotification] = useState(false);
+  const bellRef = useRef();
+  const dropdownRef = useRef();
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        !bellRef.current.contains(event.target)
+      ) {
+        setShowNotification(false);
+      }
+    }
+    if (showNotification) {
+      document.addEventListener("mousedown", handleClickOutside);
+      axiosClient.get('/notifications')
+        .then(res => {
+          setNotifications(res.data || []);
+        })
+        .catch(() => setNotifications([]));
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showNotification]);
+
   return (
     <nav className="nav-wrapper">
       <div className="nav-left">
@@ -23,9 +61,13 @@ function NavBar() {
       <div className="nav-right">
         {user ? (
           <>
-            <span className="user-greeting nav-link ">
-            Hello {user.role === "admin" ? "admin" : "user"} {user.username}!
+          <NotificationDropdown triggerRef={bellRef} />
+            <span className="user-greeting nav-link">
+              
+              Hello {user.role === "admin" ? "admin" : "user"} {user.username}!
+              
             </span>
+
             <button className="nav-link button-link" onClick={handleLogout}>Logout</button>
           </>
         ) : (
