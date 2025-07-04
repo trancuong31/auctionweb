@@ -15,16 +15,9 @@ const AuctionSearch = () => {
   const [arrAuction, setArrAuction] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
   const [dateRange, setDateRange] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [total, setTotal] = useState(0);
   const navigate = useNavigate();
 
-  const maxPageShow = 5;
-  let startPage = Math.max(0, currentIndex - Math.floor(maxPageShow / 2));
-  let endPage = startPage + maxPageShow - 1;
-  if (endPage >= totalPage) {
-    endPage = totalPage - 1;
-    startPage = Math.max(0, endPage - maxPageShow + 1);
-  }
   const handleSearch = async (page = 1) => {
     const param = {
       title: searchText,
@@ -38,6 +31,8 @@ const AuctionSearch = () => {
 
     try {
       const response = await getAll("auctions/search", false, param);
+      
+      setTotal(response.data.total);
       setArrAuction(response.data.auctions);
       setTotalPage(
         Math.ceil(response.data.total / Number(import.meta.env.VITE_PAGE_SIZE))
@@ -103,6 +98,7 @@ const AuctionSearch = () => {
             }}
             className="border border-gray-400 rounded-lg px-3 py-2 w-full"
           >
+            <option value="">-- Select sort --</option>
             <option value="title" data-order="asc">
               Title from A to Z
             </option>
@@ -148,66 +144,16 @@ const AuctionSearch = () => {
         </div>
       </div>
 
+      <div className="text-gray-600 text-sm font-medium mb-4">       
+        Results found: <span className="font-bold text-red-500">{total}</span>
+      </div>
+
       <RenderCardAuction
         arrAuction={arrAuction}
         numberCol={4}
         clickCard={handleClick}
       />
-      <div className="flex justify-center mt-10">
-        <span
-          className={clsx(
-            "w-10 h-10 flex items-center justify-center rounded border border-gray-300 bg-white transition-all duration-150",
-            currentIndex === 0
-              ? "cursor-not-allowed opacity-50"
-              : "hover:bg-[#a8a8a8d0] group cursor-pointer"
-          )}
-          onClick={() => {
-            if (currentIndex !== 0)
-              handleClickPagination(Math.max(currentIndex - 1, 0));
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faAnglesLeft}
-            className="group-hover:text-white"
-          />
-        </span>
-
-        {Array.from({ length: endPage - startPage + 1 }, (_, idx) => {
-          const i = startPage + idx;
-          return (
-            <button
-              onClick={() => handleClickPagination(i)}
-              key={i}
-              className={clsx(
-                "mx-1 px-4 py-2 rounded-lg border font-semibold transition-all duration-150",
-                currentIndex === i
-                  ? "bg-blue-600 text-white border-blue-600 shadow-md scale-105"
-                  : "bg-white text-gray-700 border-gray-300 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-400"
-              )}
-            >
-              {i + 1}
-            </button>
-          );
-        })}
-
-        <span
-          className={clsx(
-            "w-10 h-10 flex items-center justify-center rounded border border-gray-300 bg-white transition-all duration-150",
-            currentIndex === totalPage - 1
-              ? "cursor-not-allowed opacity-50"
-              : "hover:bg-[#a8a8a8d0] group cursor-pointer"
-          )}
-          onClick={() => {
-            if (currentIndex !== totalPage - 1)
-              handleClickPagination(Math.min(currentIndex + 1, totalPage - 1));
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faAnglesRight}
-            className="group-hover:text-white"
-          />
-        </span>
-      </div>
+      <Pagination totalPage={totalPage} onPageChange={handleSearch} />
     </div>
   );
 };

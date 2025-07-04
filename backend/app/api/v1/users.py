@@ -45,8 +45,7 @@ def get_current_user(db: Session = Depends(get_db), user_id: str = Depends(get_c
 def get_users(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
-    username: Optional[str] = Query(None, description="Tìm kiếm theo username"),
-    email: Optional[str] = Query(None, description="Tìm kiếm theo email"),
+    search_text: Optional[str] = Query(None, description="Tìm kiếm theo username hoặc email"),
     sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: username, email, created_at"),
     sort_order: Optional[str] = Query("desc", description="Thứ tự sắp xếp: asc, desc"),
     page: int = Query(1, ge=1, description="Số trang"),
@@ -58,10 +57,10 @@ def get_users(
             detail="You don't have permison watch users!"
         )
     query = db.query(User)
-    if username:
-        query = query.filter(User.username.ilike(f"%{username}%"))
-    if email:
-        query = query.filter(User.email.ilike(f"%{email}%"))
+    if search_text:
+        query = query.filter(
+            (User.username.ilike(f"%{search_text}%")) | (User.email.ilike(f"%{search_text}%"))
+        )
     # Sắp xếp
     if sort_by == "username":
         order_col = User.username
