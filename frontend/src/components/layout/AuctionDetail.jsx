@@ -13,7 +13,18 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import imagedefault from "../../assets/images/imagedefault.png";
 import { getOne } from "../../services/api";
-
+import { toast } from 'react-hot-toast';
+function isTokenValid() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user || !user.access_token) return false;
+  try {
+    const token = user.access_token;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+}
 const AuctionDetail = () => {
   const { id } = useParams();
   const [auction, setAuction] = useState(null);
@@ -52,8 +63,20 @@ const AuctionDetail = () => {
   }, [selectImg]);
 
   const openAuctionForm = () => {
-    setIsOpen(true);
-  };
+  if (!isTokenValid()) {
+    toast.error("You must be logged in to participate in the auction!");
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 2000); 
+    return;
+  }
+  if (auction.status === 2) {
+    toast.error("This auction has ended!");
+    return;
+  }
+
+  setIsOpen(true);
+};
 
   const handleDownload = async (id) => {
     try {
@@ -103,8 +126,8 @@ const AuctionDetail = () => {
   if (!auction) return <p>No data available</p>;
 
   return (
-    <div className="px-10">
-      <h1 className="text-2xl font-bold text-left text-gray-600 drop-shadow break-words w-1/2">
+    <div className="">
+      <h1 className="text-2xl font-bold text-left text-black-300 drop-shadow break-words w-1/2">
         {auction.title}
       </h1>
 
@@ -249,45 +272,21 @@ const AuctionDetail = () => {
         </div>
       </div>
       <div className="w-full max-h-[300px] overflow-y-auto p-6 mt-12 bg-gray-100 rounded-lg text-base leading-relaxed shadow-inner text-gray-700">
-        Mùa hè kết thúc tháng bảy nhường chỗ cho tháng tám. vậy là tôi lớn thêm
-        một tuổi lên thêm một lớp, năm học mới sắp bắt đầu ,nhìn mọi người ai
-        nấy lo sách vở quần áo nhất là các em học sinh chuẩn bị vào lớp 1, tôi
-        lại nhớ đến bản thân mình ngày xưa cách đây cũng lâu lắm rồi. cái ngày
-        mà tôi chập chững vào lớp 1 để tập viết tập đọc Cách ngày khai giảng
-        trước 1 tuần mẹ đã đưa tôi mua quần áo sắm sửa sách vở rồi về đến nhà
-        tôi cùng mẹ bao vở dán tem cho sách giáo khoa, tập viết cho thật tỉ mĩ
-        gọn gàng. trong lòng tôi có hơi bồi hồi 1 chút vì hết đêm nay đến ngày
-        mai tôi đã chính thức trở thành học sinh lớp 1. đối với bản thân và khi
-        ấy tôi chỉ là một đứa trẻ 1 đứa trẻ với tâm trạng sắp đối diện với sự
-        kiện quan trọng nhất trong cuộc đời của chính bản thân mình. Tôi dậy sớm
-        vào sáng hôm sau vệ sinh cá nhân rồi mặc vào người bộ đồng phục còn thơm
-        mùi quần áo mới. tôi, đã sẵn sàng cho ngày đầu tiên đi học,tôi theo mẹ
-        lên xe ngồi sau xe ôm chặt mẹ. lòng tôi háo hức vô cùng, cuối thu nên
-        trời rất mát gió pha lẫn với nắng tạo nên bầu không khí ấm áp khiến
-        người người cảm thấy thoải mái dễ chịu khi bước ra đường. đường đi quang
-        cảnh xung quanh vẫn không thay đổi mọi thứ vẫn như thế chỉ có người thay
-        đổi là tôi. ngồi trên xe với mẹ tôi hí hửng mong tới trường bởi vì bây
-        giờ tôi đã là học sinh lớp 1 Trường học là nơi mà tôi sẽ gắn bó suốt
-        những tháng năm trưởng thành và bây giờ thứ đang đứng trước mặt tôi là
-        cổng trường, chung quanh là các anh chị lớn hơn đang vui vẻ cười nói với
-        nhau hơn sau 3 tháng không gặp. còn những đứa mới vào lớp 1 như tôi thì
-        bé tí mặc ai cũng ngu ngơ khờ khạo. có mấy đứa còn rụt rè. tôi bước vào
-        sân trường chớp mắt quay đầu qua lại nhìn xung quanh trước mặt tôi hiện
-        giờ là cảnh quan vô cùng mới lớp học hàng cây con người cả bầu không khí
-        nữa tôi cảm thấy bản thân như bước vào thế giới mới. rồi tiếng trống đầu
-        tiên của đời học sinh to vang lên háo hức ngoảnh đầu lại nhìn mẹ tạm
-        biệt rồi theo các bạn theo cô giáo vào lớp học. Với bao nhiêu đều suy
-        nghĩ trong tôi có cả niềm vui xen lẫn điều kiêu hãnh và cả sự thẹn thùng
-        bỡ ngỡ một chút lo lắng... bấy nhiêu cảm xúc của những ngày đầu tiên đó
-        dưới mái trường tiểu học chắc chắn sẽ đọng lại trong lòng tôi một dấu ấn
-        không thể phai mờ.
+        {auction.description ? (
+          <p className="whitespace-pre-wrap break-words">
+            <span className="font-semibold text-gray-800">Description:</span>{" "}
+            {auction.description}
+          </p>
+        ) : (
+          <p className="text-gray-400 italic">No description available</p>
+        )}
       </div>
 
       {/* Nút đấu giá */}
       <div className="flex justify-center mt-12">
         <button
           onClick={openAuctionForm}
-          className="px-10 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-300 active:scale-100"
+          className="px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-300 active:scale-100"
         >
           AUCTION
         </button>

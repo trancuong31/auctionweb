@@ -28,4 +28,4 @@ const axiosDefault = axios.create({
 
 export { axiosWithToken, axiosDefault };
 
-
+export default axiosWithToken
