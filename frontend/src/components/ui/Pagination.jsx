@@ -3,7 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAnglesLeft, faAnglesRight } from "@fortawesome/free-solid-svg-icons";
 import clsx from "clsx";
 
-const Pagination = ({ totalPage, onPageChange, className }) => {
+const Pagination = ({
+  totalPage,
+  onPageChange,
+  className = "flex justify-center mt-10",
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleClickPagination = (index) => {
@@ -122,11 +126,7 @@ const Pagination = ({ totalPage, onPageChange, className }) => {
     return items;
   };
 
-  return (
-    <div className={clsx("flex justify-center mt-10", className)}>
-      {renderPages()}
-    </div>
-  );
+  return <div className={className}>{renderPages()}</div>;
 };
 
 export default Pagination;

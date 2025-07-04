@@ -38,6 +38,14 @@ export const update = async (resource, id, data, isAuth) => {
     }
 };
 
+export const updateSatus = async (resource, id, data, isAuth) => {
+    if (isAuth) {
+        return await axiosWithToken.patch(`/${resource}/${id}/status`,data);
+    } else {
+        return await axiosDefault.patch(`/${resource}/${id}/status`,data);
+    }
+};
+
 
 export const deleteOne = async (resource, id, isAuth) => {
     if (isAuth) {

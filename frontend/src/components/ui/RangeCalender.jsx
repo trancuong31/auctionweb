@@ -4,7 +4,7 @@ import "flatpickr/dist/flatpickr.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 
-function RangeCalender({ onChange, value }) {
+function RangeCalender({ onChange, value, allowMinDate }) {
   const calendarRef = useRef(null);
   const handleFocus = () => {
     calendarRef.current?.focus();
@@ -13,8 +13,10 @@ function RangeCalender({ onChange, value }) {
   useEffect(() => {
     const fp = flatpickr(calendarRef.current, {
       mode: "range",
-      minDate: null,
-      dateFormat: "d-m-Y",
+      enableTime: true,
+      time_24hr: true,
+      minDate: allowMinDate ? null : "today",
+      dateFormat: "d-m-Y H:i:S",
       defaultDate: value || [],
       onChange: (selectedDates) => {
         onChange?.(selectedDates);
