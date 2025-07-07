@@ -41,7 +41,7 @@ const AuctionSearch = () => {
     } catch (err) {
       alert(err);
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
