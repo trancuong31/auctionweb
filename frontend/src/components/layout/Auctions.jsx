@@ -48,8 +48,7 @@ const AuctionSection = ({ title, type }) => {
     fetchData();
   }, [type]);
 
-  if (loading)
-    return <p className="loading">Loading {title.toLowerCase()}...</p>;
+  if (loading) return <div className="loader" />;
   if (error) return <p className="error">{error}</p>;
 
   return (

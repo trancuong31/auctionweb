@@ -36,6 +36,7 @@ const OverViewAdmin = () => {
   const [sortAuctionOrder, setSortAuctionOrder] = useState("");
   const [totalPageAuction, setTotalPageAuction] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [formKey, setFormKey] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState({
     title: "",
     message: "",
@@ -48,7 +49,7 @@ const OverViewAdmin = () => {
       const response = await getAll("overview", true);
       setOverViewData(response.data);
     } catch (error) {
-      alert(" có lỗi khi lấy dữ liệu");
+      toast.error("Error while get data");
       console.log(error);
     }
   };
@@ -73,7 +74,7 @@ const OverViewAdmin = () => {
         )
       );
     } catch (error) {
-      alert("có lỗi khi lấy dữ liệu user");
+      toast.error("Error while get User data");
       console.log(error);
     }
   };
@@ -92,7 +93,7 @@ const OverViewAdmin = () => {
         Math.ceil(response.data.total / Number(import.meta.env.VITE_PAGE_SIZE))
       );
     } catch (error) {
-      alert("có lỗi khi lấy dữ liệu Auctions");
+      toast.error("Error while get Auction Data");
       console.log(error);
     }
   };
@@ -183,6 +184,8 @@ const OverViewAdmin = () => {
     getPageAuction();
   }, []);
 
+  console.log("a");
+
   return (
     <div>
       <ConfirmDialog
@@ -197,7 +200,11 @@ const OverViewAdmin = () => {
       />
       <CreateAuctionForm
         isOpen={displayCreateForm}
-        onClickClose={() => setDisplayCreateForm(false)}
+        key={formKey}
+        onClickClose={() => {
+          setDisplayCreateForm(false);
+          setFormKey((prev) => !prev);
+        }}
       />
       {/* <!-- OVERVIEW --> */}
       <div className="grid grid-cols-6 gap-4 mb-6">
@@ -469,7 +476,7 @@ const OverViewAdmin = () => {
             <div className="w-[25%] pb-6">
               {/* Sort select */}
               <div className="col-span-1">
-                <label className="text-sm text-gray-600 mb-1 mr-2 block">
+                <label className="text-sm font-[700] mb-1 mr-2 block">
                   Sort by
                 </label>
                 <select
