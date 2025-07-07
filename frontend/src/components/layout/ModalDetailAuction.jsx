@@ -13,7 +13,6 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
         const response = await getOne("auctions", idAuction, false);
         setAuction(response.data);
         setBids(response.data.bids);
-        console.log("a");
       } catch (error) {
         console.log(error);
         alert("có lỗi khi lấy auctions");
@@ -123,7 +122,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               ) : (
                 <tr>
                   <td colSpan={7} className="text-center py-4">
-                    đang load dữ liệu...
+                    <div className="loader" />
                   </td>
                 </tr>
               )}

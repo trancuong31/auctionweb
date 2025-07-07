@@ -13,13 +13,13 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import imagedefault from "../../assets/images/imagedefault.png";
 import { getOne } from "../../services/api";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 function isTokenValid() {
   const user = JSON.parse(localStorage.getItem("user"));
   if (!user || !user.access_token) return false;
   try {
     const token = user.access_token;
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = JSON.parse(atob(token.split(".")[1]));
     return payload.exp * 1000 > Date.now();
   } catch {
     return false;
@@ -63,20 +63,20 @@ const AuctionDetail = () => {
   }, [selectImg]);
 
   const openAuctionForm = () => {
-  if (!isTokenValid()) {
-    toast.error("You must be logged in to participate in the auction!");
-    setTimeout(() => {
-      window.location.href = "/login";
-    }, 2000); 
-    return;
-  }
-  if (auction.status === 2) {
-    toast.error("This auction has ended!");
-    return;
-  }
+    if (!isTokenValid()) {
+      toast.error("You must be logged in to participate in the auction!");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
+      return;
+    }
+    if (auction.status === 2) {
+      toast.error("This auction has ended!");
+      return;
+    }
 
-  setIsOpen(true);
-};
+    setIsOpen(true);
+  };
 
   const handleDownload = async (id) => {
     try {
@@ -122,7 +122,7 @@ const AuctionDetail = () => {
     );
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <div className="loader"></div>;
   if (!auction) return <p>No data available</p>;
 
   return (
@@ -247,7 +247,8 @@ const AuctionDetail = () => {
               <button
                 onClick={() => handleDownload(auction.id)}
                 className="text-blue-600 hover:underline font-medium"
-              ><p>{auction.file_exel.split("/").pop()}</p>                
+              >
+                <p>{auction.file_exel.split("/").pop()}</p>
               </button>
             ) : (
               <span className="text-gray-400 italic">No file</span>
@@ -255,14 +256,12 @@ const AuctionDetail = () => {
           </p>
           {auction.status === 2 && (
             <p>
-              <FontAwesomeIcon
-                icon={faUser}
-                className="mr-4 text-black-500"
-              />
+              <FontAwesomeIcon icon={faUser} className="mr-4 text-black-500" />
               Winner:{" "}
-              {Array.isArray(auction.bids) && auction.bids.find(bid => bid.is_winner) ? (
+              {Array.isArray(auction.bids) &&
+              auction.bids.find((bid) => bid.is_winner) ? (
                 <span className="font-semibold text-green-700">
-                  {auction.bids.find(bid => bid.is_winner).user_name}
+                  {auction.bids.find((bid) => bid.is_winner).user_name}
                 </span>
               ) : (
                 <span className="text-red-500 font-semibold">No winner</span>
@@ -294,7 +293,7 @@ const AuctionDetail = () => {
 
       {/* Modal đấu giá */}
       <ModalAuction
-        canOpen={isOpen}
+        isOpen={isOpen}
         email={userData?.email}
         username={userData?.username}
         auctionId={auction.id}
