@@ -38,7 +38,7 @@ function NavBar() {
         .then(res => {
           setNotifications(res.data || []);
         })
-        .catch(() => setNotifications([]));
+        .catch(() => setNotifications([], console.error('Error fetching notifications')));
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
@@ -64,10 +64,8 @@ function NavBar() {
           <NotificationDropdown triggerRef={bellRef} />
             <span className="user-greeting nav-link">
               
-              Hello {user.role === "admin" ? "admin" : "user"} {user.username}!
-              
+              Hello {user.role === "admin" ? "admin" : "user"} {user.username}!              
             </span>
-
             <button className="nav-link button-link" onClick={handleLogout}>Logout</button>
           </>
         ) : (

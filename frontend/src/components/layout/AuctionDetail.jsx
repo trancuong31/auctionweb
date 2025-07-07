@@ -45,7 +45,7 @@ const AuctionDetail = () => {
       setAuction(response.data);
       setLoading(false);
     } catch (error) {
-      alert("Có lỗi khi lấy dữ liệu auction");
+      alert("Error get auction");
       console.log(error);
     }
   };
@@ -73,15 +73,17 @@ const AuctionDetail = () => {
     if (auction.status === 2) {
       toast.error("This auction has ended!");
       return;
+    } else if (auction.status === 1) {
+      toast.error("This auction has not started yet.");
+      return;
     }
-
     setIsOpen(true);
   };
 
   const handleDownload = async (id) => {
     try {
       const res = await fetch(`/api/v1/download/excel/by-auction/${id}`);
-      if (!res.ok) throw new Error("Tải file thất bại");
+      if (!res.ok) throw new Error("Dowload file fail!");
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -90,7 +92,7 @@ const AuctionDetail = () => {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Lỗi khi tải file:", error);
+      console.error("Error download file:", error);
     }
   };
 
