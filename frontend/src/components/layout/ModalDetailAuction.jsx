@@ -99,12 +99,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
             <tbody>
               {!isLoading ? (
                 bids?.map((bid, idx) => (
-                  <tr
-                    className={
-                      idx === 0 ? "bg-yellow-100" : "hover:bg-yellow-100"
-                    }
-                    key={idx}
-                  >
+                  <tr className={idx === 0 ? "bg-yellow-100" : ""} key={idx}>
                     <td className="border border-gray-300 px-4 py-2">
                       {idx + 1}
                     </td>
