@@ -155,17 +155,16 @@ const AuctionSearch = () => {
         Results found: <span className="font-bold text-red-500">{total}</span>
       </div>
       {isLoading ? (
-        <div className="loader"></div>
+        <div className="loader my-10" />
       ) : (
-        <>
-          <RenderCardAuction
-            arrAuction={arrAuction}
-            numberCol={4}
-            clickCard={handleClick}
-          />
-          <Pagination totalPage={totalPage} onPageChange={handleSearch} />
-        </>
+        <RenderCardAuction
+          arrAuction={arrAuction}
+          numberCol={4}
+          clickCard={handleClick}
+        />
       )}
+
+      <Pagination totalPage={totalPage} onPageChange={handleSearch} />
     </div>
   );
 };
