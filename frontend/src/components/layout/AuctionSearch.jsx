@@ -16,6 +16,7 @@ const AuctionSearch = () => {
   const [totalPage, setTotalPage] = useState(0);
   const [dateRange, setDateRange] = useState([]);
   const [total, setTotal] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSearch = async (page = 1) => {
@@ -30,8 +31,8 @@ const AuctionSearch = () => {
     };
 
     try {
+      setIsLoading(true);
       const response = await getAll("auctions/search", false, param);
-
       setTotal(response.data.total);
       setArrAuction(response.data.auctions);
       setTotalPage(
@@ -39,6 +40,8 @@ const AuctionSearch = () => {
       );
     } catch (err) {
       alert(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -151,13 +154,18 @@ const AuctionSearch = () => {
       <div className="text-gray-600 text-sm font-medium mb-4">
         Results found: <span className="font-bold text-red-500">{total}</span>
       </div>
-
-      <RenderCardAuction
-        arrAuction={arrAuction}
-        numberCol={4}
-        clickCard={handleClick}
-      />
-      <Pagination totalPage={totalPage} onPageChange={handleSearch} />
+      {isLoading ? (
+        <div className="loader"></div>
+      ) : (
+        <>
+          <RenderCardAuction
+            arrAuction={arrAuction}
+            numberCol={4}
+            clickCard={handleClick}
+          />
+          <Pagination totalPage={totalPage} onPageChange={handleSearch} />
+        </>
+      )}
     </div>
   );
 };

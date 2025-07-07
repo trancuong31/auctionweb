@@ -13,7 +13,7 @@ import Tutorial from "./components/layout/Tutorial.jsx";
 import Contact from "./components/layout/Contact.jsx";
 import History from "./components/layout/History.jsx";
 import Information from "./components/layout/Information.jsx";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
