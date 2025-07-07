@@ -12,6 +12,12 @@ const NotificationDropdown = ({ triggerRef }) => {
   const dropdownRef = useRef();
   const [notifications, setNotifications] = useState([]);
   const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    axiosClient
+      .get("/notifications")
+      .then((res) => setNotifications(res.data || []))
+      .catch(() => setNotifications([]));
+  }, []);
 
   // Close on outside click
   useEffect(() => {
@@ -27,17 +33,26 @@ const NotificationDropdown = ({ triggerRef }) => {
 
     if (visible) {
       document.addEventListener("mousedown", handleClickOutside);
-      axiosClient.get("/notifications")
-        .then((res) => setNotifications(res.data || []))
-        .catch(() => setNotifications([]));
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [visible]);
+        axiosClient
+          .get("/notifications")
+          .then((res) => setNotifications(res.data || []))
+          .catch(() => setNotifications([]));
+        axiosClient
+          .post("/set_read")
+          .then(() => {
+            setNotifications((prev) =>
+              prev.map((n) => ({ ...n, is_read: true }))
+            );
+          })
+          .catch((err) => console.error("Read fail", err));
+      } else {
+        document.removeEventListener("mousedown", handleClickOutside);
+      }
+          
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [visible]);
 
   return (
     <span style={{ position: "relative", display: "inline-block" }} ref={triggerRef}>
@@ -47,15 +62,33 @@ const NotificationDropdown = ({ triggerRef }) => {
         style={{ marginLeft: "10px", cursor: "pointer" }}
         onClick={() => setVisible((v) => !v)}
       />
+      {notifications.filter((n) => !n.is_read).length > 0 && (
+        <span
+          className="notification-badge"
+          style={{
+            position: "absolute",
+            top: "-5px",
+            right: "-2px",
+            backgroundColor: "red",
+            color: "white",
+            borderRadius: "50%",
+            padding: "1px 4px",
+            fontSize: "8px",
+          }}
+        >
+          {notifications.filter((n) => !n.is_read).length}
+        </span>
+      )}
+
       {visible && (
         <div className="notification-dropdown" ref={dropdownRef}>
           <div className="notification-dropdown-header">
             <FontAwesomeIcon icon={faBell} style={{ marginRight: "8px" }} />
-            Thông báo
+            Notification
           </div>
           <ul className="notification-list">
             {notifications.length === 0 ? (
-              <li className="notification-item">Chưa có thông báo nào.</li>
+              <li className="notification-item">No announcements yet.</li>
             ) : (
               notifications.map((item) => (
                 <li
@@ -65,9 +98,6 @@ const NotificationDropdown = ({ triggerRef }) => {
                 >
                   <span className="notification-avatar"><FontAwesomeIcon icon={faUser} /></span>
                   <span style={{ flex: 1, minWidth: 0, borderBottom: "1px solid" }}>
-                    {/* {!item.is_read && (
-                      <span className="dot-unread" title="Chưa đọc"></span>
-                    )} */}
                     <span
                       className="notification-message"
                       style={{

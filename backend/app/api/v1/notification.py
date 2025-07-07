@@ -25,6 +25,8 @@ class NotificationOut(BaseModel):
     is_read:bool
     created_at:datetime
 
+class Notification_read(BaseModel):
+    is_read:bool
 
 @router.get("/notifications", response_model=list[NotificationOut])
 def get_notifications(
@@ -34,3 +36,18 @@ def get_notifications(
     notifications = db.query(Notification).filter(Notification.user_id == user_id).order_by(Notification.created_at.desc()).all()
 
     return notifications
+
+@router.post("/set_read")
+def set_read_notification(
+    db: Session = Depends(get_db),
+    user_id: str = Depends(get_current_user_id_from_token),
+    data: Notification_read = None
+    ):
+    notifications = db.query(Notification).filter(Notification.user_id == user_id).all()
+    
+    for notification in notifications:
+        notification.is_read = True
+    
+    db.commit()
+    return {"message": "Set read successful!"}
+ 

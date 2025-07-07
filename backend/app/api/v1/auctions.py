@@ -21,7 +21,9 @@ from app.core.auth import get_current_user_id_from_token
 from app.enums import UserRole
 from pydantic import field_validator
 from zoneinfo import ZoneInfo
+from fastapi import APIRouter
 
+router = APIRouter()
 class AuctionOut(BaseModel):
     id: UUID
     title: str
@@ -112,7 +114,8 @@ def get_auctions_by_status(
 ):
     now = datetime.now()
     query = db.query(Auction)
-
+    if status is not None and status not in [0, 1, 2]:
+        raise HTTPException(status_code=400, detail="Invalid status value")
     # Filter theo trạng thái
     if status == 0:
         query = query.filter(Auction.start_time <= now, Auction.end_time > now)
@@ -277,7 +280,12 @@ def upload_image(files: List[UploadFile] = File(...)):
                 f_out.write(contents)
             saved_filename = os.path.basename(file_location)
             image_urls.append(f"/uploads/images/{saved_filename}")
-
+            total_length = sum(len(url) for url in image_urls)
+            if total_length > 500:
+                return JSONResponse(
+                    status_code=400,
+                    content={"detail": f"Total image URLs length too long (max 500 chars): {image_urls}"}
+                )
         return {"image_urls": image_urls}
     except Exception as e:
         return JSONResponse(status_code=500, content={"detail": f"Internal server error: {str(e)}"})
