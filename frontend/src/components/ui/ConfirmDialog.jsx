@@ -9,12 +9,7 @@ export default function ConfirmDialog({
   icon,
 }) {
   return (
-    <div
-      className={clsx(
-        "relative transform translate-y-8 opacity-20 animate-slide-up z-10",
-        open ? "block" : "hidden"
-      )}
-    >
+    <div className={clsx("relative  z-10", open ? "block" : "hidden")}>
       <div className="fixed inset-0 bg-gray-500/75 transition-opacity" />
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">

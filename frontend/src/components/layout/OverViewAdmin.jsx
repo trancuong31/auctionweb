@@ -4,6 +4,7 @@ import CreateAuctionForm from "./AuctionCreate";
 import ModalDetailAuction from "./ModalDetailAuction";
 import Pagination from "../ui/Pagination";
 import ConfirmDialog from "../ui/ConfirmDialog";
+import toast from "react-hot-toast";
 import {
   faUsers,
   faGavel,
@@ -105,11 +106,11 @@ const OverViewAdmin = () => {
 
     try {
       await update("users", user.id, newUser, true);
-      alert("Cập nhật user thành công");
-      await getAllUser();
+      toast.success("Update user successfull!");
       setCurrentEditing(null);
+      await getPageUser();
     } catch (error) {
-      alert("lỗi khi cập nhật user");
+      toast.error("update user fail!");
       console.log(error);
     }
   };
@@ -128,10 +129,10 @@ const OverViewAdmin = () => {
       onConfirm: async () => {
         try {
           await deleteOne("users", id, true);
-          alert("xóa user thành công");
+          toast.success("Delete user successfull!");
           getPageUser();
         } catch (error) {
-          alert("xóa user thất bại");
+          toast.error("Delete user fail!");
           console.log(error);
         }
       },
@@ -154,10 +155,10 @@ const OverViewAdmin = () => {
       onConfirm: async () => {
         try {
           await updateSatus("users", user.id, { status: !user.status }, true);
-          alert("cập nhật trạng thái user thành công");
+          toast.success("update status user successfull!");
           getPageUser();
         } catch (error) {
-          alert("cập nhật trạng thái user thất bại");
+          toast.error("update status user fail!");
           console.log(error);
         }
       },
@@ -200,7 +201,7 @@ const OverViewAdmin = () => {
       />
       {/* <!-- OVERVIEW --> */}
       <div className="grid grid-cols-6 gap-4 mb-6">
-        <div className="bg-blue-200 p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
+        <div className="bg-indigo-400 p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
           <p className="font-semibold">Total User</p>
           <p className="text-2xl font-bold">{overViewData.total_user}</p>
           <p className="text-xl">
@@ -263,7 +264,7 @@ const OverViewAdmin = () => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search for category, name, company, etc"
+                  placeholder="Type email or username"
                   className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={(e) => setSearchTextUser(e.target.value)}
                 />
@@ -316,7 +317,7 @@ const OverViewAdmin = () => {
              border border-transparent
              shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
              transition-transform duration-300
-             bg-gradient-to-r from-indigo-700 to-indigo-300
+             bg-gradient-to-r from-blue-500 to-blue-300
              hover:border-gray-100 active:scale-95"
             >
               <FontAwesomeIcon icon={faSearch} />
@@ -439,7 +440,7 @@ const OverViewAdmin = () => {
 
       {/* <!-- MANAGER AUCTIONS --> */}
 
-      <div className="bg-amber-50 p-4 rounded shadow">
+      <div className="bg-blue-100  p-4 rounded shadow">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold">MANAGER AUCTIONS</h2>
         </div>
@@ -456,7 +457,7 @@ const OverViewAdmin = () => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search for category, name, company, etc"
+                  placeholder="Type Title Auction"
                   className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={(e) => setSearchAuctionTitle(e.target.value)}
                 />
@@ -515,7 +516,7 @@ const OverViewAdmin = () => {
              border border-transparent
              shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
              transition-transform duration-300
-             bg-gradient-to-r from-indigo-700 to-indigo-300
+             bg-gradient-to-r from-blue-500 to-blue-300
              hover:border-gray-100 active:scale-95"
               >
                 <FontAwesomeIcon icon={faSearch} />
