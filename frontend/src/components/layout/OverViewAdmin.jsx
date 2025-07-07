@@ -37,6 +37,8 @@ const OverViewAdmin = () => {
   const [totalPageAuction, setTotalPageAuction] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [formKey, setFormKey] = useState(false);
+  const [isLoadingPage, setIsLoadingPage] = useState(false);
+  const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState({
     title: "",
     message: "",
@@ -66,6 +68,7 @@ const OverViewAdmin = () => {
       search_text: searchTextUser,
     };
     try {
+      setIsLoadingSearch(true);
       const response = await getAll("users", true, param);
       setUserData(response.data.users);
       setTotalPageUser(
@@ -76,6 +79,8 @@ const OverViewAdmin = () => {
     } catch (error) {
       toast.error("Error while get User data");
       console.log(error);
+    } finally {
+      setIsLoadingSearch(false);
     }
   };
 
@@ -87,6 +92,7 @@ const OverViewAdmin = () => {
       title: searchAuctionTitle,
     };
     try {
+      setIsLoadingSearch(true);
       const response = await getAll("auctions/search", true, param);
       setAuctionData(response.data.auctions);
       setTotalPageAuction(
@@ -95,6 +101,8 @@ const OverViewAdmin = () => {
     } catch (error) {
       toast.error("Error while get Auction Data");
       console.log(error);
+    } finally {
+      setIsLoadingSearch(false);
     }
   };
 
@@ -179,13 +187,17 @@ const OverViewAdmin = () => {
   };
 
   useEffect(() => {
-    getOverView();
-    getPageUser();
-    getPageAuction();
+    const fetchData = async () => {
+      setIsLoadingPage(true);
+      await Promise.all([getOverView(), getPageUser(), getPageAuction()]);
+      setIsLoadingPage(false);
+    };
+    fetchData();
   }, []);
 
   console.log("a");
 
+  if (isLoadingPage) return <div className="loader" />;
   return (
     <div>
       <ConfirmDialog
@@ -334,6 +346,9 @@ const OverViewAdmin = () => {
         </div>
 
         <div className="overflow-x-auto border border-gray-300 rounded">
+          <div className="text-center ">
+            {!isLoadingSearch && <div className="loader" />}
+          </div>
           <table className="min-w-full border-collapse">
             <thead className="bg-gray-200">
               <tr>
@@ -533,6 +548,9 @@ const OverViewAdmin = () => {
           </div>
         </div>
         <div className="overflow-x-auto border border-gray-300 rounded">
+          <div className="text-center ">
+            {!isLoadingSearch && <div className="loader" />}
+          </div>
           <table className="min-w-full border-collapse">
             <thead className="bg-gray-200">
               <tr>
