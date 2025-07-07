@@ -53,20 +53,14 @@ function Tutorial() {
                     Sau khi nghiên cứu Thông báo mời đấu giá, Quy chế cuộc đấu giá, hồ sơ pháp lý về tài sản, nếu đủ điều kiện và có nguyện vọng tham gia đấu giá thì tiến hành đăng ký tài khoản và cập nhật thông tin tài khoản như Bước 1 và Bước 2 mục này.
                 </li>
                 <li>
-                    <b>Bước 5: Nộp các khoản tiền tham gia đấu giá</b><br />
-                    Người đăng ký tham gia đấu giá nộp các khoản tiền tham gia đấu giá theo hướng dẫn tại Quy chế cuộc đấu giá và email hướng dẫn đã được gửi trước đó.<br />
-                    Công ty Đấu giá hợp danh Đấu giá Việt Nam không chịu trách nhiệm đối với các khoản tiền nộp sai thông tin nêu trên. Thời gian nộp tiền đặt trước căn cứ thông tin số dư tài khoản hiển thị trên hệ thống ngân hàng cung cấp.
-                </li>
-                <li>
-                    <b>Bước 6: Nộp hồ sơ tham gia đấu giá</b><br />
+                    <b>Bước 5: Nộp hồ sơ tham gia đấu giá</b><br />
                     Người đăng ký tham gia đấu giá nộp hồ sơ tham gia đấu giá theo đúng cách thức và thời hạn quy định tại Quy chế cuộc đấu giá và email hướng dẫn.<br />
                     Hồ sơ tham gia đấu giá gồm các tài liệu quy định tại Quy chế cuộc đấu giá áp dụng với từng tài sản.<br />
-                    Người đăng ký tham gia đấu giá nộp hồ sơ trực tiếp hoặc gửi bằng thư bảo đảm qua đường bưu điện đến trụ sở Công ty Đấu giá hợp danh Đấu giá Việt Nam (Ô số 6, tầng 1, tòa nhà Sunrise IIA, NO2A, KĐT Sài Đồng, Phường Phúc Đồng, Quận Long Biên, Hà Nội).
                 </li>
                 <li>
-                    <b>Bước 7: Đăng nhập tài khoản, vào Phòng đấu giá để tham gia đấu giá</b><br />
+                    <b>Bước 6: Đăng nhập tài khoản, vào Phòng đấu giá để tham gia đấu giá</b><br />
                     Người đã đăng ký tham gia đấu giá thành công đăng nhập vào hệ thống đấu giá trực tuyến, bấm chọn vào vị trí logo có thông tin về tài sản đã nộp hồ sơ tham gia đấu giá, thực hiện bấm nút Điểm danh để có thể tiến hành trả giá.<br />
-                    Tại giao diện màn hình trả giá, nhập số tiền muốn trả hoặc bấm nút dấu + để tăng/ dấu - để giảm bước giá và bấm vào nút “Trả giá”.
+                    Tại giao diện màn hình trả giá, nhập số tiền muốn trả và bấm vào nút “Đấu giá”.
                 </li>
             </ol>
         </div>
