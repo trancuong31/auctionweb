@@ -29,7 +29,10 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
             onClick={() => clickCard(item.id)}
           >
             <div className="bg-gray-300 h-[200px] flex items-center justify-center relative overflow-hidden">
-              <CountdownTimer targetTime={item.end_time} />
+              {item.status == 0 ? (
+                <CountdownTimer targetTime={item.end_time} />
+              ):(null)
+              }
               <img
                 src={
                   item.image_url && item.image_url.length > 0
@@ -52,7 +55,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="font-semibold text-gray-500">
+                <span className=" text-gray-500">
                   Starting price:
                 </span>{" "}
                 {item.starting_price?.toLocaleString("en-US", {
@@ -61,19 +64,35 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 })}
               </p>
               <p className="flex justify-between">
-                <span className="font-semibold text-gray-500">Start time:</span>{" "}
+                <span className=" text-gray-500">Start time:</span>{" "}
                 <span className="font-[600]">
-                  {new Date(item.start_time).toLocaleString()}
+                  {new Date(item.start_time).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false 
+                  })}
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="font-semibold text-gray-500">End time:</span>{" "}
+                <span className=" text-gray-500">End time:</span>{" "}
                 <span className="font-[600]">
-                  {new Date(item.end_time).toLocaleString()}
+                  {new Date(item.end_time).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false 
+                  })}
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="font-semibold text-gray-500">Price step:</span>{" "}
+                <span className=" text-gray-500">Price step:</span>{" "}
                 {item.step_price?.toLocaleString("en-US", {
                   style: "currency",
                   currency: "USD",
@@ -82,8 +101,8 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
               {item.status === 2 ? (
                 item.highest_amount !== null && item.winner_info !== null ? (
                   <p className="flex justify-between">
-                    <span className="font-semibold text-gray-500">
-                      Highest Price:
+                    <span className="font-semibold text-gray-500">                      
+                      Winning bid price:
                     </span>{" "}
                     <span className="text-red-500 font-bold">
                       {item.highest_amount?.toLocaleString("en-US", {

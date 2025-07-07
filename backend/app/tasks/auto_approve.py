@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 async def auto_set_winner_task():
     """
     Background task: Tự động set is_winner cho bid cao nhất của các auction đã kết thúc mà chưa có winner.
-    Chạy mỗi 5 phút.
+    Chạy mỗi 1 phút.
     """
     while True:
         try:
@@ -44,14 +44,27 @@ async def auto_set_winner_task():
                             created_at=datetime.now(),
                             is_read=False
                         )
+                        
                         db.add(notification)
+                        losing_bids = db.query(Bid).filter(Bid.auction_id == auction.id, Bid.id != highest_bid.id).all()
+                        for losing_bid in losing_bids:
+                            losing_notification = Notification(
+                            user_id=losing_bid.user_id,
+                            auction_id=auction.id,
+                            message=f"Rất tiếc! Bạn đã đấu giá không thành công phiên đấu giá {auction.title}.",
+                            created_at=datetime.now(),
+                            is_read=False
+                        )
+                            db.add(losing_notification)
+
+                        
                         logger.info(f"Auto-set winner for auction {auction.id}: bid {highest_bid.id} with amount {highest_bid.bid_amount}")
             
             db.commit()
             db.close()
         except Exception as e:
             logger.error(f"Error in auto_set_winner_task: {str(e)}")
-        await asyncio.sleep(60)  # 5 phút
+        await asyncio.sleep(60)  # 1 phút
 
 def start_auto_set_winner_task():
     try:
