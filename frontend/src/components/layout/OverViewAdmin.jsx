@@ -219,54 +219,71 @@ const OverViewAdmin = () => {
         }}
       />
       {/* <!-- OVERVIEW --> */}
-      <div className="grid grid-cols-6 gap-4 mb-6">
-        <div className="bg-indigo-400 p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
-          <p className="font-semibold">Total User</p>
-          <p className="text-2xl font-bold">{overViewData.total_user}</p>
-          <p className="text-xl">
-            <FontAwesomeIcon icon={faUsers} />{" "}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
+        <div className="bg-indigo-400 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
+          <p className="text-xs sm:text-sm font-semibold">Total User</p>
+          <p className="text-xl sm:text-2xl font-bold">
+            {overViewData.total_user}
+          </p>
+          <p className="text-lg sm:text-xl">
+            <FontAwesomeIcon icon={faUsers} />
           </p>
         </div>
-        <div className="bg-yellow-200 p-4 rounded shadow text-center aspect-[4/3] max-lg:aspect-[4/2] flex flex-col justify-between">
-          <p className="font-semibold">Total auction</p>
-          <p className="text-2xl font-bold">{overViewData.total_auction}</p>
-          <p className="text-xl">
+
+        <div className="bg-yellow-200 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
+          <p className="text-xs sm:text-sm font-semibold">Total auction</p>
+          <p className="text-xl sm:text-2xl font-bold">
+            {overViewData.total_auction}
+          </p>
+          <p className="text-lg sm:text-xl">
             <FontAwesomeIcon icon={faCheck} />
           </p>
         </div>
-        <div className="bg-green-200 p-4 rounded shadow text-center aspect-[4/3] max-lg:aspect-[4/2] flex flex-col justify-between">
-          <p className="font-semibold">Total successful auctions</p>
-          <p className="text-2xl font-bold">
+
+        <div className="bg-green-200 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
+          <p className="text-xs sm:text-sm font-semibold">
+            Total successful auctions
+          </p>
+          <p className="text-xl sm:text-2xl font-bold">
             {overViewData.total_successful_auctions}
           </p>
-          <p className="text-xl">
+          <p className="text-lg sm:text-xl">
             <FontAwesomeIcon icon={faGavel} />
           </p>
         </div>
-        <div className="bg-yellow-100 p-4 rounded shadow text-center aspect-[4/3] max-lg:aspect-[4/2] flex flex-col justify-between">
-          <p className="font-semibold">Total auction in progress</p>
-          <p className="text-2xl font-bold">
+
+        <div className="bg-yellow-100 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
+          <p className="text-xs sm:text-sm font-semibold">
+            Total auction in progress
+          </p>
+          <p className="text-xl sm:text-2xl font-bold">
             {overViewData.total_auction_in_progress}
           </p>
-          <p className="text-xl">
+          <p className="text-lg sm:text-xl">
             <FontAwesomeIcon icon={faGear} />
           </p>
         </div>
-        <div className="bg-cyan-100 p-4 rounded shadow text-center aspect-[4/3] max-lg:aspect-[4/2] flex flex-col justify-between">
-          <p className="font-semibold">Total upcoming auctions</p>
-          <p className="text-2xl font-bold">
+
+        <div className="bg-cyan-100 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
+          <p className="text-xs sm:text-sm font-semibold">
+            Total upcoming auctions
+          </p>
+          <p className="text-xl sm:text-2xl font-bold">
             {overViewData.total_upcoming_auctions}
           </p>
-          <p className="text-xl">
+          <p className="text-lg sm:text-xl">
             <FontAwesomeIcon icon={faClock} />
           </p>
         </div>
-        <div className="bg-red-300 p-4 rounded shadow text-center aspect-[4/3] max-lg:aspect-[4/2] flex flex-col justify-between">
-          <p className="font-semibold">Total unsuccessful auctions</p>
-          <p className="text-2xl font-bold">
+
+        <div className="bg-red-300 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
+          <p className="text-xs sm:text-sm font-semibold">
+            Total unsuccessful auctions
+          </p>
+          <p className="text-xl sm:text-2xl font-bold">
             {overViewData.total_unsuccessful_auctions}
           </p>
-          <p className="text-xl">
+          <p className="text-lg sm:text-xl">
             <FontAwesomeIcon icon={faXmark} />
           </p>
         </div>
@@ -275,11 +292,11 @@ const OverViewAdmin = () => {
       {/* <!-- MANAGER USERS --> */}
 
       <div className="bg-blue-100 p-4 rounded shadow mb-6">
-        <div className="flex justify-between mb-3 items-center">
+        <div className="flex justify-between mb-3 items-center max-sm:flex-col max-sm:gap-3">
           <p className="text-lg font-bold">MANAGER USERS</p>
-          <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end">
+          <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end max-sm:gap-3">
             {/* <!-- Search Input --> */}
-            <div className="w-[60%]">
+            <div className="w-[60%] max-sm:w-full">
               <div className="relative">
                 <input
                   type="text"
@@ -293,7 +310,7 @@ const OverViewAdmin = () => {
               </div>
             </div>
             {/* <!-- Category Select --> */}
-            <div className="w-[25%] pb-6">
+            <div className="w-[25%] pb-6 max-sm:w-full">
               <label className="text-sm font-semibold block mb-1">
                 Sort by
               </label>
@@ -336,7 +353,7 @@ const OverViewAdmin = () => {
              border border-transparent
              shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
              transition-transform duration-300
-             bg-gradient-to-r from-blue-500 to-blue-300
+             bg-blue-500
              hover:border-gray-100 active:scale-95"
             >
               <FontAwesomeIcon icon={faSearch} />
@@ -415,7 +432,7 @@ const OverViewAdmin = () => {
                       )}
                     </div>
                   </td>
-                  <td className="border px-2 py-1 space-x-1 text-center">
+                  <td className="border px-2 py-1 space-x-1 text-center max-sm:flex">
                     {currentEditing === idx ? (
                       <>
                         <button
@@ -463,19 +480,19 @@ const OverViewAdmin = () => {
       {/* <!-- MANAGER AUCTIONS --> */}
 
       <div className="bg-blue-100  p-4 rounded shadow">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-4 max-sm:justify-center">
           <h2 className="text-lg font-bold">MANAGER AUCTIONS</h2>
         </div>
         <div className="flex-1 flex flex-col md:flex-row justify-between items-center md:space-y-0 md:space-x-4 w-full">
-          <div className="flex gap-10 w-full items-center">
+          <div className="flex gap-10 w-full items-center max-sm:flex-col max-sm:gap-4 max-sm:mb-4">
             <button
               onClick={() => setDisplayCreateForm(true)}
-              className="bg-blue-500 text-white px-3 py-2 rounded"
+              className="bg-blue-500 text-white px-3 py-2 rounded max-sm:w-full"
             >
               Create auction
             </button>
             {/* <!-- Search Input --> */}
-            <div className="flex-1">
+            <div className="flex-1 max-sm:w-full">
               <div className="relative">
                 <input
                   type="text"
@@ -488,7 +505,7 @@ const OverViewAdmin = () => {
                 </span>
               </div>
             </div>
-            <div className="w-[25%] pb-6">
+            <div className="w-[25%] pb-6 max-sm:w-full">
               {/* Sort select */}
               <div className="col-span-1">
                 <label className="text-sm font-[700] mb-1 mr-2 block">
@@ -538,7 +555,7 @@ const OverViewAdmin = () => {
              border border-transparent
              shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
              transition-transform duration-300
-             bg-gradient-to-r from-blue-500 to-blue-300
+             bg-blue-500
              hover:border-gray-100 active:scale-95"
               >
                 <FontAwesomeIcon icon={faSearch} />
