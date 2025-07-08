@@ -1,4 +1,3 @@
-// src/components/ui/NotificationDropdown.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faUser } from "@fortawesome/free-solid-svg-icons";
@@ -12,11 +11,26 @@ const NotificationDropdown = ({ triggerRef }) => {
   const dropdownRef = useRef();
   const [notifications, setNotifications] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [closing, setClosing] = useState(false);
+
+  const closeDropdown = () => {
+    setClosing(true);
+    setTimeout(() => {
+      setVisible(false);
+      setClosing(false);
+    }, 300);
+  };
+
   useEffect(() => {
-    axiosClient
-      .get("/notifications")
-      .then((res) => setNotifications(res.data || []))
-      .catch(() => setNotifications([]));
+    const fetchNotifications = () => {
+      axiosClient
+        .get("/notifications")
+        .then((res) => setNotifications(res.data || []))
+        .catch(() => setNotifications([]));
+    };
+    fetchNotifications();
+    const intervalId = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(intervalId);
   }, []);
 
   // Close on outside click
@@ -27,32 +41,32 @@ const NotificationDropdown = ({ triggerRef }) => {
         !dropdownRef.current.contains(e.target) &&
         !triggerRef.current?.contains(e.target)
       ) {
-        setVisible(false);
+        closeDropdown();
       }
     };
 
     if (visible) {
       document.addEventListener("mousedown", handleClickOutside);
-        axiosClient
-          .get("/notifications")
-          .then((res) => setNotifications(res.data || []))
-          .catch(() => setNotifications([]));
-        axiosClient
-          .post("/set_read")
-          .then(() => {
-            setNotifications((prev) =>
-              prev.map((n) => ({ ...n, is_read: true }))
-            );
-          })
-          .catch((err) => console.error("Read fail", err));
-      } else {
-        document.removeEventListener("mousedown", handleClickOutside);
-      }
-          
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, [visible]);
+      axiosClient
+        .get("/notifications")
+        .then((res) => setNotifications(res.data || []))
+        .catch(() => setNotifications([]));
+      axiosClient
+        .post("/set_read")
+        .then(() => {
+          setNotifications((prev) =>
+            prev.map((n) => ({ ...n, is_read: true }))
+          );
+        })
+        .catch((err) => console.error("Read fail", err));
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [visible]);
 
   return (
     <span style={{ position: "relative", display: "inline-block" }} ref={triggerRef}>
@@ -60,7 +74,13 @@ const NotificationDropdown = ({ triggerRef }) => {
         icon={faBell}
         className="bell-icon"
         style={{ marginLeft: "10px", cursor: "pointer" }}
-        onClick={() => setVisible((v) => !v)}
+        onClick={() => {
+          if (visible) {
+            closeDropdown();
+          } else {
+            setVisible(true);
+          }
+        }}
       />
       {notifications.filter((n) => !n.is_read).length > 0 && (
         <span
@@ -81,7 +101,10 @@ const NotificationDropdown = ({ triggerRef }) => {
       )}
 
       {visible && (
-        <div className="notification-dropdown" ref={dropdownRef}>
+        <div
+          className={`notification-dropdown ${closing ? 'fade-slide-out' : 'fade-slide-in'}`}
+          ref={dropdownRef}
+        >
           <div className="notification-dropdown-header">
             <FontAwesomeIcon icon={faBell} style={{ marginRight: "8px" }} />
             Notification
@@ -117,7 +140,6 @@ const NotificationDropdown = ({ triggerRef }) => {
               ))
             )}
           </ul>
-          {/* <div className="notification-dropdown-footer">Thu gọn</div> */}
         </div>
       )}
     </span>

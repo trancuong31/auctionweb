@@ -80,6 +80,7 @@
     drop-shadow(0 0 20px rgba(147, 197, 253, 0.2));
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  margin-left: 8px;
 }
 
 /* .header-logo:hover {
