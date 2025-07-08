@@ -163,7 +163,6 @@ const AuctionSearch = () => {
           clickCard={handleClick}
         />
       )}
-
       <Pagination totalPage={totalPage} onPageChange={handleSearch} />
     </div>
   );

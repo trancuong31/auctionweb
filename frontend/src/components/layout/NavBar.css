@@ -108,7 +108,7 @@
 /* ==== Dropdown Wrapper ==== */
 .notification-dropdown {
   position: absolute;
-  top: 36px;
+  /* top: 36px; */
   right: 0;
   width: 360px;
   background: #fff;
@@ -119,6 +119,13 @@
   border: 1px solid #eaeaea;
   animation: fadeSlideIn 0.3s ease forwards;
   transform-origin: top right;
+}
+.fade-slide-in {
+  animation: fadeSlideIn 0.3s ease forwards;
+}
+
+.fade-slide-out {
+  animation: fadeSlideOut 0.3s ease forwards;
 }
 
 @keyframes fadeSlideIn {
@@ -131,6 +138,18 @@
     transform: translateY(0) scale(1);
   }
 }
+
+@keyframes fadeSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+}
+
 
 /* ==== Header ==== */
 .notification-dropdown-header {
@@ -164,14 +183,14 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  /* padding: 14px 20px; */
+  padding: 8px 16px;
   border-bottom: 1px solid #f0f0f0;
   font-size: 15px;
   background: #fff;
   transition: background 0.2s ease;
 }
 .notification-item:hover {
-  background: #94b5f888;
+  background: #94b5f857;
 }
 .notification-item:last-child {
   border-bottom: none;
@@ -185,7 +204,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(to right, #c3e0ff, #a3bfff);
+  background: linear-gradient(to right, #c3e0ff, #4c7ff5);
   display: flex;
   align-items: center;
   justify-content: center;

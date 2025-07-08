@@ -7,6 +7,7 @@ import {
   faSignal5,
   faFileText,
   faUser,
+  faUsers,
   faLayerGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, useRef } from "react";
@@ -61,7 +62,7 @@ const AuctionDetail = () => {
       sliderRef.current.style.transform = `translateX(-${selectImg * 100}%)`;
     }
   }, [selectImg]);
-
+  //xử lý token hết hạn bắt user login để thực hiện thao tác đấu giá
   const openAuctionForm = () => {
     if (!isTokenValid()) {
       toast.error("You must be logged in to participate in the auction!");
@@ -70,10 +71,13 @@ const AuctionDetail = () => {
       }, 2000);
       return;
     }
+    //chặn người dùng đấu giá khi phiên đấu giá đã kết thúc
     if (auction.status === 2) {
       toast.error("This auction has ended!");
       return;
-    } else if (auction.status === 1) {
+    }
+    //chặn người dùng đấu giá khi phiên đấu giá chưa diễn ra
+    else if (auction.status === 1) {
       toast.error("This auction has not started yet.");
       return;
     }
@@ -256,6 +260,12 @@ const AuctionDetail = () => {
               <span className="text-gray-400 italic">No file</span>
             )}
           </p>
+          {(auction.status === 0) | (auction.status === 2) && (
+            <p>
+              <FontAwesomeIcon icon={faUsers} className="mr-4 text-black-500" />
+              Number of bids: {auction.count_users ? auction.count_users : 0}
+            </p>
+          )}
           {auction.status === 2 && (
             <p>
               <FontAwesomeIcon icon={faUser} className="mr-4 text-black-500" />
@@ -287,7 +297,7 @@ const AuctionDetail = () => {
       <div className="flex justify-center mt-12">
         <button
           onClick={openAuctionForm}
-          className="px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-300 active:scale-100"
+          className="px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out "
         >
           AUCTION
         </button>
