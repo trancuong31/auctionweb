@@ -6,7 +6,7 @@ const MainLayout = () => (
   <>
     <Header />
     <NavBar />
-    <main className="md:px-8 max-w-[2000px] mx-auto">
+    <main className="md:px-8 max-w-[2000px] mx-auto p-10">
       <Outlet />
     </main>
     <Footer />
