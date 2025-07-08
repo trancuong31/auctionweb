@@ -76,10 +76,6 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
     setImgFiles((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
 
-  const clearAllFiles = () => {
-    setImgFiles([]);
-  };
-
   const handleDragAreaClick = () => {
     document.getElementById("imageInput").click();
   };
@@ -116,13 +112,13 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
   return (
     <div
       className={clsx(
-        "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50",
+        "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ",
         isOpen ? "visible" : "invisible"
       )}
     >
       <div
         className={clsx(
-          "bg-gray-200 w-full max-w-2xl max-sm:w-[90%] max-h-[95%] p-8 rounded-2xl relative fade-slide-up overflow-hidden",
+          "bg-gray-200 w-full max-w-2xl max-sm:w-[90%] max-h-[95%] p-8 rounded-2xl relative overflow-hidden fade-slide-up",
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
         )}
       >

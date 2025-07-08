@@ -1,9 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getAll, update, deleteOne, updateSatus } from "../../services/api";
-import CreateAuctionForm from "./AuctionCreate";
-import ModalDetailAuction from "./ModalDetailAuction";
-import Pagination from "../ui/Pagination";
-import ConfirmDialog from "../ui/ConfirmDialog";
+import { getAll, update, deleteOne, updateSatus } from "../services/api";
+import CreateAuctionForm from "../components/layout/AuctionCreate";
+import ModalDetailAuction from "../components/layout/ModalDetailAuction";
+import Pagination from "../components/ui/Pagination";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
+import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import {
   faUsers,
@@ -195,8 +196,6 @@ const OverViewAdmin = () => {
     fetchData();
   }, []);
 
-  console.log("a");
-
   if (isLoadingPage) return <div className="loader" />;
   return (
     <div>
@@ -215,7 +214,6 @@ const OverViewAdmin = () => {
         key={formKey}
         onClickClose={() => {
           setDisplayCreateForm(false);
-          setFormKey((prev) => !prev);
         }}
       />
       {/* <!-- OVERVIEW --> */}
@@ -364,7 +362,7 @@ const OverViewAdmin = () => {
 
         <div className="overflow-x-auto border border-gray-300 rounded">
           <div className="text-center ">
-            {!isLoadingSearch && <div className="loader" />}
+            {isLoadingSearch && <div className="loader" />}
           </div>
           <table className="min-w-full border-collapse">
             <thead className="bg-gray-200">
@@ -411,7 +409,9 @@ const OverViewAdmin = () => {
                       user.email
                     )}
                   </td>
-                  <td className="border px-2 py-1">{user.created_at}</td>
+                  <td className="border px-2 py-1">
+                    {dayjs(user.created_at).format("MM/DD/YYYY HH:mm")}
+                  </td>
                   <td className="border px-2 py-1">{user.role}</td>
                   <td className="border px-2 py-1">
                     <div className="flex justify-center">
@@ -566,7 +566,7 @@ const OverViewAdmin = () => {
         </div>
         <div className="overflow-x-auto border border-gray-300 rounded">
           <div className="text-center ">
-            {!isLoadingSearch && <div className="loader" />}
+            {isLoadingSearch && <div className="loader" />}
           </div>
           <table className="min-w-full border-collapse">
             <thead className="bg-gray-200">
@@ -599,10 +599,10 @@ const OverViewAdmin = () => {
                       {auction.title}
                     </td>
                     <td className="border px-2 py-1 max-w-96 break-words">
-                      {auction.start_time}
+                      {dayjs(auction.start_time).format("MM/DD/YYYY HH:mm")}
                     </td>
                     <td className="border px-2 py-1 max-w-96 break-words">
-                      {auction.end_time}
+                      {dayjs(auction.end_time).format("MM/DD/YYYY HH:mm")}
                     </td>
                     <td className="border px-2 py-1 max-w-96 break-words">
                       {auction.starting_price}
