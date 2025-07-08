@@ -1,8 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import "./NavBar.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../../contexts/AuthContext";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useState, useRef, useEffect } from "react";
 import axiosClient from '../../services/axiosClient';
 import dayjs from 'dayjs';

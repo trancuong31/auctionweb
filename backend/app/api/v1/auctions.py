@@ -64,8 +64,10 @@ class AuctionDetailOut(BaseModel):
     end_time: datetime
     created_at: datetime
     status: int
+    count_users: Optional[int] = None
     highest_amount: Optional[float] = None
     bids : Optional[List]
+
 class AuctionsWithTotalOut(BaseModel):
     auctions: List[AuctionOut]
     total_ongoing: int
@@ -528,6 +530,11 @@ def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
             "address": bid.address,
             "is_winner": bid.is_winner
         })
+    if auction_data["status"] in [0, 2]:
+        count_users = db.query(Bid.user_id).filter(Bid.auction_id == auction_id).distinct().count()
+        auction_data["count_users"] = count_users
+    else:
+        auction_data["count_users"] = None
     auction_data["bids"] = bid_list
 
     return auction_data

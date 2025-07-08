@@ -41,7 +41,7 @@ const AuctionSearch = () => {
     } catch (err) {
       alert(err);
     } finally {
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -163,7 +163,7 @@ const AuctionSearch = () => {
             numberCol={4}
             clickCard={handleClick}
           />
-          <Pagination totalPage={totalPage} onPageChange={handleSearch} />
+          
         </>
       )}
       <Pagination totalPage={totalPage} onPageChange={handleSearch} />
