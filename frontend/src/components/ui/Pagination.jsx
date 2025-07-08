@@ -20,11 +20,8 @@ const Pagination = ({
 
   const handleClickPagination = (index) => {
     setCurrentIndex(index);
+    onPageChange(index + 1);
   };
-
-  useEffect(() => {
-    onPageChange(currentIndex + 1);
-  }, [currentIndex]);
 
   return (
     <div className={clsx("flex justify-center mt-10", className)}>

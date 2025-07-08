@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ModalAuction from "../ui/formAuction";
+import ModalAuction from "./formAuction";
 import clsx from "clsx";
 import {
   faTags,
@@ -17,7 +17,7 @@ import { getOne } from "../../services/api";
 import { toast } from "react-hot-toast";
 function isTokenValid() {
   const user = JSON.parse(localStorage.getItem("user"));
-  if (!user || !user.access_token) return false;
+  if (!user?.access_token) return false;
   try {
     const token = user.access_token;
     const payload = JSON.parse(atob(token.split(".")[1]));
