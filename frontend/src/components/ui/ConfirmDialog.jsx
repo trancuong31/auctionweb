@@ -12,7 +12,7 @@ export default function ConfirmDialog({
     <div className={clsx("relative z-10", open ? "visible" : "invisible")}>
       <div className="fixed inset-0 bg-gray-500/75 transition-opacity" />
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0 max-sm:items-center">
           <div
             className={clsx(
               "relative overflow-hidden rounded-lg text-left shadow-xl fade-slide-up sm:my-8 sm:w-full sm:max-w-lg",

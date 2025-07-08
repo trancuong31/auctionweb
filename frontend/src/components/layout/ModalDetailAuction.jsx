@@ -92,7 +92,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 <th className="border border-gray-300 px-4 py-2">Bid amount</th>
                 <th className="border border-gray-300 px-4 py-2">Time</th>
                 <th className="border border-gray-300 px-4 py-2">Note</th>
-                <th className="border border-gray-300 px-4 py-2">Username</th>
+                <th className="border border-gray-300 px-4 py-2">User name</th>
               </tr>
             </thead>
             <tbody>

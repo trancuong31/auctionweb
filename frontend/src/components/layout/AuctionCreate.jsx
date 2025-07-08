@@ -122,17 +122,17 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
     >
       <div
         className={clsx(
-          "bg-gray-200 w-full max-w-2xl max-h-[95vh] p-8 rounded-2xl relative fade-slide-up overflow-hidden",
+          "bg-gray-200 w-full max-w-2xl max-sm:w-[90%] max-h-[95%] p-8 rounded-2xl relative fade-slide-up overflow-hidden",
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
         )}
       >
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white sm:p-1 absolute top-0 left-0 w-full h-[10%]">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white sm:p-1 absolute top-0 left-0 w-full h-[7%] min-[1500px]:h-[10%]">
           <h2 className="text-lg sm:text-2xl font-bold text-center absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-1/2">
             CREATE AUCTION
           </h2>
           <button
             onClick={() => onClickClose()}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 w-6 h-6 sm:w-8 sm:h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-all duration-200 text-white hover:text-gray-200"
+            className="absolute max-[1500px]:top-2 top-5 right-3 sm:right-4 w-6 h-6 sm:w-8 sm:h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-all duration-200 text-white hover:text-gray-200"
           >
             <svg
               className="w-4 h-4 sm:w-5 sm:h-5"
@@ -150,7 +150,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
           </button>
         </div>
 
-        <form className="space-y-2 mt-[10%]">
+        <form className="space-y-2 mt-[5%] max-sm:mt-[6%] min-[1500px]:mt-[10%]">
           <div>
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
               <svg
@@ -244,7 +244,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               Description<span className="text-red-500">*</span>
             </label>
             <textarea
-              className="w-full p-2 rounded shadow h-24"
+              className="w-full p-2 rounded shadow h-24  max-[1500px]:max-h-14"
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
@@ -279,7 +279,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
             />
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 overflow-hidden">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
               <svg
                 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
@@ -298,44 +298,70 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               Image
             </label>
 
-            {/* Drag & Drop Area */}
-            <div
-              className={clsx(
-                "w-full p-6 border-2 border-dashed rounded-lg transition-colors cursor-pointer hover:border-blue-500",
-                isDragging
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-300 hover:border-gray-400"
-              )}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              onClick={handleDragAreaClick}
-            >
-              <div className="text-center">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
-                  stroke="currentColor"
-                  fill="none"
-                  viewBox="0 0 48 48"
-                >
-                  <path
-                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <div className="mt-2">
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium text-blue-600">
-                      Nhấp để chọn ảnh
-                    </span>{" "}
-                    hoặc kéo thả vào đây
-                  </p>
+            <div className="flex w-full">
+              {/* Drag & Drop Area */}
+              <div
+                className={clsx(
+                  "min-[1500px]:p-6 border-2 border-dashed rounded-lg transition-colors cursor-pointer flex-1",
+                  isDragging
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-300 hover:border-gray-400"
+                )}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={handleDragAreaClick}
+              >
+                <div className="text-center h-28 max-[375px]:h-20 overflow-y-auto">
+                  <svg
+                    className="mx-auto h-12 w-12 text-gray-400"
+                    stroke="currentColor"
+                    fill="none"
+                    viewBox="0 0 48 48"
+                  >
+                    <path
+                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium text-blue-600">
+                        Click to select image
+                      </span>{" "}
+                      or drag and drop
+                    </p>
+                  </div>
+                  {/* Image Preview Area */}
+                  <div
+                    className="grid grid-cols-6 gap-2 ml-1"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {imgFiles.map((file, index) => (
+                      <div
+                        key={`${file.name}-${file.size}-${file.lastModified}`}
+                        className="relative"
+                      >
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`preview-${index}`}
+                          className="object-cover rounded border"
+                        />
+                        <button
+                          onClick={() => removeFile(index)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
+                          title="Xóa ảnh"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-
             {/* Hidden Input */}
             <input
               id="imageInput"
@@ -345,59 +371,6 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               multiple
               onChange={handleFileChange}
             />
-            <div className="max-h-20 overflow-y-auto space-y-2 max-w-full overflow-x-hidden">
-              {/* Selected Files Preview */}
-              {imgFiles.length > 0 && (
-                <div className="mt-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-medium text-gray-700">
-                      Đã chọn {imgFiles.length} ảnh:
-                    </p>
-                    <button
-                      onClick={clearAllFiles}
-                      className="text-xs text-red-600 hover:text-red-800 font-medium"
-                    >
-                      Xóa tất cả
-                    </button>
-                  </div>
-                  <div className="space-y-2">
-                    {imgFiles.map((file, index) => (
-                      <div
-                        key={`${file.name}-${file.size}-${file.lastModified}`}
-                        className="flex items-center justify-between p-2 bg-gray-50 rounded"
-                      >
-                        <div className="flex items-center flex-1 min-w-0">
-                          <span className="text-sm text-gray-600 truncate">
-                            {file.name}
-                          </span>
-                          <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
-                            {(file.size / 1024 / 1024).toFixed(2)} MB
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => removeFile(index)}
-                          className="ml-2 text-red-500 hover:text-red-700 flex-shrink-0"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
 
           <div className="flex justify-center pt-4">
