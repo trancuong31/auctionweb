@@ -54,7 +54,7 @@ const AuctionSearch = () => {
   }, []);
 
   return (
-    <div className="bg-gray-100 p-4 text-xs">
+    <div className="bg-gray-100 p-4 text-xs rounded-xl">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4 items-end">
         {/* Search input */}
 
