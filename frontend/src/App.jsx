@@ -33,7 +33,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
         </Route>
         {/* Not use layout */}
-        <Route path="/admin" element={<AdminPage />} />
+        {/* <Route path="/admin" element={<AdminPage />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
