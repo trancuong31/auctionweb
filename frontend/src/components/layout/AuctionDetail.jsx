@@ -16,21 +16,61 @@ import imagedefault from "../../assets/images/imagedefault.png";
 import { getOne } from "../../services/api";
 import { toast } from "react-hot-toast";
 function isTokenValid() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user?.access_token) return false;
-  try {
-    const token = user.access_token;
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const isValid = payload.exp * 1000 > Date.now();
-    if (!isValid) {
+  const getUser = () => {
+    try {
+      const sessionUser = sessionStorage.getItem("user");
+      if (sessionUser) return JSON.parse(sessionUser);
+    } catch (e) {
+      sessionStorage.removeItem("user");
+    }
+    try {
+      const localUser = localStorage.getItem("user");
+      if (localUser) return JSON.parse(localUser);
+    } catch (e) {
       localStorage.removeItem("user");
     }
+    return null;
+  };
+
+  const user = getUser();
+  if (!user || !user.access_token) return false;
+
+  try {
+    const token = user.access_token;
+    const parts = token.split(".");
+    if (parts.length !== 3) throw new Error("Invalid token format");
+    const payload = JSON.parse(atob(parts[1]));
+    const isValid = payload.exp * 1000 > Date.now();
+
+    if (!isValid) {
+      sessionStorage.removeItem("user");
+      localStorage.removeItem("user");
+    }
+
     return isValid;
   } catch {
+    sessionStorage.removeItem("user");
     localStorage.removeItem("user");
     return false;
   }
 }
+
+function getUser() {
+  try {
+    const sessionUser = sessionStorage.getItem("user");
+    if (sessionUser) return JSON.parse(sessionUser);
+  } catch (e) {
+    sessionStorage.removeItem("user");
+  }
+  try {
+    const localUser = localStorage.getItem("user");
+    if (localUser) return JSON.parse(localUser);
+  } catch (e) {
+    localStorage.removeItem("user");
+  }
+  return null;
+}
+
 const AuctionDetail = () => {
   const { id } = useParams();
   const [auction, setAuction] = useState(null);
@@ -38,7 +78,6 @@ const AuctionDetail = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [clonedImages, setClonedImages] = useState([]);
   const [selectImg, setselectImg] = useState(1);
-  const userData = JSON.parse(localStorage.getItem("user"));
   const sliderRef = useRef(null);
   const intervalRef = useRef(null);
 
@@ -372,8 +411,8 @@ const AuctionDetail = () => {
       {/* Modal đấu giá */}
       <ModalAuction
         isOpen={isOpen}
-        email={userData?.email}
-        username={userData?.username}
+        email={getUser()?.email}
+        username={getUser()?.username}
         auctionId={auction.id}
         onClose={() => setIsOpen(false)}
       />
