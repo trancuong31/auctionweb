@@ -6,6 +6,7 @@ import Pagination from "../components/ui/Pagination";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
+import { useDebounceCallback } from "../hooks/useDebounceCallback";
 import {
   faUsers,
   faGavel,
@@ -37,7 +38,6 @@ const OverViewAdmin = () => {
   const [sortAuctionOrder, setSortAuctionOrder] = useState("");
   const [totalPageAuction, setTotalPageAuction] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [formKey, setFormKey] = useState(false);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState({
@@ -106,6 +106,40 @@ const OverViewAdmin = () => {
       setIsLoadingSearch(false);
     }
   };
+
+  const [debouncedSearchAuction, cancelSearch] = useDebounceCallback(
+    getPageAuction,
+    500
+  );
+
+  // Handler cho nút search
+  const handleSearch = () => {
+    debouncedSearchAuction(1);
+  };
+
+  // Cleanup khi component unmount
+  useEffect(() => {
+    return () => {
+      cancelSearch();
+    };
+  }, [cancelSearch]);
+
+  const [debouncedSearchUser, cancelSearchUser] = useDebounceCallback(
+    getPageUser,
+    500
+  );
+
+  // Handler cho nút search
+  const searchUser = () => {
+    debouncedSearchUser(1);
+  };
+
+  // Cleanup khi component unmount
+  useEffect(() => {
+    return () => {
+      cancelSearchUser();
+    };
+  }, [cancelSearchUser]);
 
   const handleEditUser = async (user) => {
     const newUser = {
@@ -211,7 +245,6 @@ const OverViewAdmin = () => {
       />
       <CreateAuctionForm
         isOpen={displayCreateForm}
-        key={formKey}
         onClickClose={() => {
           setDisplayCreateForm(false);
         }}
@@ -346,7 +379,7 @@ const OverViewAdmin = () => {
 
             {/* <!-- Search Button --> */}
             <button
-              onClick={() => getPageUser()}
+              onClick={searchUser}
               className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-full font-bold text-white text-base
              border border-transparent
              shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
@@ -550,7 +583,7 @@ const OverViewAdmin = () => {
             {/* <!-- Search Button --> */}
             <div className="">
               <button
-                onClick={() => getPageAuction()}
+                onClick={handleSearch}
                 className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-full font-bold text-white text-base
              border border-transparent
              shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]

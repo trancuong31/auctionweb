@@ -21,8 +21,13 @@ function isTokenValid() {
   try {
     const token = user.access_token;
     const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.exp * 1000 > Date.now();
+    const isValid = payload.exp * 1000 > Date.now();
+    if (!isValid) {
+      localStorage.removeItem("user");
+    }
+    return isValid;
   } catch {
+    localStorage.removeItem("user");
     return false;
   }
 }
