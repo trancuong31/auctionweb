@@ -16,21 +16,38 @@ import imagedefault from "../../assets/images/imagedefault.png";
 import { getOne } from "../../services/api";
 import { toast } from "react-hot-toast";
 function isTokenValid() {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const getUser = () => {
+    const sessionUser = sessionStorage.getItem("user");
+    const localUser = localStorage.getItem("user");
+    // Ưu tiên session trước, nếu không có thì lấy từ local
+    return sessionUser
+      ? JSON.parse(sessionUser)
+      : localUser
+      ? JSON.parse(localUser)
+      : null;
+  };
+
+  const user = getUser();
   if (!user?.access_token) return false;
+
   try {
     const token = user.access_token;
     const payload = JSON.parse(atob(token.split(".")[1]));
     const isValid = payload.exp * 1000 > Date.now();
+
     if (!isValid) {
+      sessionStorage.removeItem("user");
       localStorage.removeItem("user");
     }
+
     return isValid;
   } catch {
+    sessionStorage.removeItem("user");
     localStorage.removeItem("user");
     return false;
   }
 }
+
 const AuctionDetail = () => {
   const { id } = useParams();
   const [auction, setAuction] = useState(null);

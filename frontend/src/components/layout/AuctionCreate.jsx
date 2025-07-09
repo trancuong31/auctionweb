@@ -112,7 +112,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
   return (
     <div
       className={clsx(
-        "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ",
+        "fixed inset-0 flex items-center pt-[50px] justify-center bg-black bg-opacity-50 z-50 max-sm:pt-[200px] ",
         isOpen ? "visible" : "invisible"
       )}
     >
