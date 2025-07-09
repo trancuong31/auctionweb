@@ -21,8 +21,13 @@ function isTokenValid() {
   try {
     const token = user.access_token;
     const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.exp * 1000 > Date.now();
+    const isValid = payload.exp * 1000 > Date.now();
+    if (!isValid) {
+      localStorage.removeItem("user");
+    }
+    return isValid;
   } catch {
+    localStorage.removeItem("user");
     return false;
   }
 }
@@ -260,10 +265,10 @@ const AuctionDetail = () => {
               <span className="text-gray-400 italic">No file</span>
             )}
           </p>
-          {(auction.status === 0) | (auction.status === 2) && (
+          {(auction.status === 0 || auction.status === 2) && auction.count_users != null && (
             <p>
               <FontAwesomeIcon icon={faUsers} className="mr-4 text-black-500" />
-              Number of bids: {auction.count_users ? auction.count_users : 0}
+              Number of bids: {auction.count_users}
             </p>
           )}
           {auction.status === 2 && (

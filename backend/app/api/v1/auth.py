@@ -55,7 +55,7 @@ def create_refresh_token(data: dict, expires_delta: timedelta = timedelta(days=7
             
 @router.post("/login", response_model=Token)
 def login(request: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == request.email).first()   
+    user = db.query(User).filter(User.email == request.email).first()
 
     if not user or user.password != request.password:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
