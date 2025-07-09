@@ -76,7 +76,8 @@ const AuctionDetail = () => {
   const [auction, setAuction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectImg, setselectImg] = useState(0);
+  const [clonedImages, setClonedImages] = useState([]);
+  const [selectImg, setselectImg] = useState(1);
   const sliderRef = useRef(null);
   const intervalRef = useRef(null);
 
@@ -96,16 +97,60 @@ const AuctionDetail = () => {
   };
 
   useEffect(() => {
-    if (!auction?.image_url) return;
+    if (
+      !auction ||
+      !Array.isArray(auction.image_url) ||
+      auction.image_url.length <= 1
+    )
+      return;
+    let images = auction.image_url;
+    setClonedImages([
+      images[images.length - 1], // last
+      ...images,
+      images[0], //first
+    ]);
     resetInterval();
     return () => clearInterval(intervalRef.current);
   }, [auction]);
 
   useEffect(() => {
+    if (!clonedImages.length > 0) return;
     if (sliderRef.current) {
+      sliderRef.current.style.transition = "transform 0.7s ease-in-out";
       sliderRef.current.style.transform = `translateX(-${selectImg * 100}%)`;
+
+      // Logic xử lý khi đến clone
+      const totalSlides = auction.image_url.length;
+      const timeout = setTimeout(() => {
+        if (selectImg === 0) {
+          sliderRef.current.style.transition = "none";
+          sliderRef.current.style.transform = `translateX(-${
+            totalSlides * 100
+          }%)`;
+          requestAnimationFrame(() => {
+            setselectImg(totalSlides);
+          });
+        } else if (selectImg === totalSlides + 1) {
+          sliderRef.current.style.transition = "none";
+          sliderRef.current.style.transform = `translateX(-100%)`;
+
+          requestAnimationFrame(() => {
+            setselectImg(1);
+          });
+        }
+      }, 700); // Delay bằng với transition
+
+      return () => clearTimeout(timeout);
     }
-  }, [selectImg]);
+  }, [selectImg, auction]);
+
+  const getCurrentDotIndex = () => {
+    const totalSlides = auction.image_url.length;
+    if (selectImg === 0) return totalSlides - 1; // clone đầu → dot cuối
+    if (selectImg === totalSlides + 1) return 0; // clone cuối → dot đầu
+    return selectImg - 1; // các ảnh thật
+  };
+
   //xử lý token hết hạn bắt user login để thực hiện thao tác đấu giá
   const openAuctionForm = () => {
     if (!isTokenValid()) {
@@ -152,23 +197,29 @@ const AuctionDetail = () => {
   const resetInterval = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
-      setselectImg((prev) =>
-        prev + 1 >= auction.image_url.length ? 0 : prev + 1
-      );
+      setselectImg((prev) => prev + 1);
     }, 3000);
+  };
+
+  useEffect(() => {
+    if (clonedImages.length > 0 && sliderRef.current) {
+      // Gán transform ngay từ đầu
+      sliderRef.current.style.transition = "none";
+      sliderRef.current.style.transform = `translateX(-${selectImg * 100}%)`;
+    }
+  }, [clonedImages]);
+
+  const clickNextButton = () => {
+    resetInterval();
+    setselectImg((prev) =>
+      prev + 1 >= auction.image_url.length + 2 ? 0 : prev + 1
+    );
   };
 
   const clickPreButton = () => {
     resetInterval();
     setselectImg((prev) =>
       prev - 1 < 0 ? auction.image_url.length - 1 : prev - 1
-    );
-  };
-
-  const clickNextButton = () => {
-    resetInterval();
-    setselectImg((prev) =>
-      prev + 1 >= auction.image_url.length ? 0 : prev + 1
     );
   };
 
@@ -203,15 +254,21 @@ const AuctionDetail = () => {
             ref={sliderRef}
             className="flex transition-transform duration-700 ease-in-out"
           >
-            {auction.image_url.length > 0 ? (
-              auction.image_url.map((imageUrl) => (
+            {auction.image_url.length > 1 ? (
+              clonedImages.map((imageUrl, index) => (
                 <img
-                  key={imageUrl}
+                  key={`${imageUrl}-${index}`}
                   src={`${import.meta.env.VITE_BASE_URL}${imageUrl}`}
                   alt={auction.title}
                   className="min-w-full h-[400px] object-cover"
                 />
               ))
+            ) : auction.image_url.length > 0 ? (
+              <img
+                src={`${import.meta.env.VITE_BASE_URL}${auction.image_url[0]}`}
+                alt={auction.title}
+                className="min-w-full h-[400px] object-cover"
+              />
             ) : (
               <img
                 src={imagedefault}
@@ -227,10 +284,10 @@ const AuctionDetail = () => {
               auction.image_url.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => handleSelectImg(index)}
+                  onClick={() => handleSelectImg(index + 1)}
                   className={clsx(
                     "w-4 h-4 rounded-full",
-                    selectImg === index
+                    getCurrentDotIndex() === index
                       ? "bg-blue-700"
                       : "bg-gray-300 hover:bg-blue-500"
                   )}
@@ -304,12 +361,16 @@ const AuctionDetail = () => {
               <span className="text-gray-400 italic">No file</span>
             )}
           </p>
-          {(auction.status === 0 || auction.status === 2) && auction.count_users != null && (
-            <p>
-              <FontAwesomeIcon icon={faUsers} className="mr-4 text-black-500" />
-              Number of bids: {auction.count_users}
-            </p>
-          )}
+          {(auction.status === 0 || auction.status === 2) &&
+            auction.count_users != null && (
+              <p>
+                <FontAwesomeIcon
+                  icon={faUsers}
+                  className="mr-4 text-black-500"
+                />
+                Number of bids: {auction.count_users}
+              </p>
+            )}
           {auction.status === 2 && (
             <p>
               <FontAwesomeIcon icon={faUser} className="mr-4 text-black-500" />
