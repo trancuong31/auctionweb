@@ -63,9 +63,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               </div>
 
               <div className="text-sm md:text-base w-full md:w-1/2">
-                <p>
+                {/* <p>
                   <strong>PARTRON NO:</strong> xxxxxxxxxxxxxx
-                </p>
+                </p> */}
                 <p>
                   <strong>Title:</strong> {auction.title}
                 </p>

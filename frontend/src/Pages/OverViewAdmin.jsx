@@ -69,7 +69,7 @@ const OverViewAdmin = () => {
       search_text: searchTextUser,
     };
     try {
-      setIsLoadingSearch(true);
+      // setIsLoadingSearch(true);
       const response = await getAll("users", true, param);
       setUserData(response.data.users);
       setTotalPageUser(
@@ -81,7 +81,7 @@ const OverViewAdmin = () => {
       toast.error("Error while get User data");
       console.log(error);
     } finally {
-      setIsLoadingSearch(false);
+      // setIsLoadingSearch(false);
     }
   };
 
@@ -93,7 +93,7 @@ const OverViewAdmin = () => {
       title: searchAuctionTitle,
     };
     try {
-      setIsLoadingSearch(true);
+      // setIsLoadingSearch(true);
       const response = await getAll("auctions/search", true, param);
       setAuctionData(response.data.auctions);
       setTotalPageAuction(
@@ -103,7 +103,7 @@ const OverViewAdmin = () => {
       toast.error("Error while get Auction Data");
       console.log(error);
     } finally {
-      setIsLoadingSearch(false);
+      // setIsLoadingSearch(false);
     }
   };
 
@@ -253,7 +253,7 @@ const OverViewAdmin = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
         <div className="bg-indigo-400 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
           <p className="text-xs sm:text-sm font-semibold">Total User</p>
-          <p className="text-xl sm:text-2xl font-bold">
+          <p className="text-2xl sm:text-2xl font-bold">
             {overViewData.total_user}
           </p>
           <p className="text-lg sm:text-xl">
@@ -322,7 +322,7 @@ const OverViewAdmin = () => {
 
       {/* <!-- MANAGER USERS --> */}
 
-      <div className="bg-blue-100 p-4 rounded shadow mb-6">
+      <div className="bg-gray-100 p-4 rounded shadow mb-6">
         <div className="flex justify-between mb-3 items-center max-sm:flex-col max-sm:gap-3">
           <p className="text-lg font-bold">MANAGER USERS</p>
           <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end max-sm:gap-3">
@@ -331,7 +331,7 @@ const OverViewAdmin = () => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Type email or username"
+                  placeholder="Email or Username"
                   className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={(e) => setSearchTextUser(e.target.value)}
                 />
@@ -356,13 +356,13 @@ const OverViewAdmin = () => {
                   className="border border-gray-400 rounded-lg px-3 py-2 w-full"
                 >
                   <option value="username" data-order="asc">
-                    User Name from A to Z
+                    Username from A to Z
                   </option>
                   <option value="username" data-order="desc">
-                    User Name from Z to A
+                    Username from Z to A
                   </option>
                   <option value="start_time" data-order="asc">
-                    Email Name from A to Z
+                    Email from A to Z
                   </option>
                   <option value="start_time" data-order="desc">
                     Email from Z to A
@@ -512,12 +512,14 @@ const OverViewAdmin = () => {
 
       {/* <!-- MANAGER AUCTIONS --> */}
 
-      <div className="bg-blue-100  p-4 rounded shadow">
-        <div className="flex justify-between items-center mb-4 max-sm:justify-center">
-          <h2 className="text-lg font-bold">MANAGER AUCTIONS</h2>
-        </div>
+      <div className="bg-gray-100  p-4 rounded shadow">
+        {/* <div className="flex justify-between items-center mb-4 max-sm:justify-center">
+          
+        </div> */}
+        
         <div className="flex-1 flex flex-col md:flex-row justify-between items-center md:space-y-0 md:space-x-4 w-full">
           <div className="flex gap-10 w-full items-center max-sm:flex-col max-sm:gap-4 max-sm:mb-4">
+            <h2 className="text-lg font-bold">MANAGER AUCTIONS</h2>
             <button
               onClick={() => setDisplayCreateForm(true)}
               className="bg-blue-500 text-white px-3 py-2 rounded max-sm:w-full"
@@ -529,7 +531,7 @@ const OverViewAdmin = () => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Type Title Auction"
+                  placeholder="Title Auction"
                   className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={(e) => setSearchAuctionTitle(e.target.value)}
                 />
@@ -559,22 +561,22 @@ const OverViewAdmin = () => {
                     Title from Z to A
                   </option>
                   <option value="create_at" data-order="asc">
-                    Create At from Oldest to Latest
+                    Createat from Oldest to Latest
                   </option>
                   <option value="create_at" data-order="desc">
-                    Create At from Latest to Oldest
+                    Createat from Latest to Oldest
                   </option>
                   <option value="start_time" data-order="asc">
-                    Start Time from Oldest to Latest
+                    Startime from Oldest to Latest
                   </option>
                   <option value="start_time" data-order="desc">
-                    Start Time from Latest to Oldest
+                    Startime from Latest to Oldest
                   </option>
                   <option value="end_time" data-order="asc">
-                    End Time from Oldest to Latest
+                    Endtime from Oldest to Latest
                   </option>
                   <option value="end_time" data-order="desc">
-                    End Time from Latest to Oldest
+                    Endtime from Latest to Oldest
                   </option>
                 </select>
               </div>
@@ -609,7 +611,7 @@ const OverViewAdmin = () => {
                 <th className="border px-2 py-1">Start time</th>
                 <th className="border px-2 py-1">End time</th>
                 <th className="border px-2 py-1">Starting price</th>
-                <th className="border px-2 py-1">Current highest price</th>
+                <th className="border px-2 py-1">Highest price</th>
                 <th className="border px-2 py-1">Status</th>
                 <th className="border px-2 py-1">#</th>
               </tr>

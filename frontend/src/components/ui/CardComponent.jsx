@@ -44,7 +44,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   (item.image_url && item.image_url.length > 0
                     ? "w-full h-full object-cover"
                     : "img-no") +
-                  " transition-transform duration-500 ease-in-out will-change-transform group-hover:scale-105"
+                  " transition-transform duration-500 ease-in-out will-change-transform group-hover:scale-110"
                 }
               />
             </div>
@@ -59,6 +59,13 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   Starting price:
                 </span>{" "}
                 {item.starting_price?.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                })}
+              </p>
+              <p className="flex justify-between">
+                <span className=" text-gray-500">Price step:</span>{" "}
+                {item.step_price?.toLocaleString("en-US", {
                   style: "currency",
                   currency: "USD",
                 })}
@@ -91,13 +98,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   })}
                 </span>
               </p>
-              <p className="flex justify-between">
-                <span className=" text-gray-500">Price step:</span>{" "}
-                {item.step_price?.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
-              </p>
+              
               {item.status === 2 ? (
                 item.highest_amount !== null && item.winner_info !== null ? (
                   <p className="flex justify-between">
