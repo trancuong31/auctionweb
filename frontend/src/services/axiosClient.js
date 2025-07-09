@@ -10,7 +10,6 @@ axiosWithToken.interceptors.request.use(
     (config) => {
     const token = JSON.parse(localStorage.getItem('user') || "null")?.access_token ||
   JSON.parse(sessionStorage.getItem('user') || "null")?.access_token
-    console.log("sss")
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
     }
