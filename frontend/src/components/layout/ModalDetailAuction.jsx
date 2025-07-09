@@ -1,5 +1,6 @@
 import { getOne } from "../../services/api";
 import { useEffect, useState } from "react";
+import clsx from "clsx";
 
 const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   const [bids, setBids] = useState([]);
@@ -25,10 +26,19 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
     }
   }, [isOpen, idAuction]);
 
-  if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg h-[80%] w-[90%] max-w-5xl p-4">
+    <div
+      className={clsx(
+        "fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50",
+        isOpen ? "visible" : "invisible"
+      )}
+    >
+      <div
+        className={clsx(
+          "bg-white rounded-lg shadow-lg h-[80%] w-[90%] max-w-5xl p-4 fade-slide-up",
+          isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
+        )}
+      >
         <div className="flex justify-end">
           <button onClick={clickClose} className="text-black text-lg font-bold">
             &times;

@@ -2,15 +2,15 @@ import { NavLink, useNavigate } from "react-router-dom";
 import "./NavBar.css";
 import { useAuth } from "../../contexts/AuthContext";
 import { useState, useRef, useEffect } from "react";
-import axiosClient from '../../services/axiosClient';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import axiosClient from "../../services/axiosClient";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import NotificationDropdown from "./NotificationDropdown";
 
 dayjs.extend(relativeTime);
 
 function NavBar() {
-  const {user, logout} = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState(false);
   const bellRef = useRef();
@@ -32,11 +32,14 @@ function NavBar() {
     }
     if (showNotification) {
       document.addEventListener("mousedown", handleClickOutside);
-      axiosClient.get('/notifications')
-        .then(res => {
+      axiosClient
+        .get("/notifications")
+        .then((res) => {
           setNotifications(res.data || []);
         })
-        .catch(() => setNotifications([], console.error('Error fetching notifications')));
+        .catch(() =>
+          setNotifications([], console.error("Error fetching notifications"))
+        );
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
@@ -48,28 +51,52 @@ function NavBar() {
   return (
     <nav className="nav-wrapper">
       <div className="nav-left">
-        <NavLink to="/" className="nav-link">Home</NavLink>
-        <NavLink to="/auctions/search" className="nav-link">Auction</NavLink>
-        <NavLink to="/about" className="nav-link">Infomation</NavLink>
-        <NavLink to="/history" className="nav-link">History</NavLink>        
-        <NavLink to="/guide" className="nav-link">Tutorial</NavLink>
-        <NavLink to="/contact" className="nav-link">Contact</NavLink>
-        <NavLink to="/policy" className="nav-link">Rule</NavLink>
+        <NavLink to="/" className="nav-link">
+          Home
+        </NavLink>
+        <NavLink to="/auctions/search" className="nav-link">
+          Auction
+        </NavLink>
+        <NavLink to="/about" className="nav-link">
+          Infomation
+        </NavLink>
+        <NavLink to="/history" className="nav-link">
+          History
+        </NavLink>
+        <NavLink to="/guide" className="nav-link">
+          Tutorial
+        </NavLink>
+        <NavLink to="/contact" className="nav-link">
+          Contact
+        </NavLink>
+        <NavLink to="/policy" className="nav-link">
+          Rule
+        </NavLink>
+        {user?.role === "admin" && (
+          <NavLink to="/admin" className="nav-link">
+            Dashboard
+          </NavLink>
+        )}
       </div>
       <div className="nav-right">
         {user ? (
           <>
-          <NotificationDropdown triggerRef={bellRef} />
+            <NotificationDropdown triggerRef={bellRef} />
             <span className="user-greeting nav-link">
-              
-              Hello {user.role === "admin" ? "admin" : "user"} {user.username}!              
+              Hello {user.role === "admin" ? "admin" : "user"} {user.username}!
             </span>
-            <button className="nav-link button-link" onClick={handleLogout}>Logout</button>
+            <button className="nav-link button-link" onClick={handleLogout}>
+              Logout
+            </button>
           </>
         ) : (
           <>
-            <NavLink to="/login" className="nav-link">Login</NavLink>
-            <NavLink to="/register" className="nav-link">Register</NavLink>
+            <NavLink to="/login" className="nav-link">
+              Login
+            </NavLink>
+            <NavLink to="/register" className="nav-link">
+              Register
+            </NavLink>
           </>
         )}
       </div>
