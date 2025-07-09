@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./Auctions.css";
 import { useNavigate } from "react-router-dom";
 import RenderCardAuction from "../ui/CardComponent";
+
 const AuctionSection = ({ title, type }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +52,7 @@ const AuctionSection = ({ title, type }) => {
   if (loading) return <div className="loader" />;
   if (error) return <p className="error">{error}</p>;
 
-  return (
+  return (    
     <div className="section">
       <h2 className="section-title">{title}</h2>
       <span
