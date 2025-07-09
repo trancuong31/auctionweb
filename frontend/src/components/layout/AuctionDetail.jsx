@@ -17,22 +17,29 @@ import { getOne } from "../../services/api";
 import { toast } from "react-hot-toast";
 function isTokenValid() {
   const getUser = () => {
-    const sessionUser = sessionStorage.getItem("user");
-    const localUser = localStorage.getItem("user");
-    // Ưu tiên session trước, nếu không có thì lấy từ local
-    return sessionUser
-      ? JSON.parse(sessionUser)
-      : localUser
-      ? JSON.parse(localUser)
-      : null;
+    try {
+      const sessionUser = sessionStorage.getItem("user");
+      if (sessionUser) return JSON.parse(sessionUser);
+    } catch (e) {
+      sessionStorage.removeItem("user");
+    }
+    try {
+      const localUser = localStorage.getItem("user");
+      if (localUser) return JSON.parse(localUser);
+    } catch (e) {
+      localStorage.removeItem("user");
+    }
+    return null;
   };
 
   const user = getUser();
-  if (!user?.access_token) return false;
+  if (!user || !user.access_token) return false;
 
   try {
     const token = user.access_token;
-    const payload = JSON.parse(atob(token.split(".")[1]));
+    const parts = token.split(".");
+    if (parts.length !== 3) throw new Error("Invalid token format");
+    const payload = JSON.parse(atob(parts[1]));
     const isValid = payload.exp * 1000 > Date.now();
 
     if (!isValid) {
@@ -48,13 +55,28 @@ function isTokenValid() {
   }
 }
 
+function getUser() {
+  try {
+    const sessionUser = sessionStorage.getItem("user");
+    if (sessionUser) return JSON.parse(sessionUser);
+  } catch (e) {
+    sessionStorage.removeItem("user");
+  }
+  try {
+    const localUser = localStorage.getItem("user");
+    if (localUser) return JSON.parse(localUser);
+  } catch (e) {
+    localStorage.removeItem("user");
+  }
+  return null;
+}
+
 const AuctionDetail = () => {
   const { id } = useParams();
   const [auction, setAuction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [selectImg, setselectImg] = useState(0);
-  const userData = JSON.parse(localStorage.getItem("user"));
   const sliderRef = useRef(null);
   const intervalRef = useRef(null);
 
@@ -328,8 +350,8 @@ const AuctionDetail = () => {
       {/* Modal đấu giá */}
       <ModalAuction
         isOpen={isOpen}
-        email={userData?.email}
-        username={userData?.username}
+        email={getUser()?.email}
+        username={getUser()?.username}
         auctionId={auction.id}
         onClose={() => setIsOpen(false)}
       />
