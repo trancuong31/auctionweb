@@ -18,26 +18,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const schema = z.object({
   email: z
     .string()
-    .nonempty("Email không được để trống")
-    .email("Email không đúng định dạng")
-    .max(255, "Email không được vượt quá 255 ký tự"),
+    .max(100, "Email must not exceed 100 characters"),
   username: z
     .string()
-    .nonempty("Tên người dùng không được để trống")
-    .min(3, "Tên người dùng phải có ít nhất 3 ký tự")
-    .max(50, "Tên người dùng không được vượt quá 50 ký tự")
+    .min(3, "Username must be at least 3 characters")
+    .max(50, "Username cannot exceed 50 characters")
     .regex(
-      /^[a-zA-Z0-9_]+$/,
-      "Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới"
+      /^[a-zA]+$/,
+      "Usernames must contain only letters"
     ),
   password: z
     .string()
-    .nonempty("Mật khẩu không được để trống")
-    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
-    .max(100, "Mật khẩu không được vượt quá 100 ký tự")
+    .min(8, "Password must be at least 8 characters")
+    .max(30, "Password must not exceed 30 characters")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-      "Mật khẩu phải bao gồm số, chữ cái thường , chữ hoa, ký tự đặc biệt"
+      "Password must include numbers, lowercase, uppercase, special characters"
     ),
 });
 
@@ -111,7 +107,7 @@ function Register() {
               autoComplete="email"
             />
             {errors.email && (
-              <p className="text-red-500 text-sm absolute left-0 ml-1">
+              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
                 {errors.email.message}
               </p>
             )}
@@ -127,7 +123,7 @@ function Register() {
               autoComplete="username"
             />
             {errors.username && (
-              <p className="text-red-500 text-sm absolute left-0 ml-1">
+              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
                 {errors.username.message}
               </p>
             )}
@@ -143,7 +139,7 @@ function Register() {
               autoComplete="new-password"
             />
             {errors.password && (
-              <p className="text-red-500 text-sm absolute left-0 ml-1">
+              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
                 {errors.password.message}
               </p>
             )}
