@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.css";
 import logo from "../../assets/images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,9 +12,8 @@ import {
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import z from "zod";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { email } from "zod/v4-mini";
 
 const schema = z.object({
   email: z
@@ -26,26 +25,27 @@ const schema = z.object({
     .string()
     .nonempty("Tên người dùng không được để trống")
     .min(3, "Tên người dùng phải có ít nhất 3 ký tự")
-    .max(50, "Tên người dùng không được vượt quá 50 ký tự"),
-    // .regex(
-    //   /^[a-zA-Z0-9_]+$/,
-    //   "Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới"
-    // ),
+    .max(50, "Tên người dùng không được vượt quá 50 ký tự")
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      "Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới"
+    ),
   password: z
     .string()
     .nonempty("Mật khẩu không được để trống")
     .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
     .max(100, "Mật khẩu không được vượt quá 100 ký tự")
-    // .regex(
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-    //   "Mật khẩu phải bao gồm số, chữ cái thường , chữ hoa, ký tự đặc biệt"
-    // ),
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+      "Mật khẩu phải bao gồm số, chữ cái thường , chữ hoa, ký tự đặc biệt"
+    ),
 });
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirm, setConfirm] = useState("");
+  const [show, setShow] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -61,6 +61,11 @@ function Register() {
       password: "",
     },
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShow(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   const submitForm = async (formData) => {
     if (formData.password !== confirm) {
@@ -88,7 +93,11 @@ function Register() {
   return (
     <div className="login-bg">
       <img src={logo} alt="Logo" className="login-logo" />
-      <div className="login-form-container">
+      <div
+        className={`login-form-container transition-all duration-700 ease-out ${
+          show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
+      >
         <h1 className="login-title">Register</h1>
         <form onSubmit={handleSubmit(submitForm)}>
           <div className="input-group">
