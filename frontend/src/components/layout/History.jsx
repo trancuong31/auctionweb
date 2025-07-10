@@ -1,16 +1,19 @@
-import NavBar from "./NavBar";
-import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
-import login from "../../assets/images/login.png";
-import register from "../../assets/images/register.png";
-
+import React, { useEffect, useState } from "react";
 function Tutorial() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShow(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <>
-        {/* <Header /> */}
-        {/* <NavBar /> */}
-        <main className="history-content">
+      <main
+        className={`history-content transition-all duration-700 ease-out ${
+          show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
+      >
         <div
           style={{
             background: "#fff",
@@ -39,15 +42,20 @@ function Tutorial() {
                 borderLeft: "4px solid #667eea",
                 paddingLeft: "24px",
                 marginBottom: "24px",
-                background: "linear-gradient(90deg, #f6f8fa 80%, transparent)",
+                background:
+                  "linear-gradient(90deg, #f6f8fa 80%, transparent)",
                 borderRadius: "6px",
               }}
             >
-              <strong>2008:</strong> Thành lập tại Lô CN11, Khu công nghiệp Khai Quang, Vĩnh Yên, Vĩnh Phúc với vốn đầu tư ban đầu 4 triệu USD từ Hàn Quốc.
+              <strong>2008:</strong> Thành lập tại Lô CN11, Khu công nghiệp Khai
+              Quang, Vĩnh Yên, Vĩnh Phúc với vốn đầu tư ban đầu 4 triệu USD từ
+              Hàn Quốc.
               <br />
               <strong>2015:</strong> Tổng vốn đầu tư nâng lên 150 triệu USD.
               <br />
-              <strong>2024:</strong> Tiếp tục mở rộng quy mô sản xuất, tổng vốn đầu tư đạt 269,4 triệu USD, đáp ứng nhu cầu thị trường điện tử tiên tiến.
+              <strong>2024:</strong> Tiếp tục mở rộng quy mô sản xuất, tổng vốn
+              đầu tư đạt 269,4 triệu USD, đáp ứng nhu cầu thị trường điện tử
+              tiên tiến.
             </div>
             <div style={{ marginBottom: "24px" }}>
               <strong>Lĩnh vực hoạt động:</strong>
@@ -59,22 +67,32 @@ function Tutorial() {
                 <li>Các linh kiện điện tử khác</li>
               </ul>
               <span>
-                Partron Vina là nhà cung cấp vệ tinh hàng đầu của Samsung Electronics Việt Nam, đồng thời sản xuất linh kiện cho các hãng lớn như Amazon. Sản phẩm đã có mặt tại Hàn Quốc, EU, Brazil, Ấn Độ...
+                Partron Vina là nhà cung cấp vệ tinh hàng đầu của Samsung
+                Electronics Việt Nam, đồng thời sản xuất linh kiện cho các hãng
+                lớn như Amazon. Sản phẩm đã có mặt tại Hàn Quốc, EU, Brazil, Ấn
+                Độ...
               </span>
             </div>
             <div>
               <strong>Đội ngũ & Đóng góp:</strong>
               <ul style={{ margin: "8px 0 0 24px", padding: 0 }}>
                 <li>Chuyên gia nước ngoài năng động, quản lý chuyên nghiệp</li>
-                <li>Tạo việc làm cho hàng nghìn lao động trong và ngoài tỉnh Vĩnh Phúc</li>
-                <li>Góp phần phát triển kinh tế địa phương và ngành công nghiệp hỗ trợ điện tử Việt Nam</li>
+                <li>
+                  Tạo việc làm cho hàng nghìn lao động trong và ngoài tỉnh Vĩnh
+                  Phúc
+                </li>
+                <li>
+                  Góp phần phát triển kinh tế địa phương và ngành công nghiệp
+                  hỗ trợ điện tử Việt Nam
+                </li>
               </ul>
             </div>
           </div>
         </div>
       </main>
-        {/* <Footer /> */}
-        </>
-    );
+      {/* <Footer /> */}
+    </>
+  );
 }
+
 export default Tutorial;
