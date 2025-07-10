@@ -509,7 +509,7 @@ const OverViewAdmin = () => {
       <Pagination
         totalPage={totalPageUser}
         onPageChange={getPageUser}
-        className={"flex mt-0 justify-end"}
+        className={"flex mt-0 justify-end mb-4"}
       />
 
       {/* <!-- MANAGER AUCTIONS --> */}

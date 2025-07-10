@@ -11,15 +11,15 @@ const schema = z.object({
   address: z
     .string()
     .trim()
-    .min(1, "Hãy nhập địa chỉ")
-    .max(100, "địa chỉ không được quá 100 ký tự"),
+    .min(1, "Address is required")
+    .max(100, "Address cannot exceed 100 characters"),
   bid_amount: z
     .number()
-    .positive("Giá trị phải lớn hơn 0")
+    .positive("Value must be greater than 0")
     .refine((val) => /^\d+(\.\d{1,2})?$/.test(val.toFixed(2)), {
-      message: "Chỉ cho phép tối đa 2 chữ số thập phân",
+      message: "Only allow up to 2 decimal places",
     }),
-  note: z.string().trim().max(1000, "Ghi chú không được quá 1000 ký tự"),
+  note: z.string().trim().max(1000, "Notes must not exceed 1000 characters."),
 });
 
 function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
@@ -109,7 +109,7 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
           className="p-4 sm:p-6 space-y-4 sm:space-y-6"
         >
           {/* Username Field */}
-          <div className="space-y-1 sm:space-y-2">
+          <div className="">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
               <svg
                 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
@@ -153,7 +153,7 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
           </div>
 
           {/* Email Field */}
-          <div className="space-y-1 sm:space-y-2">
+          <div className="">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
               <svg
                 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
@@ -197,7 +197,7 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
           </div>
 
           {/* Address Field */}
-          <div className="space-y-1 sm:space-y-2">
+          <div className="">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
               <svg
                 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
@@ -233,7 +233,7 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
                     placeholder="Enter your delivery address"
                   />
                   {fieldState.error && (
-                    <p className="text-red-500">{fieldState.error.message}</p>
+                    <p className="text-red-500 text-[10px]">{fieldState.error.message}</p>
                   )}
                 </>
               )}
@@ -241,7 +241,7 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
           </div>
 
           {/* Bid Amount Field */}
-          <div className="space-y-1 sm:space-y-2">
+          <div className="">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
               <svg
                 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
@@ -273,13 +273,13 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
               />
 
               {errors.bid_amount && (
-                <p className="text-red-500">{errors.bid_amount.message}</p>
+                <p className="text-red-500 text-[10px]">{errors.bid_amount.message}</p>
               )}
             </div>
           </div>
 
           {/* Note Field */}
-          <div className="space-y-1 sm:space-y-2">
+          <div className="">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
               <svg
                 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"

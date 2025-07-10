@@ -14,18 +14,18 @@ const auctionSchema = z.object({
   title: z
     .string()
     .trim()
-    .min(1, "Tiêu đề là bắt buộc")
-    .max(200, "Tiêu đề không được quá 200 ký tự"),
+    .min(1, "Title is required")
+    .max(200, "Title must not exceed 200 characters"),
   description: z
     .string()
     .trim()
-    .min(1, "Mô tả là bắt buộc")
-    .max(2000, "Mô tả không được quá 2000 ký tự"),
-  starting_price: z.number().min(1, "Giá khởi điểm phải > 0"),
-  step_price: z.number().min(1, "Bước giá phải ≥ 1"),
-  image_url: z.array(z.instanceof(File)).min(1, "Phải chọn ít nhất một file"),
-  file_exel: z.instanceof(File, { message: "Phải chọn file Excel" }),
-  end_time: z.string().min(1, "Thời gian là bắt buộc"),
+    .min(1, "Description is required")
+    .max(2000, "Description must not exceed 2000 characters"),
+  starting_price: z.number().min(1, "Starting price must be > 0"),
+  step_price: z.number().min(1, "Price step must be ≥ 1$"),
+  image_url: z.array(z.instanceof(File)).min(1, "Must select at least one file"),
+  file_exel: z.instanceof(File, { message: "Must select Excel file" }),
+  end_time: z.string().min(1, "Time is required"),
   start_time: z.string().min(1),
 });
 
@@ -69,6 +69,8 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
         file_exel: linkExcel,
       };
       await create("auctions", data, true);
+      toast.success("Add new auction successful");
+      onClickClose();
     } catch (error) {
       toast.error("Error while add Auction");
       console.log(error);
@@ -316,7 +318,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               allowMinDate={false}
             />
             {errors.end_time && (
-              <p className="text-red-500 text-sm mt-1 absolute right-1 text-xs">
+              <p className="text-red-500 mt-1 absolute right-1 text-xs">
                 {errors.end_time.message}
               </p>
             )}
@@ -473,8 +475,8 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                         />
                         <button
                           onClick={() => removeFile(index)}
-                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
-                          title="Xóa ảnh"
+                          className="absolute top-1 right-1 bg-gray-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
+                          title="Delete image"
                         >
                           ×
                         </button>
@@ -503,7 +505,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
           <div className="flex justify-center pt-4">
             <button
               type="submit"
-              className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded hover:bg-blue-600"
             >
               Submit
             </button>
