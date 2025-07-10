@@ -7,17 +7,26 @@ import timezone from "dayjs/plugin/timezone";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import z from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const auctionSchema = z.object({
-  title: z.string().trim().min(1, "Tiêu đề là bắt buộc"),
-  description: z.string().trim().min(1, "Mô tả là bắt buộc"),
-  starting_price: z.number().min(0, "Giá khởi điểm phải ≥ 0"),
+  title: z
+    .string()
+    .trim()
+    .min(1, "Tiêu đề là bắt buộc")
+    .max(200, "Tiêu đề không được quá 200 ký tự"),
+  description: z
+    .string()
+    .trim()
+    .min(1, "Mô tả là bắt buộc")
+    .max(2000, "Mô tả không được quá 2000 ký tự"),
+  starting_price: z.number().min(1, "Giá khởi điểm phải > 0"),
   step_price: z.number().min(1, "Bước giá phải ≥ 1"),
-  image_url: z.array(z.string().url()).min(1, "Phải có ít nhất một ảnh"),
-  file_exel: z.string().url().optional().or(z.literal("")),
+  image_url: z.array(z.instanceof(File)).min(1, "Phải chọn ít nhất một file"),
+  file_exel: z.instanceof(File, { message: "Phải chọn file Excel" }),
   end_time: z.string().min(1, "Thời gian là bắt buộc"),
+  start_time: z.string().min(1),
 });
 
 const CreateAuctionForm = ({ isOpen, onClickClose }) => {
@@ -28,20 +37,24 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
   dayjs.extend(timezone);
 
   const {
-    register,
     handleSubmit,
+    control,
     setValue,
     watch,
+    register,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(auctionSchema),
+    mode: "onBlur",
     defaultValues: {
       title: "",
-      description: "",
       starting_price: 0,
       step_price: 0,
       start_time: "",
       end_time: "",
+      description: "",
+      file_exel: null,
+      image_url: [],
     },
   });
 
@@ -51,16 +64,10 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
 
     try {
       const data = {
-        title: formData.title.trim().replace(/\s+/g, " "),
-        description: formData.description.trim().replace(/\s+/g, " "),
-        starting_price: Number(formData.starting_price),
-        step_price: Number(formData.step_price),
+        ...formData,
         image_url: arrLinkImg,
         file_exel: linkExcel,
-        start_time: formData.start_time,
-        end_time: formData.end_time,
       };
-
       await create("auctions", data, true);
     } catch (error) {
       toast.error("Error while add Auction");
@@ -111,11 +118,11 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
   };
 
   const handlerUploadImgs = async (files) => {
+    const images = watch("image_url");
     const formData = new FormData();
-    files.forEach((img) => {
+    images.forEach((img) => {
       formData.append("files", img);
     });
-
     try {
       const response = await create("upload/image", formData, true);
       return response.data.image_urls;
@@ -181,7 +188,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-2 mt-[5%] max-sm:mt-[6%] min-[1500px]:mt-[10%]"
         >
-          <div>
+          <div className="relative">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
               <svg
                 className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
@@ -206,12 +213,14 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               onChange={(e) => setTitle(e.target.value)}
             />
             {errors.title && (
-              <p className="text-red-500">{errors.title.message}</p>
+              <p className="text-red-500 absolute right-1 text-xs">
+                {errors.title.message}
+              </p>
             )}
           </div>
 
           <div className="flex gap-4">
-            <div className="flex-1">
+            <div className="flex-1 relative">
               <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
                 <svg
                   className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
@@ -229,18 +238,20 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                 Starting Price<span className="text-red-500">*</span>
               </label>
               <input
-                {...register("starting_price")}
+                {...register("starting_price", { valueAsNumber: true })}
                 type="number"
                 min="0"
                 className="w-full p-2 rounded shadow"
                 onChange={(e) => setStartingPrice(e.target.value)}
               />
               {errors.starting_price && (
-                <p className="text-red-500">errors.starting_price.message</p>
+                <p className="text-red-500 absolute right-1 text-xs">
+                  {errors.starting_price.message}
+                </p>
               )}
             </div>
 
-            <div className="flex-1">
+            <div className="flex-1 relative">
               <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
                 <svg
                   className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
@@ -258,18 +269,20 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                 Step Price<span className="text-red-500">*</span>
               </label>
               <input
-                {...register("step_price")}
+                {...register("step_price", { valueAsNumber: true })}
                 type="number"
                 min="0"
                 className="w-full p-2 rounded shadow"
                 onChange={(e) => setStepPrice(e.target.value)}
               />
               {errors.step_price && (
-                <p className="text-red-500">{errors.step_price.message}</p>
+                <p className="text-red-500 absolute right-1 text-xs">
+                  {errors.step_price.message}
+                </p>
               )}
             </div>
           </div>
-          <div>
+          <div className="relative">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
               <svg
                 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
@@ -287,7 +300,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               Select time<span className="text-red-500">*</span>
             </label>
             <RangeCalender
-              value={watch(["start_time", "end_time"])}
+              // value={watch(["start_time", "end_time"])}
               onChange={(dates) => {
                 if (dates.length === 2) {
                   setValue(
@@ -303,13 +316,13 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               allowMinDate={false}
             />
             {errors.end_time && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="text-red-500 text-sm mt-1 absolute right-1 text-xs">
                 {errors.end_time.message}
               </p>
             )}
           </div>
 
-          <div>
+          <div className="relative">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
               <svg
                 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
@@ -332,10 +345,12 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               onChange={(e) => setDescription(e.target.value)}
             />
             {errors.description && (
-              <p className="text-red-500">{errors.description.message}</p>
+              <p className="text-red-500 absolute right-1 text-xs">
+                {errors.description.message}
+              </p>
             )}
           </div>
-          <div className="flex-1">
+          <div className="flex-1 relative">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
               <svg
                 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
@@ -358,24 +373,35 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               </svg>
               Excel
             </label>
-            <input
-              {...register("file_exel")}
-              type="file"
-              accept=".xlsx,.xls"
-              className="w-full p-2 rounded shadow bg-white"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) {
-                  setValue("file_exel", file);
-                }
-              }}
+            <Controller
+              name="file_exel"
+              control={control}
+              render={({
+                field: { onChange, value, ...field },
+                fieldState,
+              }) => (
+                <>
+                  <input
+                    {...field}
+                    type="file"
+                    accept=".xlsx,.xls"
+                    className="w-full p-2 rounded shadow bg-white"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      onChange(file || null);
+                    }}
+                  />
+                  {fieldState.error && (
+                    <p className="text-red-500 absolute right-1 text-xs">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </>
+              )}
             />
-            {errors.file_exel && (
-              <p className="text-red-500">{errors.file_exel.message}</p>
-            )}
           </div>
 
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 relative">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
               <svg
                 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
@@ -468,12 +494,17 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               onChange={handleFileChange}
             />
             {errors.image_url && (
-              <p className="text-red-500">{errors.image_url.message}</p>
+              <p className="text-red-500 absolute right-1 text-xs">
+                {errors.image_url.message}
+              </p>
             )}
           </div>
 
           <div className="flex justify-center pt-4">
-            <button className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+            >
               Submit
             </button>
           </div>
