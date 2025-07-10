@@ -30,7 +30,6 @@ const auctionSchema = z.object({
 });
 
 const CreateAuctionForm = ({ isOpen, onClickClose }) => {
-  const [imgFiles, setImgFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
 
   dayjs.extend(utc);
@@ -75,10 +74,23 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
     }
   };
 
+  const imgFiles = watch("image_url") || [];
+
   const handleFileChange = (e) => {
+    const currentFiles = watch("image_url") || [];
     const files = Array.from(e.target.files);
-    setValue("image_url", files);
-    setImgFiles(files);
+
+    const currentNames = currentFiles.map((file) => file.name);
+    const newNames = files.map((file) => file.name);
+
+    const hasDuplicate = newNames.some((name) => currentNames.includes(name));
+
+    if (hasDuplicate) {
+      toast.error("Vui lòng không chọn trùng ảnh");
+      return;
+    }
+
+    setValue("image_url", [...currentFiles, ...files]);
   };
 
   const handleDragOver = (e) => {
@@ -101,7 +113,18 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
 
     if (files.length > 0) {
       const currentFiles = watch("image_url") || [];
-      setValue("image_url", [...currentFiles, ...droppedFiles]);
+
+      const currentNames = currentFiles.map((file) => file.name);
+      const newNames = files.map((file) => file.name);
+
+      const hasDuplicate = newNames.some((name) => currentNames.includes(name));
+
+      if (hasDuplicate) {
+        toast.error("Vui lòng không chọn trùng ảnh");
+        return;
+      }
+
+      setValue("image_url", [...currentFiles, ...files]);
     }
   };
 
@@ -110,6 +133,9 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
     const updatedFiles = currentFiles.filter(
       (_, index) => index !== indexToRemove
     );
+    console.log(currentFiles);
+    console.log(updatedFiles);
+    console.log("a");
     setValue("image_url", updatedFiles);
   };
 
@@ -471,13 +497,13 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                           alt={`preview-${index}`}
                           className="object-cover rounded border"
                         />
-                        <button
+                        <div
                           onClick={() => removeFile(index)}
                           className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
                           title="Xóa ảnh"
                         >
                           ×
-                        </button>
+                        </div>
                       </div>
                     ))}
                   </div>

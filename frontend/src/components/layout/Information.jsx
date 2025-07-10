@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-function Tutorial() {
+function Information() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -45,13 +45,13 @@ function Tutorial() {
             }}
           >
             <p>
-              Với vị thế là một trong những doanh nghiệp hàng đầu trong lĩnh
-              vực sản xuất linh kiện điện tử tại Việt Nam, Công ty TNHH Partron
-              Vina luôn không ngừng đổi mới và tiên phong trong việc áp dụng
-              công nghệ vào hoạt động kinh doanh. Việc triển khai nền tảng đấu
-              giá trực tuyến không chỉ là bước tiến trong việc đa dạng hóa kênh
-              phân phối sản phẩm mà còn thể hiện cam kết của công ty trong việc
-              nâng cao trải nghiệm khách hàng và tối ưu hóa giá trị sản phẩm.
+              Với vị thế là một trong những doanh nghiệp hàng đầu trong lĩnh vực
+              sản xuất linh kiện điện tử tại Việt Nam, Công ty TNHH Partron Vina
+              luôn không ngừng đổi mới và tiên phong trong việc áp dụng công
+              nghệ vào hoạt động kinh doanh. Việc triển khai nền tảng đấu giá
+              trực tuyến không chỉ là bước tiến trong việc đa dạng hóa kênh phân
+              phối sản phẩm mà còn thể hiện cam kết của công ty trong việc nâng
+              cao trải nghiệm khách hàng và tối ưu hóa giá trị sản phẩm.
             </p>
             <p>
               Thông qua nền tảng này, Partron Vina hướng đến việc tạo ra một môi
@@ -103,9 +103,7 @@ function Tutorial() {
             </li>
           </ul>
 
-          <div
-            style={{ fontSize: "18px", color: "#222", lineHeight: "2" }}
-          >
+          <div style={{ fontSize: "18px", color: "#222", lineHeight: "2" }}>
             <p>
               Thông qua việc triển khai nền tảng đấu giá trực tuyến, Partron
               Vina không chỉ khẳng định vị thế tiên phong trong lĩnh vực công
@@ -120,4 +118,4 @@ function Tutorial() {
   );
 }
 
-export default Tutorial;
+export default Information;
