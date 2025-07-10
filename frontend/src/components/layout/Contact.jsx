@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 // import Footer from "./Footer";
 import imagefac from "../../assets/images/factory.jpg";
 
-function Tutorial() {
+function Contact() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -51,13 +51,11 @@ function Tutorial() {
               >
                 Partron Vina Co., Ltd.
               </h2>
-              <div
-                style={{ fontSize: "16px", color: "#222", lineHeight: "2" }}
-              >
+              <div style={{ fontSize: "16px", color: "#222", lineHeight: "2" }}>
                 <div>
                   <span style={{ fontWeight: 400 }}>Address :</span> Lô 11, Khu
-                  công nghiệp Khai Quang, Phường Khai Quang, Thành phố Vĩnh
-                  Yên, Tỉnh Vĩnh Phúc, Việt Nam
+                  công nghiệp Khai Quang, Phường Khai Quang, Thành phố Vĩnh Yên,
+                  Tỉnh Vĩnh Phúc, Việt Nam
                 </div>
                 <div>
                   <span style={{ fontWeight: 400 }}>Phone number :</span> 012
@@ -93,4 +91,4 @@ function Tutorial() {
   );
 }
 
-export default Tutorial;
+export default Contact;

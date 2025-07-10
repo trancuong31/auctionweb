@@ -7,19 +7,25 @@ import {
   faEye,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 function Login() {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
+  const [show, setShow] = useState(false);
   const navigate = useNavigate();
-  
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShow(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -32,42 +38,42 @@ function Login() {
       console.log(data);
       if (response.ok && data.role === "user") {
         login(data, remember);
-        toast.success('Login successfully!', {
+        toast.success("Login successfully!", {
           style: {
-            border: '1px solid #4ade80',
-            padding: '12px 16px',
-            color: '#16a34a',
-            fontWeight: '500',
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '15px',
-            borderRadius: '12px',
-            background: '#f0fdf4',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            border: "1px solid #4ade80",
+            padding: "12px 16px",
+            color: "#16a34a",
+            fontWeight: "500",
+            fontFamily: "Inter, sans-serif",
+            fontSize: "15px",
+            borderRadius: "12px",
+            background: "#f0fdf4",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
           },
           iconTheme: {
-            primary: '#16a34a',
-            secondary: '#ecfdf5',
+            primary: "#16a34a",
+            secondary: "#ecfdf5",
           },
         });
         navigate("/");
       } else if (response.ok && data.role === "admin") {
         login(data, remember);
         navigate("/admin");
-        toast.success('Login successfully!', {
+        toast.success("Login successfully!", {
           style: {
-            border: '1px solid #4ade80',
-            padding: '12px 16px',
-            color: '#16a34a',
-            fontWeight: '500',
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '15px',
-            borderRadius: '12px',
-            background: '#f0fdf4',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            border: "1px solid #4ade80",
+            padding: "12px 16px",
+            color: "#16a34a",
+            fontWeight: "500",
+            fontFamily: "Inter, sans-serif",
+            fontSize: "15px",
+            borderRadius: "12px",
+            background: "#f0fdf4",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
           },
           iconTheme: {
-            primary: '#16a34a',
-            secondary: '#ecfdf5',
+            primary: "#16a34a",
+            secondary: "#ecfdf5",
           },
         });
       } else {
@@ -84,10 +90,13 @@ function Login() {
   }
 
   return (
-    
     <div className="login-bg">
       <img src={logo} alt="Logo" className="login-logo" />
-      <div className="login-form-container">
+      <div
+        className={`login-form-container transition-all duration-700 ease-out ${
+          show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
+      >
         <h1 className="login-title">Login</h1>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
@@ -135,18 +144,16 @@ function Login() {
             <a
               href="#"
               className="login-link"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
-                toast('Please contact admin to retrieve password!',
-                  {
-                    style: {
-                      borderRadius: '10px',
-                      background: '#333',
-                      color: '#fff',
-                      textAlign: 'center',
-                    },
-                  }
-                );
+                toast("Please contact admin to retrieve password!", {
+                  style: {
+                    borderRadius: "10px",
+                    background: "#333",
+                    color: "#fff",
+                    textAlign: "center",
+                  },
+                });
               }}
             >
               Forget password

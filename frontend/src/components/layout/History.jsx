@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-function Tutorial() {
+function History() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -42,8 +42,7 @@ function Tutorial() {
                 borderLeft: "4px solid #667eea",
                 paddingLeft: "24px",
                 marginBottom: "24px",
-                background:
-                  "linear-gradient(90deg, #f6f8fa 80%, transparent)",
+                background: "linear-gradient(90deg, #f6f8fa 80%, transparent)",
                 borderRadius: "6px",
               }}
             >
@@ -82,8 +81,8 @@ function Tutorial() {
                   Phúc
                 </li>
                 <li>
-                  Góp phần phát triển kinh tế địa phương và ngành công nghiệp
-                  hỗ trợ điện tử Việt Nam
+                  Góp phần phát triển kinh tế địa phương và ngành công nghiệp hỗ
+                  trợ điện tử Việt Nam
                 </li>
               </ul>
             </div>
@@ -95,4 +94,4 @@ function Tutorial() {
   );
 }
 
-export default Tutorial;
+export default History;
