@@ -1,25 +1,50 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { create } from "../../services/api";
 import { toast } from "react-hot-toast";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, Controller, Form } from "react-hook-form";
 import clsx from "clsx";
+
+const schema = z.object({
+  auction_id: z.any(),
+  address: z
+    .string()
+    .trim()
+    .min(1, "Hãy nhập địa chỉ")
+    .max(100, "địa chỉ không được quá 100 ký tự"),
+  bid_amount: z
+    .number()
+    .positive("Giá trị phải lớn hơn 0")
+    .refine((val) => /^\d+(\.\d{1,2})?$/.test(val.toFixed(2)), {
+      message: "Chỉ cho phép tối đa 2 chữ số thập phân",
+    }),
+  note: z.string().trim().max(1000, "Ghi chú không được quá 1000 ký tự"),
+});
+
 function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
-  const [address, setAddress] = useState("");
-  const [amount, setAmount] = useState(0);
-  const [note, setNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    const data = {
+  const {
+    handleSubmit,
+    control,
+    register,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+    mode: "onBlur",
+    defaultValues: {
       auction_id: auctionId,
-      address: address,
-      bid_amount: Number(amount),
-      note: note,
-    };
+      address: "",
+      bid_amount: 0,
+      note: "",
+    },
+  });
 
-    create("bids", data, true)
+  const submitAuctionForm = async (formData) => {
+    setIsSubmitting(true);
+    console.log(formData);
+    create("bids", formData, true)
       .then((response) => {
         toast.success("Bid submitted successfully!");
       })
@@ -79,7 +104,10 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <form
+          onSubmit={handleSubmit(submitAuctionForm)}
+          className="p-4 sm:p-6 space-y-4 sm:space-y-6"
+        >
           {/* Username Field */}
           <div className="space-y-1 sm:space-y-2">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
@@ -193,12 +221,22 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
               Address
               <span className="text-red-500 ml-1">*</span>
             </label>
-            <input
-              type="text"
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-md sm:rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
-              placeholder="Enter your delivery address"
-              onChange={(e) => setAddress(e.target.value)}
-              required
+            <Controller
+              name="address"
+              control={control}
+              render={({ field, fieldState }) => (
+                <>
+                  <input
+                    type="text"
+                    {...field}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-md sm:rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                    placeholder="Enter your delivery address"
+                  />
+                  {fieldState.error && (
+                    <p className="text-red-500">{fieldState.error.message}</p>
+                  )}
+                </>
+              )}
             />
           </div>
 
@@ -229,13 +267,14 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
               </div>
               <input
                 type="number"
-                min="0"
-                step="0.01"
-                className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-md sm:rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
                 placeholder="0.00"
-                onChange={(e) => setAmount(e.target.value)}
-                required
+                className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-md sm:rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                {...register("bid_amount", { valueAsNumber: true })}
               />
+
+              {errors.bid_amount && (
+                <p className="text-red-500">{errors.bid_amount.message}</p>
+              )}
             </div>
           </div>
 
@@ -257,19 +296,29 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
               </svg>
               Additional Notes
             </label>
-            <textarea
-              onChange={(e) => setNote(e.target.value)}
-              className="w-full px-4 sm:px-2 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-md sm:rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 resize-none"
-              rows="3"
-              placeholder="Add any special requirements or comments..."
+            <Controller
+              name="note"
+              control={control}
+              render={({ field, fieldState }) => (
+                <>
+                  <textarea
+                    {...field}
+                    className="w-full px-4 sm:px-2 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-md sm:rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 resize-none"
+                    rows="3"
+                    placeholder="Add any special requirements or comments..."
+                  />
+                  {fieldState.error && (
+                    <p className="text-red-500">{fieldState.error.message}</p>
+                  )}
+                </>
+              )}
             />
           </div>
 
           {/* Submit Button */}
           <div className="pt-2">
             <button
-              onClick={handleSubmit}
-              disabled={isSubmitting || !address || !amount}
+              type="submit"
               className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-3 sm:py-4 px-4 sm:px-3 text-sm sm:text-base rounded-md sm:rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center space-x-2"
             >
               {isSubmitting ? (
@@ -316,7 +365,7 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
               )}
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

@@ -1,41 +1,87 @@
-import React, { useState } from 'react';
-import './Login.css';
-import logo from '../../assets/images/logo.png';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faUser, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate, Link } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import React, { useState } from "react";
+import "./Login.css";
+import logo from "../../assets/images/logo.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEnvelope,
+  faUser,
+  faLock,
+  faEye,
+  faEyeSlash,
+} from "@fortawesome/free-solid-svg-icons";
+import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import z from "zod";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { email } from "zod/v4-mini";
+
+const schema = z.object({
+  email: z
+    .string()
+    .nonempty("Email không được để trống")
+    .email("Email không đúng định dạng")
+    .max(255, "Email không được vượt quá 255 ký tự"),
+  username: z
+    .string()
+    .nonempty("Tên người dùng không được để trống")
+    .min(3, "Tên người dùng phải có ít nhất 3 ký tự")
+    .max(50, "Tên người dùng không được vượt quá 50 ký tự")
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      "Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới"
+    ),
+  password: z
+    .string()
+    .nonempty("Mật khẩu không được để trống")
+    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+    .max(100, "Mật khẩu không được vượt quá 100 ký tự")
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+      "Mật khẩu phải bao gồm số, chữ cái thường , chữ hoa, ký tự đặc biệt"
+    ),
+});
+
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [email, setEmail] = useState('');
-  const [username, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
+  const [confirm, setConfirm] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (password !== confirm) {
-      alert('Passwords do not match!');
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+    mode: "onBlur",
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+    },
+  });
+
+  const submitForm = async (formData) => {
+    if (formData.password !== confirm) {
+      toast.error("password does not match");
       return;
     }
     try {
-      const response = await fetch('/api/v1/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, username, password }),
+      const response = await fetch("/api/v1/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
       const data = await response.json();
       if (response.ok) {
         toast.success("Register successful!");
-        navigate('/login');
+        navigate("/login");
       } else {
-        toast.error(data.message || 'Register failed!');
+        toast.error(data.message || "Register failed!");
       }
     } catch (error) {
       console.error(error.detail);
-      
     }
   };
 
@@ -44,49 +90,58 @@ function Register() {
       <img src={logo} alt="Logo" className="login-logo" />
       <div className="login-form-container">
         <h1 className="login-title">Register</h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(submitForm)}>
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faEnvelope} />
             </span>
             <input
+              {...register("email")}
               type="email"
               placeholder="Email*"
-              required
               autoComplete="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm absolute left-0 ml-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faUser} />
             </span>
             <input
+              {...register("username")}
               type="text"
               placeholder="Username*"
-              required
               autoComplete="username"
-              value={username}
-              onChange={e => setName(e.target.value)}
             />
+            {errors.username && (
+              <p className="text-red-500 text-sm absolute left-0 ml-1">
+                {errors.username.message}
+              </p>
+            )}
           </div>
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faLock} />
             </span>
             <input
+              {...register("password")}
               type={showPassword ? "text" : "password"}
               placeholder="Password*"
-              required
               autoComplete="new-password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
             />
+            {errors.password && (
+              <p className="text-red-500 text-sm absolute left-0 ml-1">
+                {errors.password.message}
+              </p>
+            )}
             <span
               className="input-icon right"
               style={{ cursor: "pointer" }}
-              onClick={() => setShowPassword(prev => !prev)}
+              onClick={() => setShowPassword((prev) => !prev)}
             >
               <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
             </span>
@@ -101,17 +156,19 @@ function Register() {
               required
               autoComplete="new-password"
               value={confirm}
-              onChange={e => setConfirm(e.target.value)}
+              onChange={(e) => setConfirm(e.target.value)}
             />
             <span
               className="input-icon right"
               style={{ cursor: "pointer" }}
-              onClick={() => setShowConfirm(prev => !prev)}
+              onClick={() => setShowConfirm((prev) => !prev)}
             >
               <FontAwesomeIcon icon={showConfirm ? faEyeSlash : faEye} />
             </span>
           </div>
-          <button type="submit" className="login-btn">Register</button>
+          <button type="submit" className="login-btn">
+            Register
+          </button>
           <div className="login-or">or</div>
           <div className="login-signup">
             You already have an account? <Link to="/login">Sign in</Link>
