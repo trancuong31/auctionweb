@@ -26,20 +26,20 @@ const schema = z.object({
     .string()
     .nonempty("Tên người dùng không được để trống")
     .min(3, "Tên người dùng phải có ít nhất 3 ký tự")
-    .max(50, "Tên người dùng không được vượt quá 50 ký tự")
-    .regex(
-      /^[a-zA-Z0-9_]+$/,
-      "Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới"
-    ),
+    .max(50, "Tên người dùng không được vượt quá 50 ký tự"),
+    // .regex(
+    //   /^[a-zA-Z0-9_]+$/,
+    //   "Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới"
+    // ),
   password: z
     .string()
     .nonempty("Mật khẩu không được để trống")
     .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
     .max(100, "Mật khẩu không được vượt quá 100 ký tự")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-      "Mật khẩu phải bao gồm số, chữ cái thường , chữ hoa, ký tự đặc biệt"
-    ),
+    // .regex(
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+    //   "Mật khẩu phải bao gồm số, chữ cái thường , chữ hoa, ký tự đặc biệt"
+    // ),
 });
 
 function Register() {

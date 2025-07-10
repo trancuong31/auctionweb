@@ -24,7 +24,7 @@ const Pagination = ({
   };
 
   return (
-    <div className={clsx("flex justify-center mt-10", className)}>
+    <div className={clsx("flex justify-center", className)}>
       <span
         className={clsx(
           "w-10 h-10 flex items-center justify-center rounded border border-gray-300 bg-white transition-all duration-150",
