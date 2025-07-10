@@ -12,27 +12,21 @@ const AuctionSearch = () => {
   const [status, setStatus] = useState(null);
   const [sortBy, setSortBy] = useState("");
   const [sortOder, setSortOder] = useState("");
+  const [dateRange, setDateRange] = useState([]);
+
+  const [searchParam, setSearchParam] = useState({});
+
   const [arrAuction, setArrAuction] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
-  const [dateRange, setDateRange] = useState([]);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSearch = async (page = 1) => {
-    const param = {
-      title: searchText,
-      status: status,
-      sort_by: sortBy,
-      sort_order: sortOder,
-      start_time: dateRange[0] ? dateRange[0].toISOString() : undefined,
-      end_time: dateRange[1] ? dateRange[1].toISOString() : undefined,
-      page: page,
-    };
-
+  const searchData = async (page = 1) => {
     try {
       setIsLoading(true);
-      const response = await getAll("auctions/search", false, param);
+      const paramWithPage = { ...searchParam, page };
+      const response = await getAll("auctions/search", false, paramWithPage);
       setTotal(response.data.total);
       setArrAuction(response.data.auctions);
       setTotalPage(
@@ -45,12 +39,29 @@ const AuctionSearch = () => {
     }
   };
 
+  const setDataForParam = () => {
+    setSearchParam({
+      title: searchText.trim(),
+      status: status,
+      sort_by: sortBy,
+      sort_order: sortOder,
+      start_time: dateRange[0] ? dateRange[0].toISOString() : undefined,
+      end_time: dateRange[1] ? dateRange[1].toISOString() : undefined,
+    });
+  };
+
+  useEffect(() => {
+    if (Object.keys(searchParam).length > 0) {
+      searchData();
+    }
+  }, [searchParam]);
+
   const handleClick = (id) => {
     navigate(`/auctions/${id}`);
   };
 
   useEffect(() => {
-    handleSearch();
+    searchData();
   }, []);
 
   return (
@@ -142,7 +153,7 @@ const AuctionSearch = () => {
         {/* Search button */}
         <div className="col-span-1 px-4 flex items-end ">
           <button
-            onClick={() => handleSearch()}
+            onClick={() => setDataForParam()}
             className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-600 hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out w-full font-semibold tracking-wide"
           >
             <FontAwesomeIcon icon={faSearch} className="mr-2" />
@@ -163,7 +174,7 @@ const AuctionSearch = () => {
           clickCard={handleClick}
         />
       )}
-      <Pagination totalPage={totalPage} onPageChange={handleSearch} />
+      <Pagination totalPage={totalPage} onPageChange={searchData} />
     </div>
   );
 };

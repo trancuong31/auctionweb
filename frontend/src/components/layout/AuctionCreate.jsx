@@ -23,7 +23,9 @@ const auctionSchema = z.object({
     .max(2000, "Description must not exceed 2000 characters"),
   starting_price: z.number().min(1, "Starting price must be > 0"),
   step_price: z.number().min(1, "Price step must be ≥ 1$"),
-  image_url: z.array(z.instanceof(File)).min(1, "Must select at least one file"),
+  image_url: z
+    .array(z.instanceof(File))
+    .min(1, "Must select at least one file"),
   file_exel: z.instanceof(File, { message: "Must select Excel file" }),
   end_time: z.string().min(1, "Time is required"),
   start_time: z.string().min(1),
