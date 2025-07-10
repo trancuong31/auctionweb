@@ -6,6 +6,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   const [bids, setBids] = useState([]);
   const [auction, setAuction] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [highestBid, setHighestBid] = useState(0);
   const handleDownload = async (id) => {
     try {
       const res = await fetch(`/api/v1/download/excel/by-auction/${id}`);
@@ -27,7 +28,10 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
         setIsLoading(true);
         const response = await getOne("auctions", idAuction, false);
         setAuction(response.data);
-        setBids(response.data.bids);
+        const fetchedBids = response.data.bids;
+        setBids(fetchedBids);
+        const maxBid = fetchedBids.length > 0 ? Math.max(...fetchedBids.map(b => b.bid_amount)) : 0;
+        setHighestBid(maxBid);
       } catch (error) {
         console.log(error);
         alert("Có lỗi khi lấy auctions");
@@ -47,15 +51,15 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
         isOpen ? "visible" : "invisible"
       )}
     >
-      <div className="bg-white shadow-lg w-[80%] max-w-6xl p-6 relative max-h-[80%] overflow-y-auto">
+      
+      <div className="bg-white shadow-lg w-[80%] max-w-6xl p-6 relative max-h-[80%] overflow-y-auto max-sm:max-h-[60%] max-sm:mt-32 max-lg:mt-10 scrollbar-hide ">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Auction Details</h2>
         <button
           onClick={clickClose}
           className="absolute top-4 right-4 text-black-500 hover:text-red-700 text-2xl font-bold"
         >
           ×
-        </button>
-
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Auction Details</h2>
+        </button>        
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="lg:w-1/2 w-full">
             <img
@@ -65,30 +69,29 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                   : imagedefault
               }
               alt="Auction Image"
-              className="w-full h-64 object-cover rounded-xl"
+              className="w-full h-64 object-cover hover:scale-105 transition ease-out duration-500 rounded-2xl"
             />
-            <div className="mt-4 p-3 bg-gradient-to-r from-indigo-500 via-blue-600 to-indigo-700 text-white rounded-xl shadow text-center">
+            <div className="mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl shadow flex items-center justify-between w-full">
               <p className="text-sm font-semibold">Current Status</p>
-              <p className="text-lg font-bold bg-blue-50 text-blue-800 px-4 py-2 rounded-xl shadow-sm">
+              <span className="text-sm font-medium bg-white text-purple-600 px-4 py-1 rounded-full shadow-sm">
                 {auction.status === 0
                   ? "Ongoing"
                   : auction.status === 1
                   ? "Upcoming"
                   : "Ended"}
-              </p>
-            </div>
-            
+              </span>
+            </div>            
           </div>
 
           <div className="lg:w-1/2 w-full space-y-3">
-            <div className="bg-gray-100 p-4 rounded-xl">
-              <p className="text-lg font-semibold text-indigo-700 text-left">
+            <div className="bg-gray-100 p-4 rounded-xl flex items-start rounded-r-3xl rounded-l-md border-l-4 border-purple-500 shadow-sm">
+              <p className="text-lg font-semibold text-indigo-700 text-left break-words w-full">
                 {auction.title || "No title"}
-              </p>              
+              </p>             
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-2">
+            <div className="bg-white border border-gray-400 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
                 <p className="text-sm font-medium text-gray-500">Deadline</p>
                 <p className="font-semibold text-gray-800">
                   {auction.end_time
@@ -105,7 +108,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 </p>
               </div>
 
-              <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-2">
+              <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
                 <p className="text-sm font-medium text-gray-500">Starting Price</p>
                 <p className="text-green-600 font-bold text-lg">
                   {auction.starting_price?.toLocaleString("en-US", {
@@ -115,9 +118,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 </p>
               </div>
 
-              <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-2">
+              <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
                 <p className="text-sm font-medium text-gray-500">Step Price</p>
-                <p className="text-red-600 font-bold text-lg">
+                <p className="text-yellow-700 font-bold text-lg">
                   {auction.step_price?.toLocaleString("en-US", {
                     style: "currency",
                     currency: "USD",
@@ -125,13 +128,13 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 </p>
               </div>
 
-              <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-2">
+              <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
                 <p className="text-sm font-medium text-gray-500">File</p>
                 <p className="text-red-600 font-bold text-lg">
                   {auction.file_exel ? (
                     <button
                       onClick={() => handleDownload(auction.id)}
-                      className="text-blue-600 hover:underline font-medium"
+                      className="text-blue-600 text-left hover:underline font-medium"
                     >
                       <p>{auction.file_exel.split("/").pop()}</p>
                     </button>
@@ -143,17 +146,28 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
             </div>
 
 
-            <div className="bg-white border border-gray-200 rounded-xl p-4">
+            <div className="bg-white border border-gray-300 rounded-xl p-4">
               <p className="text-sm font-medium text-gray-500">Description</p>
-              <p className="text-gray-700 text-sm max-h-32 overflow-y-auto">
+              <p className="text-gray-700 text-sm max-h-20 overflow-y-auto">
                 {auction.description || "No description available."}
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-text-center">
-            Total Bids: <span className="text-red-700">{bids?.length || 0}</span>
+        <div className="flex justify-between items-center text-sm text-gray-700 px-4 py-2">
+          <div>
+            Total Bids: <span className="text-gray-500">{bids?.length || 0}</span>
+          </div>
+          <div>
+            <span className="font-medium text-purple-600">
+              Highest Bid: {highestBid.toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              })}
+            </span>
+          </div>
         </div>
+
         <div className=" border rounded-xl max-h-60 overflow-y-auto">
           <table className="table-fixed min-w-full text-sm text-left">
 
@@ -163,7 +177,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 <th className="px-4 py-2 font-semibold uppercase">Supplier Email</th>
                 <th className="px-4 py-2 font-semibold uppercase">User Name</th>
                 <th className="px-4 py-2 font-semibold uppercase">Bid Amount</th>
-                <th className="px-4 py-2 font-semibold uppercase">Submission Time</th>
+                <th className="px-4 py-2 font-semibold uppercase">Submitted At</th>
                 <th className="px-4 py-2 font-semibold uppercase">Note</th>
                 
               </tr>
@@ -182,11 +196,28 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     <td className="px-4 py-2">{idx + 1}</td>
                     <td className="px-4 py-2">{bid.email || "-"}</td>
                     <td className="px-4 py-2">{bid.user_name || "-"}</td>
-                    <td className="px-4 text-green-500 py-2">{bid.bid_amount || "-"}$</td>
-                    <td className="px-4 py-2">
-                      {new Date(bid.created_at).toLocaleString()}
+                    <td className="px-4 text-green-500 py-2">
+                      {bid.bid_amount != null
+                        ? bid.bid_amount.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          })
+                        : "-"}
                     </td>
-                    <td className="px-4 py-2 w-[200px] break-all whitespace-normal">{bid.note || "-"}</td>
+                    <td className="px-4 py-2">
+                      {bid.created_at
+                    ? new Date(auction.end_time).toLocaleString("en-US", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false,
+                      })
+                    : "-"}
+                    </td>
+                    <td className="px-4 py-2 w-[200px] break-all whitespace-normal">{bid.note || "null"}</td>
                     
                   </tr>
                 ))

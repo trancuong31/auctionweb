@@ -35,6 +35,7 @@ const OverViewAdmin = () => {
   const [sortUserOder, setSortUserOder] = useState("");
   const [totalPageUser, setTotalPageUser] = useState(0);
   const [sortAuctionBy, setSortAuctionBy] = useState("");
+  const [status, setStatus] = useState(null);
   const [sortAuctionOrder, setSortAuctionOrder] = useState("");
   const [totalPageAuction, setTotalPageAuction] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -89,6 +90,7 @@ const OverViewAdmin = () => {
     const param = {
       sort_by: sortAuctionBy,
       sort_order: sortAuctionOrder,
+      status: status,
       page: page,
       title: searchAuctionTitle,
     };
@@ -380,11 +382,11 @@ const OverViewAdmin = () => {
             {/* <!-- Search Button --> */}
             <button
               onClick={searchUser}
-              className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-full font-bold text-white text-base
+              className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-lg font-bold text-white text-base
              border border-transparent
              shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
              transition-transform duration-300
-             bg-blue-500
+             bg-gradient-to-r from-blue-500 to-indigo-500
              hover:border-gray-100 active:scale-95"
             >
               <FontAwesomeIcon icon={faSearch} />
@@ -451,7 +453,7 @@ const OverViewAdmin = () => {
                       {user.status ? (
                         <button
                           onClick={() => handleDeactiveUser(user)}
-                          className="bg-blue-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded"
+                          className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded"
                         >
                           Active
                         </button>
@@ -522,7 +524,7 @@ const OverViewAdmin = () => {
             <h2 className="text-lg font-bold">MANAGER AUCTIONS</h2>
             <button
               onClick={() => setDisplayCreateForm(true)}
-              className="bg-blue-500 text-white px-3 py-2 rounded max-sm:w-full"
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-3 py-2 rounded max-sm:w-full"
             >
               Create auction
             </button>
@@ -579,18 +581,31 @@ const OverViewAdmin = () => {
                     Endtime from Latest to Oldest
                   </option>
                 </select>
-              </div>
-            </div>
 
+                
+              </div>
+                
+              </div>
+                  <select
+                      onChange={(e) =>
+                        setStatus(e.target.value === "" ? null : e.target.value)
+                      }
+                      className="border border-gray-400 rounded-lg px-3 py-2 max-sm:w-full"
+                    >
+                      <option value="">-- Select status --</option>
+                      <option value="0">Ongoing</option>
+                      <option value="1">Upcoming</option>
+                      <option value="2">Ended</option>
+                    </select>
             {/* <!-- Search Button --> */}
             <div className="">
               <button
                 onClick={handleSearch}
-                className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-full font-bold text-white text-base
+                className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-lg font-bold text-white text-base
              border border-transparent
              shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
              transition-transform duration-300
-             bg-blue-500
+             bg-gradient-to-r from-blue-500 to-indigo-500
              hover:border-gray-100 active:scale-95"
               >
                 <FontAwesomeIcon icon={faSearch} />
@@ -643,7 +658,7 @@ const OverViewAdmin = () => {
                       {auction.starting_price}
                     </td>
                     <td className="border px-2 py-1 max-w-96 break-words">
-                      {auction.highest_amount}
+                      {auction.highest_amount || "null"}
                     </td>
                     <td className="border px-2 py-1 max-w-96 break-words">
                       {statusText}
