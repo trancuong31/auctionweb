@@ -143,7 +143,7 @@ const AuctionSearch = () => {
         <div className="col-span-1 px-4 flex items-end ">
           <button
             onClick={() => handleSearch()}
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-600 hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out w-full font-semibold tracking-wide"
+            className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-600 hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out w-full font-semibold tracking-wide"
           >
             <FontAwesomeIcon icon={faSearch} className="mr-2" />
             Search

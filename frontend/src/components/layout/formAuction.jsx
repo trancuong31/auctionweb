@@ -51,7 +51,7 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
         )}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white sm:p-1 rounded-t-2xl relative">
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white sm:p-1 rounded-t-2xl relative">
           <h2 className="text-lg sm:text-2xl font-bold text-center">
             Submit Your Bid
           </h2>

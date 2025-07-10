@@ -206,7 +206,7 @@
   border-bottom: 1px solid #f2f2f2;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 50%, #1e3a8a 100%);
+  background: linear-gradient(to right, #348AC7, #7474BF);
 }
 
 /* ==== List + Scrollbar ==== */
