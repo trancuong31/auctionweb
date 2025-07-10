@@ -88,7 +88,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
     const hasDuplicate = newNames.some((name) => currentNames.includes(name));
 
     if (hasDuplicate) {
-      toast.error("Vui lòng không chọn trùng ảnh");
+      toast.error("Please do not select duplicate photos");
       return;
     }
 
@@ -122,7 +122,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
       const hasDuplicate = newNames.some((name) => currentNames.includes(name));
 
       if (hasDuplicate) {
-        toast.error("Vui lòng không chọn trùng ảnh");
+        toast.error("Please do not select duplicate photos");
         return;
       }
 
