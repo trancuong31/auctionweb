@@ -24,7 +24,7 @@ const schema = z.object({
     .min(3, "Username must be at least 3 characters")
     .max(50, "Username cannot exceed 50 characters")
     .regex(
-      /^[a-zA]+$/,
+      /^[a-zA-Z]+$/,
       "Usernames must contain only letters"
     ),
   password: z
