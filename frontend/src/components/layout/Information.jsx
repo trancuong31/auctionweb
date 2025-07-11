@@ -1,19 +1,8 @@
-import React, { useEffect, useState } from "react";
+import AnimatedContent from "../ui/animatedContent";
 function Information() {
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShow(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <>
-      <main
-        className={`information-content transition-all duration-700 ease-out ${
-          show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
-      >
+    <AnimatedContent>
+      <main className="information-content">
         <div
           style={{
             background: "#fff",
@@ -114,7 +103,7 @@ function Information() {
         </div>
       </main>
       {/* <Footer /> */}
-    </>
+    </AnimatedContent>
   );
 }
 

@@ -1,26 +1,12 @@
-import React, { useEffect, useState } from "react";
-// import NavBar from "./NavBar";
-// import Header from "./Header";
-// import Footer from "./Footer";
+import AnimatedContent from "../ui/animatedContent";
 import imagefac from "../../assets/images/factory.jpg";
 
 function Contact() {
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShow(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <>
+    <AnimatedContent>
       {/* <Header />
       <NavBar /> */}
-      <main
-        className={`rule-content transition-all duration-700 ease-out ${
-          show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
-      >
+      <main className="rule-content">
         <div
           style={{
             background: "#fff",
@@ -87,7 +73,7 @@ function Contact() {
         </div>
       </main>
       {/* <Footer /> */}
-    </>
+    </AnimatedContent>
   );
 }
 
