@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import "./Auctions.css";
 import { useNavigate } from "react-router-dom";
+import AnimatedContent from "../ui/animatedContent";
 import RenderCardAuction from "../ui/CardComponent";
 
 const AuctionSection = ({ title, type }) => {
@@ -23,6 +24,7 @@ const AuctionSection = ({ title, type }) => {
   const handleClick = (id) => {
     navigate(`/auctions/${id}`);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,31 +51,36 @@ const AuctionSection = ({ title, type }) => {
     fetchData();
   }, [type]);
 
-  if (loading) return <div className="loader" />;
-  if (error) return <p className="error">{error}</p>;
-
-  return (    
-    <div className="section">
-      <h2 className="section-title">{title}</h2>
-      <span
-        style={{
-          fontWeight: "normal",
-          color: "#8c8e94",
-          fontSize: "12px",
-          padding: "0px 0px 5px 0px",
-        }}
-      >
-        Total: {total} asset
-      </span>
-      <RenderCardAuction
-        arrAuction={items}
-        numberCol={4}
-        clickCard={handleClick}
-      />
-      <a href="/auctions/search" className="see-all">
-        See all
-      </a>
-    </div>
+  return (
+    <AnimatedContent className="section">
+      {loading ? (
+        <div className="loader" />
+      ) : error ? (
+        <p className="error">{error}</p>
+      ) : (
+        <>
+          <h2 className="section-title">{title}</h2>
+          <span
+            style={{
+              fontWeight: "normal",
+              color: "#8c8e94",
+              fontSize: "12px",
+              padding: "0px 0px 5px 0px",
+            }}
+          >
+            Total: {total} asset
+          </span>
+          <RenderCardAuction
+            arrAuction={items}
+            numberCol={4}
+            clickCard={handleClick}
+          />
+          <a href="/auctions/search" className="see-all">
+            See all
+          </a>
+        </>
+      )}
+    </AnimatedContent>
   );
 };
 

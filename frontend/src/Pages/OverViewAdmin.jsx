@@ -7,6 +7,7 @@ import ConfirmDialog from "../components/ui/ConfirmDialog";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import { useDebounceCallback } from "../hooks/useDebounceCallback";
+import AnimatedContent from "../components/ui/animatedContent";
 import {
   faUsers,
   faGavel,
@@ -259,9 +260,9 @@ const OverViewAdmin = () => {
     fetchData();
   }, []);
 
-  if (isLoadingPage) return <div className="loader" />;
+  // if (isLoadingPage) return <div className="loader" />;
   return (
-    <div>
+    <AnimatedContent>
       <ConfirmDialog
         open={confirmOpen}
         icon={confirmConfig.icon}
@@ -279,6 +280,7 @@ const OverViewAdmin = () => {
         }}
       />
       {/* <!-- OVERVIEW --> */}
+
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
         <div className="bg-indigo-400 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
           <p className="text-xs sm:text-sm font-semibold">Total User</p>
@@ -732,7 +734,7 @@ const OverViewAdmin = () => {
         onPageChange={getPageAuction}
         className="flex mt-4 justify-end"
       />
-    </div>
+    </AnimatedContent>
   );
 };
 
