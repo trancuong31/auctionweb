@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAnglesLeft, faAnglesRight } from "@fortawesome/free-solid-svg-icons";
 import clsx from "clsx";
@@ -6,12 +5,11 @@ import clsx from "clsx";
 const Pagination = ({
   totalPage,
   onPageChange,
+  currentPage,
   className = "flex justify-center mt-10",
 }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
   const maxPageShow = 5;
-  let startPage = Math.max(0, currentIndex - Math.floor(maxPageShow / 2));
+  let startPage = Math.max(0, currentPage - Math.floor(maxPageShow / 2));
   let endPage = startPage + maxPageShow - 1;
   if (endPage >= totalPage) {
     endPage = totalPage - 1;
@@ -19,7 +17,6 @@ const Pagination = ({
   }
 
   const handleClickPagination = (index) => {
-    setCurrentIndex(index);
     onPageChange(index + 1);
   };
 
@@ -28,13 +25,13 @@ const Pagination = ({
       <span
         className={clsx(
           "w-10 h-10 flex items-center justify-center rounded border border-gray-300 bg-white transition-all duration-150",
-          currentIndex === 0
+          currentPage === 0
             ? "cursor-not-allowed opacity-50"
             : "hover:bg-[#a8a8a8d0] group cursor-pointer"
         )}
         onClick={() => {
-          if (currentIndex !== 0)
-            handleClickPagination(Math.max(currentIndex - 1, 0));
+          if (currentPage !== 0)
+            handleClickPagination(Math.max(currentPage - 1, 0));
         }}
       >
         <FontAwesomeIcon
@@ -51,7 +48,7 @@ const Pagination = ({
             key={i}
             className={clsx(
               "mx-1 px-4 py-2 rounded-lg border font-semibold transition-all duration-150",
-              currentIndex === i
+              currentPage === i
                 ? "bg-blue-600 text-white border-blue-600 shadow-md scale-105"
                 : "bg-white text-gray-700 border-gray-300 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-400"
             )}
@@ -64,13 +61,13 @@ const Pagination = ({
       <span
         className={clsx(
           "w-10 h-10 flex items-center justify-center rounded border border-gray-300 bg-white transition-all duration-150",
-          currentIndex === totalPage - 1
+          currentPage === totalPage - 1
             ? "cursor-not-allowed opacity-50"
             : "hover:bg-[#a8a8a8d0] group cursor-pointer"
         )}
         onClick={() => {
-          if (currentIndex !== totalPage - 1)
-            handleClickPagination(Math.min(currentIndex + 1, totalPage - 1));
+          if (currentPage !== totalPage - 1)
+            handleClickPagination(Math.min(currentPage + 1, totalPage - 1));
         }}
       >
         <FontAwesomeIcon

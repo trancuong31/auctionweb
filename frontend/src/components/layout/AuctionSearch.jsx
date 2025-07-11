@@ -20,6 +20,8 @@ const AuctionSearch = () => {
   const [totalPage, setTotalPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentIndexPage, setCurrentIndexPage] = useState(0);
+
   const navigate = useNavigate();
 
   const searchData = async (page = 1) => {
@@ -36,6 +38,7 @@ const AuctionSearch = () => {
       alert(err);
     } finally {
       setIsLoading(false);
+      setCurrentIndexPage(page - 1);
     }
   };
 
@@ -174,7 +177,11 @@ const AuctionSearch = () => {
           clickCard={handleClick}
         />
       )}
-      <Pagination totalPage={totalPage} onPageChange={searchData} />
+      <Pagination
+        currentPage={currentIndexPage}
+        totalPage={totalPage}
+        onPageChange={searchData}
+      />
     </div>
   );
 };

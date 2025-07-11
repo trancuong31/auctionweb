@@ -20,6 +20,8 @@ import {
 import { useEffect, useState } from "react";
 
 const OverViewAdmin = () => {
+  const [currentIndexPageUser, setCurrentIndexPageUser] = useState(0);
+  const [currentIndexPageAuction, setCurrentIndexPageAuction] = useState(0);
   const [currentEditing, setCurrentEditing] = useState(null);
   const [overViewData, setOverViewData] = useState({});
   const [userData, setUserData] = useState([]);
@@ -27,20 +29,36 @@ const OverViewAdmin = () => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [displayCreateForm, setDisplayCreateForm] = useState(false);
-  const [searchAuctionTitle, setSearchAuctionTitle] = useState("");
-  const [searchTextUser, setSearchTextUser] = useState("");
   const [idAuction, setIdAuction] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [sortUserBy, setSortUserBy] = useState("");
-  const [sortUserOder, setSortUserOder] = useState("");
   const [totalPageUser, setTotalPageUser] = useState(0);
-  const [sortAuctionBy, setSortAuctionBy] = useState("");
-  const [status, setStatus] = useState(null);
-  const [sortAuctionOrder, setSortAuctionOrder] = useState("");
   const [totalPageAuction, setTotalPageAuction] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+  const [userParam, setUserParam] = useState({
+    sort_by: "",
+    sort_order: "",
+    search_text: "",
+  });
+  const [userFilterInput, setUserFilterInput] = useState({
+    sort_by: "",
+    sort_order: "",
+    search_text: "",
+  });
+  const [auctionParam, setAuctionParam] = useState({
+    sort_by: "",
+    sort_order: "",
+    status: null,
+    title: "",
+  });
+  const [auctionFilterInput, setAuctionFilterInput] = useState({
+    sort_by: "",
+    sort_order: "",
+    status: null,
+    title: "",
+  });
+  // const [auctionParam, setAuctionParam] = useState({});
   const [confirmConfig, setConfirmConfig] = useState({
     title: "",
     message: "",
@@ -64,10 +82,8 @@ const OverViewAdmin = () => {
 
   const getPageUser = async (page = 1) => {
     const param = {
-      sort_by: sortUserBy,
-      sort_order: sortUserOder,
-      page: page,
-      search_text: searchTextUser,
+      ...userParam,
+      page,
     };
     try {
       // setIsLoadingSearch(true);
@@ -83,20 +99,18 @@ const OverViewAdmin = () => {
       console.log(error);
     } finally {
       // setIsLoadingSearch(false);
+      setCurrentIndexPageUser(page - 1);
     }
   };
 
   const getPageAuction = async (page = 1) => {
-    const param = {
-      sort_by: sortAuctionBy,
-      sort_order: sortAuctionOrder,
-      status: status,
-      page: page,
-      title: searchAuctionTitle,
-    };
     try {
       // setIsLoadingSearch(true);
-      const response = await getAll("auctions/search", true, param);
+      const paramWithPage = {
+        ...auctionParam,
+        page,
+      };
+      const response = await getAll("auctions/search", true, paramWithPage);
       setAuctionData(response.data.auctions);
       setTotalPageAuction(
         Math.ceil(response.data.total / Number(import.meta.env.VITE_PAGE_SIZE))
@@ -106,6 +120,7 @@ const OverViewAdmin = () => {
       console.log(error);
     } finally {
       // setIsLoadingSearch(false);
+      setCurrentIndexPageAuction(page - 1);
     }
   };
 
@@ -116,8 +131,14 @@ const OverViewAdmin = () => {
 
   // Handler cho nút search
   const handleSearch = () => {
-    debouncedSearchAuction(1);
+    setAuctionParam({
+      ...auctionFilterInput,
+    });
   };
+
+  useEffect(() => {
+    debouncedSearchAuction(1);
+  }, [auctionParam]);
 
   // Cleanup khi component unmount
   useEffect(() => {
@@ -133,8 +154,14 @@ const OverViewAdmin = () => {
 
   // Handler cho nút search
   const searchUser = () => {
-    debouncedSearchUser(1);
+    setUserParam({
+      ...userFilterInput,
+    });
   };
+
+  useEffect(() => {
+    debouncedSearchUser(1);
+  }, [userParam]);
 
   // Cleanup khi component unmount
   useEffect(() => {
@@ -335,7 +362,12 @@ const OverViewAdmin = () => {
                   type="text"
                   placeholder="Email or Username"
                   className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  onChange={(e) => setSearchTextUser(e.target.value)}
+                  onChange={(e) =>
+                    setUserFilterInput((prev) => ({
+                      ...prev,
+                      search_text: e.target.value.trim(),
+                    }))
+                  }
                 />
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <FontAwesomeIcon icon={faSearch} />
@@ -352,8 +384,11 @@ const OverViewAdmin = () => {
                 <select
                   onChange={(e) => {
                     const selectedOption = e.target.selectedOptions[0];
-                    setSortUserBy(selectedOption.value);
-                    setSortUserOder(selectedOption.dataset.order);
+                    setUserFilterInput((prev) => ({
+                      ...prev,
+                      sort_by: selectedOption.value,
+                      sort_order: selectedOption.dataset.order,
+                    }));
                   }}
                   className="border border-gray-400 rounded-lg px-3 py-2 w-full"
                 >
@@ -508,6 +543,7 @@ const OverViewAdmin = () => {
       </div>
       <Pagination
         totalPage={totalPageUser}
+        currentPage={currentIndexPageUser}
         onPageChange={getPageUser}
         className={"flex mt-0 justify-end mb-4"}
       />
@@ -518,7 +554,7 @@ const OverViewAdmin = () => {
         {/* <div className="flex justify-between items-center mb-4 max-sm:justify-center">
           
         </div> */}
-        
+
         <div className="flex-1 flex flex-col md:flex-row justify-between items-center md:space-y-0 md:space-x-4 w-full">
           <div className="flex gap-10 w-full items-center max-sm:flex-col max-sm:gap-4 max-sm:mb-4">
             <h2 className="text-lg font-bold">MANAGER AUCTIONS</h2>
@@ -535,7 +571,12 @@ const OverViewAdmin = () => {
                   type="text"
                   placeholder="Title Auction"
                   className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  onChange={(e) => setSearchAuctionTitle(e.target.value)}
+                  onChange={(e) =>
+                    setAuctionFilterInput((prev) => ({
+                      ...prev,
+                      title: e.target.value.trim(),
+                    }))
+                  }
                 />
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <FontAwesomeIcon icon={faSearch} />
@@ -551,8 +592,11 @@ const OverViewAdmin = () => {
                 <select
                   onChange={(e) => {
                     const selectedOption = e.target.selectedOptions[0];
-                    setSortAuctionBy(selectedOption.value);
-                    setSortAuctionOrder(selectedOption.dataset.order);
+                    setAuctionFilterInput((prev) => ({
+                      ...prev,
+                      sort_by: selectedOption.value,
+                      sort_order: selectedOption.dataset.order,
+                    }));
                   }}
                   className="border border-gray-400 rounded-lg px-3 py-2 w-full"
                 >
@@ -581,22 +625,22 @@ const OverViewAdmin = () => {
                     Endtime from Latest to Oldest
                   </option>
                 </select>
-
-                
               </div>
-                
-              </div>
-                  <select
-                      onChange={(e) =>
-                        setStatus(e.target.value === "" ? null : e.target.value)
-                      }
-                      className="border border-gray-400 rounded-lg px-3 py-2 max-sm:w-full"
-                    >
-                      <option value="">-- Select status --</option>
-                      <option value="0">Ongoing</option>
-                      <option value="1">Upcoming</option>
-                      <option value="2">Ended</option>
-                    </select>
+            </div>
+            <select
+              onChange={(e) =>
+                setAuctionFilterInput((prev) => ({
+                  ...prev,
+                  status: e.target.value === "" ? null : e.target.value,
+                }))
+              }
+              className="border border-gray-400 rounded-lg px-3 py-2 max-sm:w-full"
+            >
+              <option value="">-- Select status --</option>
+              <option value="0">Ongoing</option>
+              <option value="1">Upcoming</option>
+              <option value="2">Ended</option>
+            </select>
             {/* <!-- Search Button --> */}
             <div className="">
               <button
@@ -684,6 +728,7 @@ const OverViewAdmin = () => {
       </div>
       <Pagination
         totalPage={totalPageAuction}
+        currentPage={currentIndexPageAuction}
         onPageChange={getPageAuction}
         className="flex mt-4 justify-end"
       />
