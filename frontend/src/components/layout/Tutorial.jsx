@@ -1,22 +1,11 @@
-import React, { useEffect, useState } from "react";
+import AnimatedContent from "../ui/animatedContent";
 import login from "../../assets/images/login.png";
 import register from "../../assets/images/register.png";
 
 function Tutorial() {
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShow(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <>
-      <main
-        className={`tutorial-content transition-all duration-700 ease-out ${
-          show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
-      >
+    <AnimatedContent>
+      <main className="tutorial-content">
         <div
           style={{
             background: "#fff",
@@ -98,10 +87,10 @@ function Tutorial() {
             <li>
               <b>Bước 4: Đăng ký tham gia đấu giá</b>
               <br />
-              Sau khi nghiên cứu Thông báo mời đấu giá, Quy chế cuộc đấu giá,
-              hồ sơ pháp lý về tài sản, nếu đủ điều kiện và có nguyện vọng tham
-              gia đấu giá thì tiến hành đăng ký tài khoản và cập nhật thông tin
-              tài khoản như Bước 1 và Bước 2 mục này.
+              Sau khi nghiên cứu Thông báo mời đấu giá, Quy chế cuộc đấu giá, hồ
+              sơ pháp lý về tài sản, nếu đủ điều kiện và có nguyện vọng tham gia
+              đấu giá thì tiến hành đăng ký tài khoản và cập nhật thông tin tài
+              khoản như Bước 1 và Bước 2 mục này.
             </li>
             <li>
               <b>Bước 5: Nộp hồ sơ tham gia đấu giá</b>
@@ -120,9 +109,9 @@ function Tutorial() {
               </b>
               <br />
               Người đã đăng ký tham gia đấu giá thành công đăng nhập vào hệ
-              thống đấu giá trực tuyến, bấm chọn vào vị trí logo có thông tin
-              về tài sản đã nộp hồ sơ tham gia đấu giá, thực hiện bấm nút Điểm
-              danh để có thể tiến hành trả giá.
+              thống đấu giá trực tuyến, bấm chọn vào vị trí logo có thông tin về
+              tài sản đã nộp hồ sơ tham gia đấu giá, thực hiện bấm nút Điểm danh
+              để có thể tiến hành trả giá.
               <br />
               Tại giao diện màn hình trả giá, nhập số tiền muốn trả và bấm vào
               nút “Đấu giá”.
@@ -131,7 +120,7 @@ function Tutorial() {
         </div>
       </main>
       {/* <Footer /> */}
-    </>
+    </AnimatedContent>
   );
 }
 

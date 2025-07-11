@@ -1,21 +1,9 @@
-import React, { useEffect, useState } from "react";
-
+import AnimatedContent from "../ui/animatedContent";
 
 function Rule() {
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShow(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <>
-      <main
-        className={`rule-content transition-all duration-700 ease-out ${
-          show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
-      >
+    <AnimatedContent>
+      <main className="rule-content">
         <div
           style={{
             background: "#fff",
@@ -43,9 +31,7 @@ function Rule() {
               lineHeight: "2",
             }}
           >
-            <li>
-              1. Tuân thủ quy định của pháp luật về đấu giá tài sản.
-            </li>
+            <li>1. Tuân thủ quy định của pháp luật về đấu giá tài sản.</li>
             <li>
               2. Bảo mật về tài khoản truy cập, thông tin về người tham gia đấu
               giá và các thông tin khác theo quy định của pháp luật.
@@ -61,7 +47,7 @@ function Rule() {
         </div>
       </main>
       {/* <Footer /> */}
-    </>
+    </AnimatedContent>
   );
 }
 
