@@ -52,7 +52,8 @@ const AuctionSection = ({ title, type }) => {
   }, [type]);
 
   return (
-    <AnimatedContent className="section">
+ <AnimatedContent>
+     <div className="section">
       {loading ? (
         <div className="loader" />
       ) : error ? (
@@ -80,7 +81,8 @@ const AuctionSection = ({ title, type }) => {
           </a>
         </>
       )}
-    </AnimatedContent>
+    </div>
+ </AnimatedContent>
   );
 };
 

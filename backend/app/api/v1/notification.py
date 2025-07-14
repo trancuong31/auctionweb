@@ -1,5 +1,5 @@
 from email import message
-from fastapi import APIRouter, Depends, HTTPException, status, Request, Header
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.functions import user
 from app.core.database import get_db
@@ -8,13 +8,9 @@ from app.models.Auction import Auction
 from app.models.User import User
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
-from jose import jwt, JWTError
-from app.core.config import SECRET_KEY, ALGORITHM
 from app.core.auth import get_current_user_id_from_token
 from app.models.Notification import Notification
-import uuid
-
+from app.i18n import _
 router = APIRouter()
 
 class NotificationOut(BaseModel):
@@ -39,6 +35,7 @@ def get_notifications(
 
 @router.post("/set_read")
 def set_read_notification(
+    request: Request,
     db: Session = Depends(get_db),
     user_id: str = Depends(get_current_user_id_from_token),
     data: Notification_read = None
@@ -49,5 +46,5 @@ def set_read_notification(
         notification.is_read = True
     
     db.commit()
-    return {"message": "Set read successful!"}
+    return {"detail": _("Set read successful!", request)}
  

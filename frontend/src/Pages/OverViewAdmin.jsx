@@ -262,8 +262,8 @@ const OverViewAdmin = () => {
 
   // if (isLoadingPage) return <div className="loader" />;
   return (
-    <AnimatedContent>
-      <ConfirmDialog
+    <>
+    <ConfirmDialog
         open={confirmOpen}
         icon={confirmConfig.icon}
         setOpen={setConfirmOpen}
@@ -279,6 +279,8 @@ const OverViewAdmin = () => {
           setDisplayCreateForm(false);
         }}
       />
+    <AnimatedContent>
+      
       {/* <!-- OVERVIEW --> */}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
@@ -722,11 +724,7 @@ const OverViewAdmin = () => {
           </table>
         </div>
 
-        <ModalDetailAuction
-          isOpen={isOpenModal}
-          clickClose={handleClickClose}
-          idAuction={idAuction}
-        />
+        
       </div>
       <Pagination
         totalPage={totalPageAuction}
@@ -735,6 +733,12 @@ const OverViewAdmin = () => {
         className="flex mt-4 justify-end"
       />
     </AnimatedContent>
+    <ModalDetailAuction
+          isOpen={isOpenModal}
+          clickClose={handleClickClose}
+          idAuction={idAuction}
+        />
+    </>
   );
 };
 

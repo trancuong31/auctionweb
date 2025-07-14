@@ -70,7 +70,7 @@ const AuctionSearch = () => {
 
   return (
     <AnimatedContent>
-      <div className="bg-gray-100 p-4 text-xs rounded-xl">
+      <div className="shadow-[0_4px_24px_rgba(0,0,0,0.30)] p-4 text-xs rounded-xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4 items-end">
           {/* Search input */}
 

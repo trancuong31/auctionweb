@@ -6,8 +6,26 @@ from app.models.Bid import Bid
 from datetime import datetime
 import logging
 from app.models.Notification import Notification
+from app.i18n import _
+from app.models.User import User
 
 logger = logging.getLogger(__name__)
+
+def translate(msg_key, lang, **kwargs):
+    translations = {
+        "win": {
+            "en": "Congratulations! You have won the auction {title}.",
+            "vi": "Chúc mừng! Bạn đã chiến thắng phiên đấu giá {title}.",
+            "ko": "축하합니다! {title} 경매에서 낙찰되었습니다."
+        },
+        "lose": {
+            "en": "Sorry! You did not win the auction {title}.",
+            "vi": "Rất tiếc! Bạn đã đấu giá không thành công phiên đấu giá {title}.",
+            "ko": "안타깝게도 {title} 경매에서 낙찰되지 못했습니다."
+        }
+    }
+    template = translations[msg_key].get(lang, translations[msg_key]["en"])
+    return template.format(**kwargs)
 
 async def auto_set_winner_task():
     """
@@ -19,8 +37,7 @@ async def auto_set_winner_task():
             db = next(get_db())
             now = datetime.now()
             # Lấy các auction đã kết thúc mà chưa có bid nào is_winner
-            ended_auctions = db.query(Auction).filter(Auction.end_time < now).all()
-            
+            ended_auctions = db.query(Auction).filter(Auction.end_time < now).all()            
             for auction in ended_auctions:
                 winner_bid = db.query(Bid).filter(
                     Bid.auction_id == auction.id,
@@ -37,10 +54,21 @@ async def auto_set_winner_task():
                         db.query(Bid).filter(Bid.auction_id == auction.id).update({"is_winner": False})
                         highest_bid.is_winner = True
                         # Thêm bản ghi notification cho user chiến thắng
+                        winner_user = db.query(User).filter(User.id == highest_bid.user_id).first()
+                        winner_lang = getattr(winner_user, "language", "en")
+                        if winner_lang == "vi":
+                            auction_title = auction.title_vi or auction.title
+                        elif winner_lang == "ko":
+                            auction_title = auction.title_ko or auction.title
+                        else:
+                            auction_title = auction.title
+
+                        message = translate("win", winner_lang, title=auction_title)
+
                         notification = Notification(
                             user_id=highest_bid.user_id,
                             auction_id=auction.id,
-                            message=f"Chúc mừng! Bạn đã chiến thắng phiên đấu giá {auction.title}.",
+                            message=message,
                             created_at=datetime.now(),
                             is_read=False
                         )
@@ -48,10 +76,20 @@ async def auto_set_winner_task():
                         db.add(notification)
                         losing_bids = db.query(Bid).filter(Bid.auction_id == auction.id, Bid.id != highest_bid.id).all()
                         for losing_bid in losing_bids:
+                            losing_user = db.query(User).filter(User.id == losing_bid.user_id).first()
+                            losing_lang = getattr(losing_user, "language", "en")
+                            if losing_lang == "vi":
+                                auction_title = auction.title_vi or auction.title
+                            elif losing_lang == "ko":
+                                auction_title = auction.title_ko or auction.title
+                            else:
+                                auction_title = auction.title
+
+                            message = translate("lose", losing_lang, title=auction_title)
                             losing_notification = Notification(
                             user_id=losing_bid.user_id,
                             auction_id=auction.id,
-                            message=f"Rất tiếc! Bạn đã đấu giá không thành công phiên đấu giá {auction.title}.",
+                            message=message,
                             created_at=datetime.now(),
                             is_read=False
                         )

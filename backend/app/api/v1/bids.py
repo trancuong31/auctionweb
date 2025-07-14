@@ -1,5 +1,5 @@
 from email import message
-from fastapi import APIRouter, Depends, HTTPException, status, Request, Header
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.Bid import Bid
@@ -8,11 +8,10 @@ from app.models.User import User
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
-from jose import jwt, JWTError
-from app.core.config import SECRET_KEY, ALGORITHM
 from app.core.auth import get_current_user_id_from_token
 from app.models.Notification import Notification
-import uuid
+from app.i18n import _
+
 
 router = APIRouter()
 
@@ -36,17 +35,21 @@ class BidOut(BaseModel):
 
 
 @router.post("/bids", response_model=BidOut)
-def create_bid(bid_in: BidCreate, db: Session = Depends(get_db), user_id: str = Depends(get_current_user_id_from_token)):
-
+def create_bid(
+    request: Request,
+    bid_in: BidCreate,
+    db: Session = Depends(get_db),
+    user_id: str = Depends(get_current_user_id_from_token)
+):
     auction = db.query(Auction).filter(Auction.id == bid_in.auction_id).first()
     if not auction:
-        raise HTTPException(status_code=404, detail="Auction not found")
+        raise HTTPException(status_code=404, detail=_("Auction not found", request))
     now = datetime.now()
     if auction.start_time > now or auction.end_time < now:
-        raise HTTPException(status_code=400, detail="Auction is not active")
+        raise HTTPException(status_code=400, detail=_("Auction is not active", request))
     user = db.query(User).filter(User.id == user_id, User.status == 1).first()
     if not user:
-        raise HTTPException(status_code=403, detail="User not allowed to bid")
+        raise HTTPException(status_code=403, detail=_("User not allowed to bid", request))
     # Luôn yêu cầu bid_amount >= starting_price + step_price
     highest_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id).order_by(Bid.bid_amount.desc()).first()
     if highest_bid:
@@ -59,16 +62,14 @@ def create_bid(bid_in: BidCreate, db: Session = Depends(get_db), user_id: str = 
     if float(bid_in.bid_amount) < min_bid:
         raise HTTPException(
             status_code=400,
-            detail=(
-                f"Bid amount is invalid. "
-                f"Your bid must be at least {min_bid:,.0f}$ "
-                f"{min_bid_msg}"
-            )
+            detail=_("Bid amount is invalid. Your bid must be at least {min_bid:,.0f}$ {min_bid_msg}", request).format(
+        min_bid=min_bid, min_bid_msg=min_bid_msg
+    )
         )
     # Kiểm tra user đã đặt bid cho auction này chưa
     existing_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id, Bid.user_id == user_id).first()
     if existing_bid:
-        raise HTTPException(status_code=400, detail="User has already placed a bid for this auction")
+        raise HTTPException(status_code=400, detail=_("User has already placed a bid for this auction", request))
     bid = Bid(
         auction_id=bid_in.auction_id,
         user_id=user_id,
@@ -84,7 +85,12 @@ def create_bid(bid_in: BidCreate, db: Session = Depends(get_db), user_id: str = 
     notification = Notification(
         user_id=user_id,
         auction_id = bid_in.auction_id,
-        message=f"Bạn đã đặt giá thành công {bid_in.bid_amount:,.0f}$ cho phiên đấu giá {auction.title}.",
+        message=_(
+        "You have successfully placed a bid of  {bid_in_bid_amount:,.0f}$ on auction {auction_title}.", request
+    ).format(
+        bid_in_bid_amount=bid_in.bid_amount,
+        auction_title=auction.title
+    ),
         created_at=datetime.now(),
         is_read=False
     )
