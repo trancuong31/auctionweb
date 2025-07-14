@@ -13,7 +13,7 @@ function Tutorial() {
             padding: "32px",
             maxWidth: "1200px",
             margin: "40px auto",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.18)",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
           }}
         >
           <h3

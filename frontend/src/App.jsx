@@ -11,6 +11,7 @@ import Rule from "./components/layout/Rule.jsx";
 import Tutorial from "./components/layout/Tutorial.jsx";
 import Contact from "./components/layout/Contact.jsx";
 import History from "./components/layout/History.jsx";
+import AccountInfo from "./components/layout/AccountInfo.jsx";
 import Information from "./components/layout/Information.jsx";
 import PrivateRoute from "./components/layout/PrivateRoute.jsx";
 import { Toaster } from "react-hot-toast";
@@ -33,12 +34,15 @@ function App() {
           <Route path="/policy" element={<Rule />} />
           <Route path="/guide" element={<Tutorial />} />
           <Route path="/contact" element={<Contact />} />
+          
         </Route>
         {/* Not use layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
+      
     </>
+    
   );
 }
 

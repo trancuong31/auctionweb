@@ -190,7 +190,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
         )}
       >
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white sm:p-1 absolute top-0 left-0 w-full h-[7%] min-[1500px]:h-[10%]">
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white sm:p-1 absolute top-0 left-0 w-full h-[7%] min-[1500px]:h-[10%]">
           <h2 className="text-lg sm:text-2xl font-bold text-center absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-1/2">
             CREATE AUCTION
           </h2>

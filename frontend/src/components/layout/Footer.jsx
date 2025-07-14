@@ -1,7 +1,7 @@
 import React from "react";
 import "./Footer.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPhone, faEnvelope, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPhone, faEnvelope, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
 export const Footer = () => {
@@ -9,15 +9,18 @@ export const Footer = () => {
     name: "Partron Vina Co., Ltd.",
     phone: "+84 123 456 789",
     email: "contact@partronvina.com",
-    address: "123 Example St., District 1, Vinh Phuc Province, Vietnam",
+    addresses: [
+      "Lot 11, Khai Quang Industrial Park, Vinh Phuc Ward, Phu Tho Province, Vietnam",
+      "Lot CN03-03, Dong Soc Industrial Cluster, Vinh Tuong Commune, Phu Tho Province, Vietnam",
+    ],
   };
 
   const helpLinks = [
-  { label: "Register for Account Pricing", to: "/guide" },
-  { label: "Online Pricing Rules Policy Security", to: "/policy" },
-  { label: "Vision & Development Orientation", to: "/about" },
-  { label: "History of Partron Vina Company Limited", to: "/history" },
-];
+    { label: "Register for Account Pricing", to: "/guide" },
+    { label: "Online Pricing Rules Policy Security", to: "/policy" },
+    { label: "Vision & Development Orientation", to: "/about" },
+    { label: "History of Partron Vina Company Limited", to: "/history" },
+  ];
 
   return (
     <footer className="footer">
@@ -35,10 +38,18 @@ export const Footer = () => {
             </li>
             <li>
               <FontAwesomeIcon icon={faMapMarkerAlt} style={{ marginRight: 8 }} />
-              <span className="footer__label">Address:</span> {companyInfo.address}
+              <span className="footer__label">Addresses:</span>
+              <ul className="footer__address-list">
+                {companyInfo.addresses.map((addr, index) => (
+                  <li key={index} className="footer__address-item">
+                    {addr}                    
+                  </li>
+                ))}
+              </ul>
             </li>
           </ul>
         </div>
+
         <div className="footer__section footer__help">
           <h2 className="footer__title">Auctioneer Assistance</h2>
           <ul className="footer__list footer__list--inline">

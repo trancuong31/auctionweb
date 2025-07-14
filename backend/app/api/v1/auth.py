@@ -1,5 +1,5 @@
 import enum
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.User import User
@@ -9,6 +9,7 @@ from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from app.core.config import  SECRET_KEY, ALGORITHM
 from app.enums import UserRole
+from app.i18n import _
 
 router = APIRouter()
 
@@ -54,13 +55,13 @@ def create_refresh_token(data: dict, expires_delta: timedelta = timedelta(days=7
     return encoded_jwt
             
 @router.post("/login", response_model=Token)
-def login(request: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == request.email).first()
+def login(request: Request, login_data: LoginRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == login_data.email).first()
 
-    if not user or user.password != request.password:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+    if not user or user.password != login_data.password:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=_("Incorrect email or password", request))
     if user.status != 1 and user:
-        raise HTTPException(status_code=403, detail="User is inactive or banned")
+        raise HTTPException(status_code=403, detail=_("User is inactive or banned", request))
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id})
     refresh_token = create_refresh_token(data={"sub": user.email, "user_id": user.id})
     role = UserRole(user.role).name.lower()
@@ -69,17 +70,17 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
     return {"access_token": access_token,"refresh_token": refresh_token, "token_type": "bearer", "role":role, "username":username, "email": email}
 
 @router.post("/register", response_model=Token)
-def register(request: RegisterRequest, db: Session = Depends(get_db)):
-    existing_user = db.query(User).filter(User.email == request.email).first()
+def register(request: Request, register_data: RegisterRequest, db: Session = Depends(get_db)):
+    existing_user = db.query(User).filter(User.email == register_data.email).first()
     if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=400, detail=_("Account already registered", request))
     
     user = User(
-        email=request.email,
-        username = request.username,
+        email=register_data.email,
+        username = register_data.username,
         created_at=datetime.now(),
-        password=request.password,
-        role=request.role.value
+        password=register_data.password,
+        role=register_data.role.value
     )
     db.add(user)
     db.commit()
@@ -97,16 +98,16 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
     }
 
 @router.post("/refresh-token")
-def refresh_token(request: RefreshRequest):
+def refresh_token(request: Request, refresh_data: RefreshRequest):
     try:
-        payload = jwt.decode(request.refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(refresh_data.refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
         if payload.get("type") != "refresh":
-            raise HTTPException(status_code=401, detail="Invalid refresh token")
+            raise HTTPException(status_code=401, detail=_("Invalid refresh token", request))
         user_id = payload.get("user_id")
         email = payload.get("sub")
         new_access_token = create_access_token(data={"sub": email, "user_id": user_id})
         return {"access_token": new_access_token, "token_type": "bearer"}
     except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
+        raise HTTPException(status_code=401, detail=_("Invalid refresh token", request))
 
     
