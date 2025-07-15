@@ -45,7 +45,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 }
               />
             </div>
-            <div className="bg-gray-100 p-3 text-sm leading-[1.5] flex-grow">
+            <div className="bg-white p-3 text-sm leading-[1.5] flex-grow">
               <p className="flex justify-between">
                 <span className="break-all w-0 flex-1 min-w-0 text-left font-[600]">
                   {item.title}
@@ -93,7 +93,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   })}
                 </span>
               </p>
-              
+
               {item.status === 2 ? (
                 item.highest_amount !== null && item.winner_info !== null ? (
                   <p className="flex justify-between">

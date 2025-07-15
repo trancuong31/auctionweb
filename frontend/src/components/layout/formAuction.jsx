@@ -68,12 +68,14 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
         "fixed inset-0 bg-black bg-opacity-50 flex items-center pt-[80px] max-sm:pt-[140px] justify-center p-2 z-50",
         isOpen ? "visible" : "invisible"
       )}
+      onClick={onClose}
     >
       <div
         className={clsx(
           "bg-white rounded-2xl shadow-2xl w-full max-w-md sm:max-w-lg  transform transition-all duration-300 fade-slide-up",
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
         )}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white sm:p-1 rounded-t-2xl relative">
@@ -233,7 +235,9 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
                     placeholder="Enter your delivery address"
                   />
                   {fieldState.error && (
-                    <p className="text-red-500 text-[10px]">{fieldState.error.message}</p>
+                    <p className="text-red-500 text-[10px]">
+                      {fieldState.error.message}
+                    </p>
                   )}
                 </>
               )}
@@ -273,7 +277,9 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
               />
 
               {errors.bid_amount && (
-                <p className="text-red-500 text-[10px]">{errors.bid_amount.message}</p>
+                <p className="text-red-500 text-[10px]">
+                  {errors.bid_amount.message}
+                </p>
               )}
             </div>
           </div>

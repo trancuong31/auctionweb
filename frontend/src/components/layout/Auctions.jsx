@@ -52,34 +52,36 @@ const AuctionSection = ({ title, type }) => {
   }, [type]);
 
   return (
-    <AnimatedContent className="section">
-      {loading ? (
-        <div className="loader" />
-      ) : error ? (
-        <p className="error">{error}</p>
-      ) : (
-        <>
-          <h2 className="section-title">{title}</h2>
-          <span
-            style={{
-              fontWeight: "normal",
-              color: "#8c8e94",
-              fontSize: "12px",
-              padding: "0px 0px 5px 0px",
-            }}
-          >
-            Total: {total} asset
-          </span>
-          <RenderCardAuction
-            arrAuction={items}
-            numberCol={4}
-            clickCard={handleClick}
-          />
-          <a href="/auctions/search" className="see-all">
-            See all
-          </a>
-        </>
-      )}
+    <AnimatedContent>
+      <div className="section">
+        {loading ? (
+          <div className="loader" />
+        ) : error ? (
+          <p className="error">{error}</p>
+        ) : (
+          <>
+            <h2 className="section-title">{title}</h2>
+            <span
+              style={{
+                fontWeight: "normal",
+                color: "#8c8e94",
+                fontSize: "12px",
+                padding: "0px 0px 5px 0px",
+              }}
+            >
+              Total: {total} asset
+            </span>
+            <RenderCardAuction
+              arrAuction={items}
+              numberCol={4}
+              clickCard={handleClick}
+            />
+            <a href="/auctions/search" className="see-all">
+              See all
+            </a>
+          </>
+        )}
+      </div>
     </AnimatedContent>
   );
 };

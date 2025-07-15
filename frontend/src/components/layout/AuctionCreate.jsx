@@ -183,12 +183,14 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
         "fixed inset-0 flex items-center pt-[50px] justify-center bg-black bg-opacity-50 z-50 max-sm:pt-[200px] ",
         isOpen ? "visible" : "invisible"
       )}
+      onClick={onClickClose}
     >
       <div
         className={clsx(
           "bg-gray-200 w-full max-w-2xl max-sm:w-[90%] max-h-[95%] p-8 rounded-2xl relative overflow-hidden fade-slide-up",
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
         )}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white sm:p-1 absolute top-0 left-0 w-full h-[7%] min-[1500px]:h-[10%]">
           <h2 className="text-lg sm:text-2xl font-bold text-center absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-1/2">
@@ -485,6 +487,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                       </span>{" "}
                       or drag and drop
                     </p>
+                    <p className="text-sm text-red-500">Photo limit is 10mb</p>
                   </div>
                   {/* Image Preview Area */}
                   <div
