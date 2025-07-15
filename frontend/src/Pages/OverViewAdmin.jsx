@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import { useDebounceCallback } from "../hooks/useDebounceCallback";
 import AnimatedContent from "../components/ui/animatedContent";
+import { useTranslation } from "react-i18next";
 import {
   faUsers,
   faGavel,
@@ -28,7 +29,6 @@ const OverViewAdmin = () => {
   const [userData, setUserData] = useState([]);
   const [auctionData, setAuctionData] = useState([]);
   const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
   const [displayCreateForm, setDisplayCreateForm] = useState(false);
   const [idAuction, setIdAuction] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -37,6 +37,7 @@ const OverViewAdmin = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+  const { t, i18n } = useTranslation();
   const [userParam, setUserParam] = useState({
     sort_by: "",
     sort_order: "",
@@ -67,9 +68,19 @@ const OverViewAdmin = () => {
     onConfirm: () => {},
   });
 
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
+
   const getOverView = async () => {
     try {
-      const response = await getAll("overview", true);
+      const response = await getAll("overview", true, {
+        lang: sessionStorage.getItem("lang") || "en",
+      });
       setOverViewData(response.data);
     } catch (error) {
       toast.error("Error while get data");
@@ -82,9 +93,11 @@ const OverViewAdmin = () => {
   };
 
   const getPageUser = async (page = 1) => {
+    const lang = sessionStorage.getItem("lang") || "en";
     const param = {
       ...userParam,
       page,
+      lang,
     };
     try {
       // setIsLoadingSearch(true);
@@ -107,9 +120,11 @@ const OverViewAdmin = () => {
   const getPageAuction = async (page = 1) => {
     try {
       // setIsLoadingSearch(true);
+      const lang = sessionStorage.getItem("lang") || "en";
       const paramWithPage = {
         ...auctionParam,
         page,
+        lang,
       };
       const response = await getAll("auctions/search", true, paramWithPage);
       setAuctionData(response.data.auctions);
@@ -179,7 +194,9 @@ const OverViewAdmin = () => {
     };
 
     try {
-      await update("users", user.id, newUser, true);
+      await update("users", user.id, newUser, true, {
+        lang: sessionStorage.getItem("lang") || "en",
+      });
       toast.success("Update user successful!");
       setCurrentEditing(null);
       await getPageUser();
@@ -191,9 +208,8 @@ const OverViewAdmin = () => {
 
   const handleDeleteUser = (id) => {
     setConfirmConfig({
-      title: "Delete user",
-      message:
-        "Are you sure you want to delete this user? This action cannot be undone.",
+      title: t("delete_user_title"),
+      message: t("delete_user_message"),
       icon: (
         <FontAwesomeIcon
           className="text-red-500 h-6"
@@ -202,7 +218,9 @@ const OverViewAdmin = () => {
       ),
       onConfirm: async () => {
         try {
-          await deleteOne("users", id, true);
+          await deleteOne("users", id, true, {
+            lang: sessionStorage.getItem("lang") || "en",
+          });
           toast.success("Delete user successful!");
           getPageUser();
         } catch (error) {
@@ -216,19 +234,21 @@ const OverViewAdmin = () => {
 
   const handleDeactiveUser = (user) => {
     setConfirmConfig({
-      title: user.status ? "Deactive user" : "Active user",
+      title: t(user.status ? "deactivate_user_title" : "activate_user_title"),
       icon: (
         <FontAwesomeIcon
           className="text-yellow-500 h-6"
           icon={faTriangleExclamation}
         />
       ),
-      message: user.status
-        ? "Are you sure you want to Deactive this user?"
-        : "Are you sure you want to Active this user?",
+      message: t(
+        user.status ? "deactivate_user_message" : "activate_user_message"
+      ),
       onConfirm: async () => {
         try {
-          await updateSatus("users", user.id, { status: !user.status }, true);
+          await updateSatus("users", user.id, { status: !user.status }, true, {
+            lang: sessionStorage.getItem("lang") || "en",
+          });
           toast.success("update status user successful!");
           getPageUser();
         } catch (error) {
@@ -248,7 +268,6 @@ const OverViewAdmin = () => {
   const handelClickEdit = (user, idx) => {
     setCurrentEditing(idx);
     setUserName(user.username);
-    setEmail(user.email);
   };
 
   useEffect(() => {
@@ -290,7 +309,9 @@ const OverViewAdmin = () => {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
           <div className="bg-indigo-400 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
-            <p className="text-xs sm:text-sm font-semibold">Total User</p>
+            <p className="text-xs sm:text-sm font-semibold">
+              {t("total_user")}
+            </p>
             <p className="text-2xl sm:text-2xl font-bold">
               {overViewData.total_user}
             </p>
@@ -300,7 +321,9 @@ const OverViewAdmin = () => {
           </div>
 
           <div className="bg-yellow-200 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
-            <p className="text-xs sm:text-sm font-semibold">Total auction</p>
+            <p className="text-xs sm:text-sm font-semibold">
+              {t("total_auction")}
+            </p>
             <p className="text-xl sm:text-2xl font-bold">
               {overViewData.total_auction}
             </p>
@@ -311,7 +334,7 @@ const OverViewAdmin = () => {
 
           <div className="bg-green-200 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
             <p className="text-xs sm:text-sm font-semibold">
-              Total successful auctions
+              {t("total_successful_auctions")}
             </p>
             <p className="text-xl sm:text-2xl font-bold">
               {overViewData.total_successful_auctions}
@@ -323,7 +346,7 @@ const OverViewAdmin = () => {
 
           <div className="bg-yellow-100 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
             <p className="text-xs sm:text-sm font-semibold">
-              Total auction in progress
+              {t("total_auction_in_progress")}
             </p>
             <p className="text-xl sm:text-2xl font-bold">
               {overViewData.total_auction_in_progress}
@@ -335,7 +358,7 @@ const OverViewAdmin = () => {
 
           <div className="bg-cyan-100 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
             <p className="text-xs sm:text-sm font-semibold">
-              Total upcoming auctions
+              {t("total_upcoming_auctions")}
             </p>
             <p className="text-xl sm:text-2xl font-bold">
               {overViewData.total_upcoming_auctions}
@@ -347,7 +370,7 @@ const OverViewAdmin = () => {
 
           <div className="bg-red-300 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
             <p className="text-xs sm:text-sm font-semibold">
-              Total unsuccessful auctions
+              {t("total_unsuccessful_auctions")}
             </p>
             <p className="text-xl sm:text-2xl font-bold">
               {overViewData.total_unsuccessful_auctions}
@@ -362,14 +385,14 @@ const OverViewAdmin = () => {
 
         <div className="bg-gray-100 p-4 rounded shadow mb-6">
           <div className="flex justify-between mb-3 items-center max-sm:flex-col max-sm:gap-3">
-            <p className="text-lg font-bold">MANAGER USERS</p>
+            <p className="text-lg font-bold">{t("manager_user")}</p>
             <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end max-sm:gap-3">
               {/* <!-- Search Input --> */}
               <div className="w-[60%] max-sm:w-full">
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Email or Username"
+                    placeholder={t("email_or_username")}
                     className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     onChange={(e) =>
                       setUserFilterInput((prev) => ({
@@ -386,7 +409,7 @@ const OverViewAdmin = () => {
               {/* <!-- Category Select --> */}
               <div className="w-[25%] pb-6 max-sm:w-full">
                 <label className="text-sm font-semibold block mb-1">
-                  Sort by
+                  {t("sort_by")}
                 </label>
                 {/* Sort select */}
                 <div className="">
@@ -402,22 +425,22 @@ const OverViewAdmin = () => {
                     className="border border-gray-400 rounded-lg px-3 py-2 w-full"
                   >
                     <option value="username" data-order="asc">
-                      Username from A to Z
+                      {t("sort_username_asc")}
                     </option>
                     <option value="username" data-order="desc">
-                      Username from Z to A
+                      {t("sort_username_desc")}
                     </option>
-                    <option value="start_time" data-order="asc">
-                      Email from A to Z
+                    <option value="email" data-order="asc">
+                      {t("sort_email_asc")}
                     </option>
-                    <option value="start_time" data-order="desc">
-                      Email from Z to A
+                    <option value="email" data-order="desc">
+                      {t("sort_email_desc")}
                     </option>
                     <option value="create_at" data-order="asc">
-                      Create At from Oldest to Latest
+                      {t("sort_create_at_asc")}
                     </option>
                     <option value="create_at" data-order="desc">
-                      Create At from Latest to Oldest
+                      {t("sort_create_at_desc")}
                     </option>
                   </select>
                 </div>
@@ -434,7 +457,7 @@ const OverViewAdmin = () => {
              hover:border-gray-100 active:scale-95"
               >
                 <FontAwesomeIcon icon={faSearch} />
-                <span>SEARCH</span>
+                <span>{t("search_btn")}</span>
               </button>
             </div>
           </div>
@@ -447,12 +470,12 @@ const OverViewAdmin = () => {
               <thead className="bg-gray-200">
                 <tr>
                   <th className="border px-2 py-1">#</th>
-                  <th className="border px-2 py-1">Name</th>
-                  <th className="border px-2 py-1">Email</th>
-                  <th className="border px-2 py-1">Create at</th>
-                  <th className="border px-2 py-1">Role</th>
-                  <th className="border px-2 py-1">Status</th>
-                  <th className="border px-2 py-1">Active</th>
+                  <th className="border px-2 py-1">{t("name")}</th>
+                  <th className="border px-2 py-1">{t("email")}</th>
+                  <th className="border px-2 py-1">{t("created_at")}</th>
+                  <th className="border px-2 py-1">{t("role")}</th>
+                  <th className="border px-2 py-1">{t("status")}</th>
+                  <th className="border px-2 py-1">{t("action")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -487,14 +510,14 @@ const OverViewAdmin = () => {
                             onClick={() => handleDeactiveUser(user)}
                             className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded"
                           >
-                            Active
+                            {t("active")}
                           </button>
                         ) : (
                           <button
                             onClick={() => handleDeactiveUser(user)}
                             className="bg-red-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded"
                           >
-                            Disactive
+                            {t("disactive")}
                           </button>
                         )}
                       </div>
@@ -506,13 +529,13 @@ const OverViewAdmin = () => {
                             onClick={() => handleEditUser(user)}
                             className="bg-teal-100 text-teal-600 text-xs font-semibold px-3 py-2 min-w-16 rounded-md border border-teal-200 hover:bg-teal-300 transition"
                           >
-                            Save
+                            {t("save")}
                           </button>
                           <button
                             onClick={() => setCurrentEditing(null)}
                             className="bg-orange-100 text-orange-600 font-semibold text-xs px-3 py-2 rounded-md min-w-[60px] border border-orange-200 hover:bg-orange-300 transition"
                           >
-                            Cancel
+                            {t("cancle")}
                           </button>
                         </>
                       ) : (
@@ -521,13 +544,13 @@ const OverViewAdmin = () => {
                             onClick={() => handelClickEdit(user, idx)}
                             className="bg-indigo-100 hover:bg-indigo-200 font-semibold text-indigo-700 text-xs px-3 py-2 rounded min-w-[60px] transition"
                           >
-                            Edit
+                            {t("edit")}
                           </button>
                           <button
                             onClick={() => handleDeleteUser(user.id)}
                             className="bg-red-100 text-red-600 text-xs font-semibold px-3 py-2 rounded-md border border-red-200 hover:bg-red-300 transition"
                           >
-                            Delete
+                            {t("delete")}
                           </button>
                         </>
                       )}
@@ -554,19 +577,19 @@ const OverViewAdmin = () => {
 
           <div className="flex-1 flex flex-col md:flex-row justify-between items-center md:space-y-0 md:space-x-4 w-full">
             <div className="flex gap-10 w-full items-center max-sm:flex-col max-sm:gap-4 max-sm:mb-4">
-              <h2 className="text-lg font-bold">MANAGER AUCTIONS</h2>
+              <h2 className="text-lg font-bold"> {t("manager_auctions")}</h2>
               <button
                 onClick={() => setDisplayCreateForm(true)}
                 className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-3 py-2 rounded max-sm:w-full"
               >
-                Create auction
+                {t("create_auction_btn")}
               </button>
               {/* <!-- Search Input --> */}
               <div className="flex-1 max-sm:w-full">
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Title Auction"
+                    placeholder={t("enter_title")}
                     className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     onChange={(e) =>
                       setAuctionFilterInput((prev) => ({
@@ -584,7 +607,7 @@ const OverViewAdmin = () => {
                 {/* Sort select */}
                 <div className="col-span-1">
                   <label className="text-sm font-[700] mb-1 mr-2 block">
-                    Sort by
+                    {t("sort_by")}
                   </label>
                   <select
                     onChange={(e) => {
@@ -597,29 +620,30 @@ const OverViewAdmin = () => {
                     }}
                     className="border border-gray-400 rounded-lg px-3 py-2 w-full"
                   >
+                    <option value="">{t("select_sort")}</option>
                     <option value="title" data-order="asc">
-                      Title from A to Z
+                      {t("sort_title_asc")}
                     </option>
                     <option value="title" data-order="desc">
-                      Title from Z to A
+                      {t("sort_title_desc")}
                     </option>
                     <option value="create_at" data-order="asc">
-                      Createat from Oldest to Latest
+                      {t("sort_create_at_asc")}
                     </option>
                     <option value="create_at" data-order="desc">
-                      Createat from Latest to Oldest
+                      {t("sort_create_at_desc")}
                     </option>
                     <option value="start_time" data-order="asc">
-                      Startime from Oldest to Latest
+                      {t("sort_start_time_asc")}
                     </option>
                     <option value="start_time" data-order="desc">
-                      Startime from Latest to Oldest
+                      {t("sort_start_time_desc")}
                     </option>
                     <option value="end_time" data-order="asc">
-                      Endtime from Oldest to Latest
+                      {t("sort_end_time_asc")}
                     </option>
                     <option value="end_time" data-order="desc">
-                      Endtime from Latest to Oldest
+                      {t("sort_end_time_desc")}
                     </option>
                   </select>
                 </div>
@@ -633,10 +657,10 @@ const OverViewAdmin = () => {
                 }
                 className="border border-gray-400 rounded-lg px-3 py-2 max-sm:w-full"
               >
-                <option value="">-- Select status --</option>
-                <option value="0">Ongoing</option>
-                <option value="1">Upcoming</option>
-                <option value="2">Ended</option>
+                <option value="">{t("select_status")}</option>
+                <option value="0">{t("ongoing_auctions")}</option>
+                <option value="1">{t("upcoming_auctions")}</option>
+                <option value="2">{t("ended_auctions")}</option>
               </select>
               {/* <!-- Search Button --> */}
               <div className="">
@@ -650,7 +674,7 @@ const OverViewAdmin = () => {
              hover:border-gray-100 active:scale-95"
                 >
                   <FontAwesomeIcon icon={faSearch} />
-                  <span>SEARCH</span>
+                  <span> {t("search_btn")}</span>
                 </button>
               </div>
             </div>
@@ -663,12 +687,12 @@ const OverViewAdmin = () => {
               <thead className="bg-gray-200">
                 <tr>
                   <th className="border px-2 py-1">#</th>
-                  <th className="border px-2 py-1">Title</th>
-                  <th className="border px-2 py-1">Start time</th>
-                  <th className="border px-2 py-1">End time</th>
-                  <th className="border px-2 py-1">Starting price</th>
-                  <th className="border px-2 py-1">Highest price</th>
-                  <th className="border px-2 py-1">Status</th>
+                  <th className="border px-2 py-1">{t("title")}</th>
+                  <th className="border px-2 py-1">{t("start_time")}</th>
+                  <th className="border px-2 py-1">{t("end_time")}</th>
+                  <th className="border px-2 py-1">{t("starting_price")}</th>
+                  <th className="border px-2 py-1">{t("highest_price")}</th>
+                  <th className="border px-2 py-1">{t("status")}</th>
                   <th className="border px-2 py-1">#</th>
                 </tr>
               </thead>
@@ -708,7 +732,7 @@ const OverViewAdmin = () => {
                         onClick={() => openDetailBid(auction.id)}
                         className="border px-2 py-1 max-w-96 text-blue-500 underline cursor-pointer break-words"
                       >
-                        View
+                        {t("view")}
                       </td>
                     </tr>
                   );

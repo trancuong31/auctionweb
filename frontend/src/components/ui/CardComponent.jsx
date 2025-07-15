@@ -1,7 +1,19 @@
 import clsx from "clsx";
 import imagedefault from "../../assets/images/imagedefault.png";
 import CountdownTimer from "../../common/CountDownTime";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
+  const { t, i18n } = useTranslation();
+
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
+
   const gridClass = clsx(
     "grid gap-4",
     "grid-cols-1",
@@ -52,21 +64,21 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className=" text-gray-500">Starting price:</span>{" "}
+                <span className=" text-gray-500">{t("starting_price")}:</span>{" "}
                 {item.starting_price?.toLocaleString("en-US", {
                   style: "currency",
                   currency: "USD",
                 })}
               </p>
               <p className="flex justify-between">
-                <span className=" text-gray-500">Price step:</span>{" "}
+                <span className=" text-gray-500">{t("step_price")}:</span>{" "}
                 {item.step_price?.toLocaleString("en-US", {
                   style: "currency",
                   currency: "USD",
                 })}
               </p>
               <p className="flex justify-between">
-                <span className=" text-gray-500">Start time:</span>{" "}
+                <span className=" text-gray-500">{t("start_time")}:</span>{" "}
                 <span className="font-[600]">
                   {new Date(item.start_time).toLocaleString("en-US", {
                     year: "numeric",
@@ -80,7 +92,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className=" text-gray-500">End time:</span>{" "}
+                <span className=" text-gray-500">{t("end_time")}:</span>{" "}
                 <span className="font-[600]">
                   {new Date(item.end_time).toLocaleString("en-US", {
                     year: "numeric",

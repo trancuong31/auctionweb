@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./Footer.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPhone, faEnvelope, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPhone,
+  faEnvelope,
+  faMapMarkerAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const Footer = () => {
+  const { t, i18n } = useTranslation();
   const companyInfo = {
     name: "Partron Vina Co., Ltd.",
     phone: "+84 123 456 789",
@@ -16,11 +22,19 @@ export const Footer = () => {
   };
 
   const helpLinks = [
-    { label: "Register for Account Pricing", to: "/guide" },
-    { label: "Online Pricing Rules Policy Security", to: "/policy" },
-    { label: "Vision & Development Orientation", to: "/about" },
-    { label: "History of Partron Vina Company Limited", to: "/history" },
+    { label: t("register_account_pricing"), to: "/guide" },
+    { label: t("policy_security"), to: "/policy" },
+    { label: t("vision_development_orientation"), to: "/about" },
+    { label: t("company_history"), to: "/history" },
   ];
+
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
 
   return (
     <footer className="footer">
@@ -30,19 +44,24 @@ export const Footer = () => {
           <ul className="footer__list">
             <li>
               <FontAwesomeIcon icon={faPhone} style={{ marginRight: 8 }} />
-              <span className="footer__label">Phone:</span> {companyInfo.phone}
+              <span className="footer__label">{t("phone")}:</span>{" "}
+              {companyInfo.phone}
             </li>
             <li>
               <FontAwesomeIcon icon={faEnvelope} style={{ marginRight: 8 }} />
-              <span className="footer__label">Email:</span> {companyInfo.email}
+              <span className="footer__label">{t("email")}:</span>{" "}
+              {companyInfo.email}
             </li>
             <li>
-              <FontAwesomeIcon icon={faMapMarkerAlt} style={{ marginRight: 8 }} />
-              <span className="footer__label">Addresses:</span>
+              <FontAwesomeIcon
+                icon={faMapMarkerAlt}
+                style={{ marginRight: 8 }}
+              />
+              <span className="footer__label">{t("address")}:</span>
               <ul className="footer__address-list">
                 {companyInfo.addresses.map((addr, index) => (
                   <li key={index} className="footer__address-item">
-                    {addr}                    
+                    {addr}
                   </li>
                 ))}
               </ul>
@@ -51,7 +70,7 @@ export const Footer = () => {
         </div>
 
         <div className="footer__section footer__help">
-          <h2 className="footer__title">Auctioneer Assistance</h2>
+          <h2 className="footer__title">{t("auctioneer_assistance")}</h2>
           <ul className="footer__list footer__list--inline">
             {helpLinks.map((link, idx) => (
               <li key={idx} className="footer__item">
