@@ -3,9 +3,11 @@ import { useEffect, useRef } from "react";
 import "flatpickr/dist/flatpickr.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { useTranslation } from "react-i18next";
 
 function RangeCalender({ onChange, value, allowMinDate }) {
   const calendarRef = useRef(null);
+  const { t, i18n } = useTranslation();
   const handleFocus = () => {
     calendarRef.current?.focus();
   };
@@ -26,6 +28,14 @@ function RangeCalender({ onChange, value, allowMinDate }) {
     return () => fp.destroy();
   }, []);
 
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
+
   return (
     <div className="flex items-center border rounded overflow-hidden">
       <div
@@ -39,7 +49,7 @@ function RangeCalender({ onChange, value, allowMinDate }) {
       </div>
       <input
         ref={calendarRef}
-        placeholder="Select a time range"
+        placeholder={t("select_time_range")}
         className="p-2 w-full h-full focus:outline-none"
       />
     </div>

@@ -1,8 +1,9 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [user, setUser] = useState(() => {
     const storedUser =
       localStorage.getItem("user") || sessionStorage.getItem("user");
@@ -19,13 +20,15 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    setIsLoggingOut(true);
     setUser(null);
     localStorage.removeItem("user");
     sessionStorage.removeItem("user");
+    setTimeout(() => setIsLoggingOut(true), 100);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoggingOut }}>
       {children}
     </AuthContext.Provider>
   );

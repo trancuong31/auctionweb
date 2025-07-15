@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ModalAuction from "./formAuction";
 import clsx from "clsx";
+import { useTranslation } from "react-i18next";
 import {
   faTags,
   faMoneyBill,
@@ -10,66 +11,11 @@ import {
   faUsers,
   faLayerGroup,
 } from "@fortawesome/free-solid-svg-icons";
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import imagedefault from "../../assets/images/imagedefault.png";
 import { getOne } from "../../services/api";
 import { toast } from "react-hot-toast";
-function isTokenValid() {
-  const getUser = () => {
-    try {
-      const sessionUser = sessionStorage.getItem("user");
-      if (sessionUser) return JSON.parse(sessionUser);
-    } catch (e) {
-      sessionStorage.removeItem("user");
-    }
-    try {
-      const localUser = localStorage.getItem("user");
-      if (localUser) return JSON.parse(localUser);
-    } catch (e) {
-      localStorage.removeItem("user");
-    }
-    return null;
-  };
-
-  const user = getUser();
-  if (!user || !user.access_token) return false;
-
-  try {
-    const token = user.access_token;
-    const parts = token.split(".");
-    if (parts.length !== 3) throw new Error("Invalid token format");
-    const payload = JSON.parse(atob(parts[1]));
-    const isValid = payload.exp * 1000 > Date.now();
-
-    if (!isValid) {
-      sessionStorage.removeItem("user");
-      localStorage.removeItem("user");
-    }
-
-    return isValid;
-  } catch {
-    sessionStorage.removeItem("user");
-    localStorage.removeItem("user");
-    return false;
-  }
-}
-
-function getUser() {
-  try {
-    const sessionUser = sessionStorage.getItem("user");
-    if (sessionUser) return JSON.parse(sessionUser);
-  } catch (e) {
-    sessionStorage.removeItem("user");
-  }
-  try {
-    const localUser = localStorage.getItem("user");
-    if (localUser) return JSON.parse(localUser);
-  } catch (e) {
-    localStorage.removeItem("user");
-  }
-  return null;
-}
 
 const AuctionDetail = () => {
   const { id } = useParams();
@@ -85,9 +31,76 @@ const AuctionDetail = () => {
     getAuction();
   }, [id]);
 
+  const { t, i18n } = useTranslation();
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
+
+  function isTokenValid() {
+    const getUser = () => {
+      try {
+        const sessionUser = sessionStorage.getItem("user");
+        if (sessionUser) return JSON.parse(sessionUser);
+      } catch (e) {
+        sessionStorage.removeItem("user");
+      }
+      try {
+        const localUser = localStorage.getItem("user");
+        if (localUser) return JSON.parse(localUser);
+      } catch (e) {
+        localStorage.removeItem("user");
+      }
+      return null;
+    };
+
+    const user = getUser();
+    if (!user || !user.access_token) return false;
+
+    try {
+      const token = user.access_token;
+      const parts = token.split(".");
+      if (parts.length !== 3) throw new Error("Invalid token format");
+      const payload = JSON.parse(atob(parts[1]));
+      const isValid = payload.exp * 1000 > Date.now();
+
+      if (!isValid) {
+        sessionStorage.removeItem("user");
+        localStorage.removeItem("user");
+      }
+
+      return isValid;
+    } catch {
+      sessionStorage.removeItem("user");
+      localStorage.removeItem("user");
+      return false;
+    }
+  }
+
+  function getUser() {
+    try {
+      const sessionUser = sessionStorage.getItem("user");
+      if (sessionUser) return JSON.parse(sessionUser);
+    } catch (e) {
+      sessionStorage.removeItem("user");
+    }
+    try {
+      const localUser = localStorage.getItem("user");
+      if (localUser) return JSON.parse(localUser);
+    } catch (e) {
+      localStorage.removeItem("user");
+    }
+    return null;
+  }
+
   const getAuction = async () => {
     try {
-      const response = await getOne("auctions", id);
+      const response = await getOne("auctions", id, false, {
+        lang: sessionStorage.getItem("lang") || "en",
+      });
       setAuction(response.data);
       setLoading(false);
     } catch (error) {
@@ -300,7 +313,7 @@ const AuctionDetail = () => {
         <div className="flex-1 text-xl font-medium space-y-6 text-gray-800">
           <p>
             <FontAwesomeIcon icon={faTags} className="mr-4 text-blue-500" />
-            Deadline:{" "}
+            {t("deadline")}:{" "}
             <span className="font-semibold">
               {new Date(auction.end_time).toLocaleString()}
             </span>
@@ -310,7 +323,7 @@ const AuctionDetail = () => {
               icon={faMoneyBill}
               className="mr-4 text-green-500"
             />
-            Starting price:{" "}
+            {t("starting_price")}:{" "}
             <span className="font-semibold text-green-700">
               {auction.starting_price?.toLocaleString("en-US", {
                 style: "currency",
@@ -323,7 +336,7 @@ const AuctionDetail = () => {
               icon={faLayerGroup}
               className="mr-4 text-yellow-500"
             />
-            Step price:{" "}
+            {t("step_price")}:{" "}
             <span className="font-semibold text-yellow-700">
               {auction.step_price?.toLocaleString("en-US", {
                 style: "currency",
@@ -336,7 +349,7 @@ const AuctionDetail = () => {
               icon={faSignal5}
               className="mr-4 text-purple-500"
             />
-            Status:{" "}
+            {t("status")}:{" "}
             <span className="font-semibold">
               {auction.status === 0
                 ? "Ongoing"
@@ -349,7 +362,7 @@ const AuctionDetail = () => {
           </p>
           <p>
             <FontAwesomeIcon icon={faFileText} className="mr-4 text-cyan-500" />
-            Attached file:{" "}
+            {t("attached_file")}:{" "}
             {auction.file_exel ? (
               <button
                 onClick={() => handleDownload(auction.id)}
@@ -368,7 +381,7 @@ const AuctionDetail = () => {
                   icon={faUsers}
                   className="mr-4 text-black-500"
                 />
-                Number of bids: {auction.count_users}
+                {t("number_of_bids")}: {auction.count_users}
               </p>
             )}
           {auction.status === 2 && (
@@ -390,7 +403,9 @@ const AuctionDetail = () => {
       <div className="w-full max-h-[300px] overflow-y-auto p-6 mt-12 bg-gray-100 rounded-lg text-base leading-relaxed shadow-inner text-gray-700">
         {auction.description ? (
           <p className="whitespace-pre-wrap break-words">
-            <span className="font-semibold text-gray-800">Description:</span>{" "}
+            <span className="font-semibold text-gray-800">
+              {t("description")}:
+            </span>{" "}
             {auction.description}
           </p>
         ) : (
@@ -402,9 +417,9 @@ const AuctionDetail = () => {
       <div className="flex justify-center mt-12">
         <button
           onClick={openAuctionForm}
-          className="px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out "
+          className="uppercase px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out "
         >
-          AUCTION
+          {t("auction")}
         </button>
       </div>
 

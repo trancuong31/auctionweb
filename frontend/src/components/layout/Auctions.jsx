@@ -1,16 +1,17 @@
-// src/components/layout/AuctionSection.jsx
 import React, { useEffect, useState } from "react";
 import "./Auctions.css";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import AnimatedContent from "../ui/animatedContent";
 import RenderCardAuction from "../ui/CardComponent";
 
-const AuctionSection = ({ title, type }) => {
+const AuctionSection = ({ titleKey, type }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [total, setTotal] = useState(0);
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const statusMap = {
     ongoing: 0,
     upcoming: 1,
@@ -24,6 +25,14 @@ const AuctionSection = ({ title, type }) => {
   const handleClick = (id) => {
     navigate(`/auctions/${id}`);
   };
+
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,37 +61,37 @@ const AuctionSection = ({ title, type }) => {
   }, [type]);
 
   return (
- <AnimatedContent>
-     <div className="section">
-      {loading ? (
-        <div className="loader" />
-      ) : error ? (
-        <p className="error">{error}</p>
-      ) : (
-        <>
-          <h2 className="section-title">{title}</h2>
-          <span
-            style={{
-              fontWeight: "normal",
-              color: "#8c8e94",
-              fontSize: "12px",
-              padding: "0px 0px 5px 0px",
-            }}
-          >
-            Total: {total} asset
-          </span>
-          <RenderCardAuction
-            arrAuction={items}
-            numberCol={4}
-            clickCard={handleClick}
-          />
-          <a href="/auctions/search" className="see-all">
-            See all
-          </a>
-        </>
-      )}
-    </div>
- </AnimatedContent>
+    <AnimatedContent>
+      <div className="section">
+        {loading ? (
+          <div className="loader" />
+        ) : error ? (
+          <p className="error">{error}</p>
+        ) : (
+          <>
+            <h2 className="section-title">{t(titleKey)}</h2>
+            <span
+              style={{
+                fontWeight: "normal",
+                color: "#8c8e94",
+                fontSize: "12px",
+                padding: "0px 0px 5px 0px",
+              }}
+            >
+              {t("total")}: {total} {t("asset")}
+            </span>
+            <RenderCardAuction
+              arrAuction={items}
+              numberCol={4}
+              clickCard={handleClick}
+            />
+            <a href="/auctions/search" className="see-all">
+              {t("see_all")}
+            </a>
+          </>
+        )}
+      </div>
+    </AnimatedContent>
   );
 };
 

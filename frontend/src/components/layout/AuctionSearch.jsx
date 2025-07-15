@@ -7,6 +7,7 @@ import { getAll } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../ui/Pagination";
 import AnimatedContent from "../ui/animatedContent";
+import { useTranslation } from "react-i18next";
 
 const AuctionSearch = () => {
   const [searchText, setSearchText] = useState("");
@@ -14,6 +15,7 @@ const AuctionSearch = () => {
   const [sortBy, setSortBy] = useState("");
   const [sortOder, setSortOder] = useState("");
   const [dateRange, setDateRange] = useState([]);
+  const { t, i18n } = useTranslation();
 
   const [searchParam, setSearchParam] = useState({});
 
@@ -28,7 +30,8 @@ const AuctionSearch = () => {
   const searchData = async (page = 1) => {
     try {
       setIsLoading(true);
-      const paramWithPage = { ...searchParam, page };
+      const lang = sessionStorage.getItem("lang") || "en";
+      const paramWithPage = { ...searchParam, page, lang };
       const response = await getAll("auctions/search", false, paramWithPage);
       setTotal(response.data.total);
       setArrAuction(response.data.auctions);
@@ -64,13 +67,21 @@ const AuctionSearch = () => {
     navigate(`/auctions/${id}`);
   };
 
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
+
   useEffect(() => {
     searchData();
   }, []);
 
   return (
     <AnimatedContent>
-      <div className="shadow-[0_4px_24px_rgba(0,0,0,0.30)] p-4 text-xs rounded-xl">
+      <div className="shadow-[0_4px_24px_rgba(0,0,0,0.10)] p-4 text-xs rounded-xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4 items-end">
           {/* Search input */}
 
@@ -80,7 +91,7 @@ const AuctionSearch = () => {
             </span>
             <input
               type="text"
-              placeholder="Title..."
+              placeholder={t("enter_title")}
               className="pl-10 border pr-4 py-2 w-full rounded border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               onChange={(e) => setSearchText(e.target.value)}
             />
@@ -89,7 +100,7 @@ const AuctionSearch = () => {
           {/* Status select */}
           <div className="col-span-1">
             <label className="text-sm text-gray-600 mb-1 mr-2 block">
-              Status
+              {t("status")}
             </label>
             <select
               onChange={(e) =>
@@ -97,17 +108,17 @@ const AuctionSearch = () => {
               }
               className="border border-gray-400 rounded-lg px-3 py-2 w-full"
             >
-              <option value="">-- Select status --</option>
-              <option value="0">Ongoing</option>
-              <option value="1">Upcoming</option>
-              <option value="2">Ended</option>
+              <option value="">{t("select_status")}</option>
+              <option value="0">{t("ongoing_auctions")}</option>
+              <option value="1">{t("upcoming_auctions")}</option>
+              <option value="2">{t("ended_auctions")}</option>
             </select>
           </div>
 
           {/* Sort select */}
           <div className="col-span-1">
             <label className="text-sm text-gray-600 mb-1 mr-2 block">
-              Sort by
+              {t("sort_by")}
             </label>
             <select
               onChange={(e) => {
@@ -117,37 +128,39 @@ const AuctionSearch = () => {
               }}
               className="border border-gray-400 rounded-lg px-3 py-2 w-full"
             >
-              <option value="">-- Select sort --</option>
+              <option value="">{t("select_sort")}</option>
               <option value="title" data-order="asc">
-                Title from A to Z
+                {t("sort_title_asc")}
               </option>
               <option value="title" data-order="desc">
-                Title from Z to A
+                {t("sort_title_desc")}
               </option>
               <option value="create_at" data-order="asc">
-                Create At from Oldest to Latest
+                {t("sort_create_at_asc")}
               </option>
               <option value="create_at" data-order="desc">
-                Create At from Latest to Oldest
+                {t("sort_create_at_desc")}
               </option>
               <option value="start_time" data-order="asc">
-                Start Time from Oldest to Latest
+                {t("sort_start_time_asc")}
               </option>
               <option value="start_time" data-order="desc">
-                Start Time from Latest to Oldest
+                {t("sort_start_time_desc")}
               </option>
               <option value="end_time" data-order="asc">
-                End Time from Oldest to Latest
+                {t("sort_end_time_asc")}
               </option>
               <option value="end_time" data-order="desc">
-                End Time from Latest to Oldest
+                {t("sort_end_time_desc")}
               </option>
             </select>
           </div>
 
           {/* Calendar */}
           <div className="col-span-1">
-            <label className="text-sm text-gray-600 mb-1 block">Calendar</label>
+            <label className="text-sm text-gray-600 mb-1 block">
+              {t("calendar")}
+            </label>
             <RangeCalender
               value={dateRange}
               onChange={setDateRange}
@@ -162,13 +175,14 @@ const AuctionSearch = () => {
               className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-600 hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out w-full font-semibold tracking-wide"
             >
               <FontAwesomeIcon icon={faSearch} className="mr-2" />
-              Search
+              {t("search_btn")}
             </button>
           </div>
         </div>
 
         <div className="text-gray-600 text-sm font-medium mb-4">
-          Results found: <span className="font-bold text-red-500">{total}</span>
+          {t("result_found")}:{" "}
+          <span className="font-bold text-red-500">{total}</span>
         </div>
         {isLoading ? (
           <div className="loader my-10" />
