@@ -1,5 +1,4 @@
 import RangeCalender from "../ui/RangeCalender";
-import { useState } from "react";
 import { create } from "../../services/api";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -9,6 +8,8 @@ import toast from "react-hot-toast";
 import z from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
 
 const auctionSchema = z.object({
   title: z
@@ -69,7 +70,8 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
         image_url: arrLinkImg,
         file_exel: linkExcel,
       };
-      await create("auctions", data, true);
+      const language = sessionStorage.getItem("lang") || "en";
+      await create("auctions", data, true, { lang: language });
       toast.success("Add new auction successful");
       onClickClose();
     } catch (error) {
@@ -77,6 +79,16 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
       console.log(error);
     }
   };
+
+  const { t, i18n } = useTranslation();
+
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
 
   const imgFiles = watch("image_url") || [];
 
@@ -154,7 +166,10 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
       formData.append("files", img);
     });
     try {
-      const response = await create("upload/image", formData, true);
+      const language = sessionStorage.getItem("lang") || "en";
+      const response = await create("upload/image", formData, true, {
+        lang: language,
+      });
       return response.data.image_urls;
     } catch (error) {
       toast.error("Error while upload image");
@@ -183,16 +198,18 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
         "fixed inset-0 flex items-center pt-[50px] justify-center bg-black bg-opacity-50 z-50 max-sm:pt-[200px] ",
         isOpen ? "visible" : "invisible"
       )}
+      onClick={onClickClose}
     >
       <div
         className={clsx(
           "bg-gray-200 w-full max-w-2xl max-sm:w-[90%] max-h-[95%] p-8 rounded-2xl relative overflow-hidden fade-slide-up",
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
         )}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white sm:p-1 absolute top-0 left-0 w-full h-[7%] min-[1500px]:h-[10%]">
-          <h2 className="text-lg sm:text-2xl font-bold text-center absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-1/2">
-            CREATE AUCTION
+          <h2 className="uppercase text-lg sm:text-2xl font-bold text-center absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-1/2">
+            {t("create_auction_btn")}
           </h2>
           <button
             onClick={() => onClickClose()}
@@ -233,7 +250,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                   d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"
                 />
               </svg>
-              Title
+              {t("title")}
               <span className="text-red-500">*</span>
             </label>
             <input
@@ -265,7 +282,8 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                     d="M7 7h.01M3 7a4 4 0 014-4h6l8 8-6 6-8-8V7z"
                   />
                 </svg>
-                Starting Price<span className="text-red-500">*</span>
+                {t("starting_price")}
+                <span className="text-red-500">*</span>
               </label>
               <input
                 {...register("starting_price", { valueAsNumber: true })}
@@ -296,7 +314,8 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                     d="M3 17l6-6 4 4 8-8M14 7h7v7"
                   />
                 </svg>
-                Step Price<span className="text-red-500">*</span>
+                {t("step_price")}
+                <span className="text-red-500">*</span>
               </label>
               <input
                 {...register("step_price", { valueAsNumber: true })}
@@ -327,7 +346,8 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              Select time<span className="text-red-500">*</span>
+              {t("select_time")}
+              <span className="text-red-500">*</span>
             </label>
             <RangeCalender
               // value={watch(["start_time", "end_time"])}
@@ -367,7 +387,8 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                   d="M8 16h8M8 12h8M9 4h6a2 2 0 012 2v14a2 2 0 01-2 2H9a2 2 0 01-2-2V6a2 2 0 012-2z"
                 />
               </svg>
-              Description<span className="text-red-500">*</span>
+              {t("description")}
+              <span className="text-red-500">*</span>
             </label>
             <textarea
               {...register("description")}
@@ -401,7 +422,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                   d="M9 9l6 6m0-6l-6 6"
                 />
               </svg>
-              Excel
+              {t("excel")}
             </label>
             <Controller
               name="file_exel"
@@ -447,7 +468,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                 />
                 <circle cx="12" cy="13" r="3" />
               </svg>
-              Image
+              {t("img")}
             </label>
 
             <div className="flex w-full">
@@ -481,10 +502,11 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
                   <div className="mt-2">
                     <p className="text-sm text-gray-600">
                       <span className="font-medium text-blue-600">
-                        Click to select image
+                        {t("click_to_select_image")}
                       </span>{" "}
-                      or drag and drop
+                      {t("or_drag_and_drop")}
                     </p>
+                    <p className="text-sm text-red-500">{t("photo_limit")}</p>
                   </div>
                   {/* Image Preview Area */}
                   <div
@@ -535,7 +557,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               type="submit"
               className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded hover:bg-blue-600"
             >
-              Submit
+              {t("create")}
             </button>
           </div>
         </form>
