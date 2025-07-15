@@ -30,7 +30,10 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
         setAuction(response.data);
         const fetchedBids = response.data.bids;
         setBids(fetchedBids);
-        const maxBid = fetchedBids.length > 0 ? Math.max(...fetchedBids.map(b => b.bid_amount)) : 0;
+        const maxBid =
+          fetchedBids.length > 0
+            ? Math.max(...fetchedBids.map((b) => b.bid_amount))
+            : 0;
         setHighestBid(maxBid);
       } catch (error) {
         console.log(error);
@@ -50,16 +53,24 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
         "fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50",
         isOpen ? "visible" : "invisible"
       )}
+      onClick={clickClose}
     >
-      
-      <div className="bg-white shadow-lg w-[80%] max-w-6xl p-6 relative max-h-[80%] overflow-y-auto max-sm:max-h-[60%] max-sm:mt-32 max-lg:mt-10 scrollbar-hide ">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Auction Details</h2>
+      <div
+        className={clsx(
+          "bg-white shadow-lg w-[80%] max-w-6xl p-6 relative max-h-[80%] overflow-y-auto max-sm:max-h-[60%] max-sm:mt-32 max-lg:mt-10 scrollbar-hide fade-slide-up",
+          isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
+        )}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
+          Auction Details
+        </h2>
         <button
           onClick={clickClose}
           className="absolute top-4 right-4 text-black-500 hover:text-red-700 text-2xl font-bold"
         >
           ×
-        </button>        
+        </button>
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="lg:w-1/2 w-full">
             <img
@@ -80,14 +91,14 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                   ? "Upcoming"
                   : "Ended"}
               </span>
-            </div>            
+            </div>
           </div>
 
           <div className="lg:w-1/2 w-full space-y-3">
             <div className="bg-gray-100 p-4 rounded-xl flex items-start rounded-r-3xl rounded-l-md border-l-4 border-purple-500 shadow-sm">
               <p className="text-lg font-semibold text-indigo-700 text-left break-words w-full">
                 {auction.title || "No title"}
-              </p>             
+              </p>
             </div>
 
             <div className="bg-white border border-gray-400 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -109,7 +120,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               </div>
 
               <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
-                <p className="text-sm font-medium text-gray-500">Starting Price</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Starting Price
+                </p>
                 <p className="text-green-600 font-bold text-lg">
                   {auction.starting_price?.toLocaleString("en-US", {
                     style: "currency",
@@ -145,7 +158,6 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               </div>
             </div>
 
-
             <div className="bg-white border border-gray-300 rounded-xl p-4">
               <p className="text-sm font-medium text-gray-500">Description</p>
               <p className="text-gray-700 text-sm max-h-20 overflow-y-auto">
@@ -156,11 +168,13 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
         </div>
         <div className="flex justify-between items-center text-sm text-gray-700 px-4 py-2">
           <div>
-            Total Bids: <span className="text-gray-500">{bids?.length || 0}</span>
+            Total Bids:{" "}
+            <span className="text-gray-500">{bids?.length || 0}</span>
           </div>
           <div>
             <span className="font-medium text-purple-600">
-              Highest Bid: {highestBid.toLocaleString("en-US", {
+              Highest Bid:{" "}
+              {highestBid.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
               })}
@@ -170,16 +184,20 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
 
         <div className=" border rounded-xl max-h-60 overflow-y-auto">
           <table className="table-fixed min-w-full text-sm text-left">
-
             <thead className="bg-gray-200 text-gray-700 sticky top-0 z-10">
               <tr>
                 <th className="px-4 py-2 font-semibold uppercase">#</th>
-                <th className="px-4 py-2 font-semibold uppercase">Supplier Email</th>
+                <th className="px-4 py-2 font-semibold uppercase">
+                  Supplier Email
+                </th>
                 <th className="px-4 py-2 font-semibold uppercase">User Name</th>
-                <th className="px-4 py-2 font-semibold uppercase">Bid Amount</th>
-                <th className="px-4 py-2 font-semibold uppercase">Submitted At</th>
+                <th className="px-4 py-2 font-semibold uppercase">
+                  Bid Amount
+                </th>
+                <th className="px-4 py-2 font-semibold uppercase">
+                  Submitted At
+                </th>
                 <th className="px-4 py-2 font-semibold uppercase">Note</th>
-                
               </tr>
             </thead>
             <tbody>
@@ -206,19 +224,20 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     </td>
                     <td className="px-4 py-2">
                       {bid.created_at
-                    ? new Date(auction.end_time).toLocaleString("en-US", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: false,
-                      })
-                    : "-"}
+                        ? new Date(auction.end_time).toLocaleString("en-US", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: false,
+                          })
+                        : "-"}
                     </td>
-                    <td className="px-4 py-2 w-[200px] break-all whitespace-normal">{bid.note || "null"}</td>
-                    
+                    <td className="px-4 py-2 w-[200px] break-all whitespace-normal">
+                      {bid.note || "null"}
+                    </td>
                   </tr>
                 ))
               ) : (
