@@ -2,11 +2,13 @@ import { getOne } from "../../services/api";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import imagedefault from "../../assets/images/imagedefault.png";
+import { useTranslation } from "react-i18next";
 const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   const [bids, setBids] = useState([]);
   const [auction, setAuction] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [highestBid, setHighestBid] = useState(0);
+  const { t, i18n } = useTranslation();
   const handleDownload = async (id) => {
     try {
       const res = await fetch(`/api/v1/download/excel/by-auction/${id}`);
@@ -22,11 +24,22 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
       console.error("Error download file:", error);
     }
   };
+
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
+
   useEffect(() => {
     const fetchBids = async () => {
       try {
         setIsLoading(true);
-        const response = await getOne("auctions", idAuction, false);
+        const response = await getOne("auctions", idAuction, false, {
+          lang: sessionStorage.getItem("lang") || "en",
+        });
         setAuction(response.data);
         const fetchedBids = response.data.bids;
         setBids(fetchedBids);
@@ -63,7 +76,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-          Auction Details
+          {t("auction_detail")}
         </h2>
         <button
           onClick={clickClose}
@@ -83,13 +96,13 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               className="w-full h-64 object-cover hover:scale-105 transition ease-out duration-500 rounded-2xl"
             />
             <div className="mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl shadow flex items-center justify-between w-full">
-              <p className="text-sm font-semibold">Current Status</p>
+              <p className="text-sm font-semibold">{t("current_status")}</p>
               <span className="text-sm font-medium bg-white text-purple-600 px-4 py-1 rounded-full shadow-sm">
                 {auction.status === 0
-                  ? "Ongoing"
+                  ? t("ongoing_auctions")
                   : auction.status === 1
-                  ? "Upcoming"
-                  : "Ended"}
+                  ? t("upcoming_auctions")
+                  : t("ended_auctions")}
               </span>
             </div>
           </div>
@@ -103,7 +116,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
 
             <div className="bg-white border border-gray-400 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
-                <p className="text-sm font-medium text-gray-500">Deadline</p>
+                <p className="text-sm font-medium text-gray-500">
+                  {t("deadline")}
+                </p>
                 <p className="font-semibold text-gray-800">
                   {auction.end_time
                     ? new Date(auction.end_time).toLocaleString("en-US", {
@@ -121,7 +136,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
 
               <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
                 <p className="text-sm font-medium text-gray-500">
-                  Starting Price
+                  {t("starting_price")}
                 </p>
                 <p className="text-green-600 font-bold text-lg">
                   {auction.starting_price?.toLocaleString("en-US", {
@@ -132,7 +147,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               </div>
 
               <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
-                <p className="text-sm font-medium text-gray-500">Step Price</p>
+                <p className="text-sm font-medium text-gray-500">
+                  {t("step_price")}
+                </p>
                 <p className="text-yellow-700 font-bold text-lg">
                   {auction.step_price?.toLocaleString("en-US", {
                     style: "currency",
@@ -142,7 +159,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               </div>
 
               <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
-                <p className="text-sm font-medium text-gray-500">File</p>
+                <p className="text-sm font-medium text-gray-500">
+                  {t("attached_file")}
+                </p>
                 <p className="text-red-600 font-bold text-lg">
                   {auction.file_exel ? (
                     <button
@@ -159,7 +178,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
             </div>
 
             <div className="bg-white border border-gray-300 rounded-xl p-4">
-              <p className="text-sm font-medium text-gray-500">Description</p>
+              <p className="text-sm font-medium text-gray-500">
+                {t("description")}
+              </p>
               <p className="text-gray-700 text-sm max-h-20 overflow-y-auto">
                 {auction.description || "No description available."}
               </p>
@@ -168,12 +189,12 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
         </div>
         <div className="flex justify-between items-center text-sm text-gray-700 px-4 py-2">
           <div>
-            Total Bids:{" "}
+            {t("total_bids")}:{" "}
             <span className="text-gray-500">{bids?.length || 0}</span>
           </div>
           <div>
             <span className="font-medium text-purple-600">
-              Highest Bid:{" "}
+              {t("highest_bid")}:{" "}
               {highestBid.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
@@ -188,16 +209,18 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               <tr>
                 <th className="px-4 py-2 font-semibold uppercase">#</th>
                 <th className="px-4 py-2 font-semibold uppercase">
-                  Supplier Email
+                  {t("supplier_email")}
                 </th>
                 <th className="px-4 py-2 font-semibold uppercase">User Name</th>
                 <th className="px-4 py-2 font-semibold uppercase">
-                  Bid Amount
+                  {t("bid_amount_usd")}
                 </th>
                 <th className="px-4 py-2 font-semibold uppercase">
-                  Submitted At
+                  {t("submitted_at")}
                 </th>
-                <th className="px-4 py-2 font-semibold uppercase">Note</th>
+                <th className="px-4 py-2 font-semibold uppercase">
+                  {t("additional_notes")}
+                </th>
               </tr>
             </thead>
             <tbody>

@@ -4,16 +4,18 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 
 const PrivateRoute = () => {
-  const { user } = useAuth();
+  const { user, isLoggingOut } = useAuth();
   const location = useLocation();
   const [redirectPath, setRedirectPath] = useState(null);
 
   useEffect(() => {
     if (!user || user.role !== "admin") {
-      const message = !user
-        ? "You need login to continue!"
-        : "You don’t have permission!";
-      toast.error(message);
+      if (!isLoggingOut) {
+        const message = !user
+          ? "You need login to continue!"
+          : "You don’t have permission!";
+        toast.error(message);
+      }
       setRedirectPath("/login");
     }
   }, [user]);

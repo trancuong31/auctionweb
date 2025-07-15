@@ -1,16 +1,17 @@
-// src/components/layout/AuctionSection.jsx
 import React, { useEffect, useState } from "react";
 import "./Auctions.css";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import AnimatedContent from "../ui/animatedContent";
 import RenderCardAuction from "../ui/CardComponent";
 
-const AuctionSection = ({ title, type }) => {
+const AuctionSection = ({ titleKey, type }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [total, setTotal] = useState(0);
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const statusMap = {
     ongoing: 0,
     upcoming: 1,
@@ -24,6 +25,14 @@ const AuctionSection = ({ title, type }) => {
   const handleClick = (id) => {
     navigate(`/auctions/${id}`);
   };
+
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,7 +69,7 @@ const AuctionSection = ({ title, type }) => {
           <p className="error">{error}</p>
         ) : (
           <>
-            <h2 className="section-title">{title}</h2>
+            <h2 className="section-title">{t(titleKey)}</h2>
             <span
               style={{
                 fontWeight: "normal",
@@ -69,7 +78,7 @@ const AuctionSection = ({ title, type }) => {
                 padding: "0px 0px 5px 0px",
               }}
             >
-              Total: {total} asset
+              {t("total")}: {total} {t("asset")}
             </span>
             <RenderCardAuction
               arrAuction={items}
@@ -77,7 +86,7 @@ const AuctionSection = ({ title, type }) => {
               clickCard={handleClick}
             />
             <a href="/auctions/search" className="see-all">
-              See all
+              {t("see_all")}
             </a>
           </>
         )}
