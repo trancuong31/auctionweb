@@ -12,6 +12,8 @@ class Notification(Base):
     user_id = Column(String(36), ForeignKey("users.id", ondelete='CASCADE'), nullable=False, )
     auction_id = Column(String(36), ForeignKey("auctions.id"), nullable=False)
     message = Column(String, nullable=False)
+    message_vi = Column(String, nullable=False)
+    message_ko = Column(String, nullable=False)
     is_read = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.now)
 

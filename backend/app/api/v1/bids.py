@@ -82,15 +82,25 @@ def create_bid(
     db.commit()
     db.refresh(bid)
 
+    message = "You have successfully placed a bid of  {bid_in_bid_amount:,.0f}$ on auction {auction_title}.".format(
+        bid_in_bid_amount=bid_in.bid_amount,
+        auction_title=auction.title
+    )
+    message_vi = "Bạn đã đặt giá thầu thành công {bid_in_bid_amount:,.0f}$ của {auction_title}.".format(
+        bid_in_bid_amount=bid_in.bid_amount,
+        auction_title=auction.title
+    )
+    message_ko = "{auction_title} 경매에 {bid_in_bid_amount:,.0f}$의 입찰을 성공적으로 완료하였습니다.".format(
+        bid_in_bid_amount=bid_in.bid_amount,
+        auction_title=auction.title
+    )
+
     notification = Notification(
         user_id=user_id,
         auction_id = bid_in.auction_id,
-        message=_(
-        "You have successfully placed a bid of  {bid_in_bid_amount:,.0f}$ on auction {auction_title}.", request
-    ).format(
-        bid_in_bid_amount=bid_in.bid_amount,
-        auction_title=auction.title
-    ),
+        message=message,
+        message_vi=message_vi,
+        message_ko=message_ko,
         created_at=datetime.now(),
         is_read=False
     )
