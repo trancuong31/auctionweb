@@ -29,7 +29,7 @@ const NotificationDropdown = ({ triggerRef }) => {
         .catch(() => setNotifications([]));
     };
     fetchNotifications();
-    const intervalId = setInterval(fetchNotifications, 60000);
+    const intervalId = setInterval(fetchNotifications, 120000);
     return () => clearInterval(intervalId);
   }, []);
 

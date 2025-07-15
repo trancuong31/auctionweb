@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, HTTPException, File, UploadFile, status
+from fastapi import APIRouter, Depends, Query, HTTPException, File, UploadFile, status, Request
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 from app.core.database import get_db
@@ -13,8 +13,6 @@ import os
 from sqlalchemy import func
 from fastapi.responses import JSONResponse
 from app.models.Bid import Bid
-from app.enums import OrderStatus
-from decimal import Decimal
 import json
 from app.models.User import User
 from app.core.auth import get_current_user_id_from_token
@@ -22,6 +20,7 @@ from app.enums import UserRole
 from pydantic import field_validator
 from zoneinfo import ZoneInfo
 from fastapi import APIRouter
+from app.i18n import _
 
 router = APIRouter()
 class AuctionOut(BaseModel):
@@ -76,7 +75,11 @@ class AuctionsWithTotalOut(BaseModel):
 
 class AuctionCreate(BaseModel):
     title: str
+    title_vi: Optional[str] = None
+    title_ko: Optional[str] = None
     description: Optional[str] = None
+    description_vi: Optional[str] = None
+    description_ko: Optional[str] = None
     starting_price: float
     step_price: float
     image_url: Optional[List[str]] = None
@@ -102,22 +105,24 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
 UPLOAD_IMAGE_DIR = os.path.join(BASE_DIR, 'uploads', 'images')
 UPLOAD_EXCEL_DIR = os.path.join(BASE_DIR, 'uploads', 'excels')
 
-def get_current_user(db: Session = Depends(get_db), user_id: str = Depends(get_current_user_id_from_token)):
+def get_current_user(request: Request, db: Session = Depends(get_db), user_id: str = Depends(get_current_user_id_from_token)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(status_code=401, detail=_("User not found", request))
     return user
 
 #lấy ra ds các đấu giá
 @router.get("/auctions", response_model=AuctionsWithTotalOut)
 def get_auctions_by_status(
+    request: Request,
     status: int = Query(None, description="0: ongoing, 1: upcoming, 2: ended"),
     db: Session = Depends(get_db)
 ):
+    lang = request.state.locale
     now = datetime.now()
     query = db.query(Auction)
     if status is not None and status not in [0, 1, 2]:
-        raise HTTPException(status_code=400, detail="Invalid status value")
+        raise HTTPException(status_code=400, detail=_("Invalid status value", request))
     # Filter theo trạng thái
     if status == 0:
         query = query.filter(Auction.start_time <= now, Auction.end_time > now)
@@ -143,7 +148,13 @@ def get_auctions_by_status(
                 data["image_url"] = []
         else:
             data["image_url"] = []
-
+        # gán giá trị dựa them ngôn ngữ mà FE chọn
+        if lang == "vi" and getattr(auction, "title_vi", None):
+            data["title"] = auction.title_vi or auction.title
+            data["description"] = auction.description_vi or auction.description
+        elif lang == "ko" and getattr(auction, "title_ko", None):
+            data["title"] = auction.title_ko or auction.title
+            data["description"] = auction.description_ko or auction.description
         # Tính lại status động
         if now < auction.start_time:
             data["status"] = 1  # upcoming
@@ -200,18 +211,23 @@ def get_auctions_by_status(
 
 #tạo đấu giá
 @router.post("/auctions", response_model=AuctionOut)
-def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def create_auction(
+    request: Request,
+    auction_in: AuctionCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     # chỉ admin mới được add đấu giá
     if current_user.role != UserRole.ADMIN :
         raise HTTPException(
             status_code = HTTP_400_BAD_REQUEST,
-            detail="You don't have permison create auction!"
+            detail=_("You don't have permison create auction!", request)
         )
     auction = db.query(Auction).filter(Auction.title == auction_in.title).first()
     if auction :
         raise HTTPException(
             status_code= HTTP_400_BAD_REQUEST,
-            detail= "Auction title already exists"
+            detail=_("Auction title already exists", request)
         )
     """
     - status = 0 (ongoing): start_time <= now < end_time (đang diễn ra)
@@ -229,7 +245,11 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db), cur
     
     auction = Auction(
         title=auction_in.title,
+        title_vi=auction_in.title_vi,
+        title_ko=auction_in.title_ko,
         description=auction_in.description,
+        description_vi=auction_in.description_vi,
+        description_ko=auction_in.description_ko,
         starting_price=auction_in.starting_price,
         step_price=auction_in.step_price,
         image_url = json.dumps(auction_in.image_url) if auction_in.image_url else None,
@@ -247,27 +267,33 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db), cur
 
 #admin upload ảnh khi thêm auction
 @router.post("/upload/image")
-def upload_image(files: List[UploadFile] = File(...)):
+def upload_image(request: Request, files: List[UploadFile] = File(...)):
     try:
         allowed_exts = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
         max_size = 5 * 1024 * 1024  # 5MB
         image_urls = []
 
         if not files:
-            return JSONResponse(status_code=400, content={"detail": "No files provided"})
+            return JSONResponse(status_code=400, content={"detail": _("No files provided", request)})
 
         if not os.path.exists(UPLOAD_IMAGE_DIR):
             os.makedirs(UPLOAD_IMAGE_DIR)
 
         for file in files:
             if not file.filename or not isinstance(file.filename, str):
-                return JSONResponse(status_code=400, content={"detail": "Invalid file name."})
+                return JSONResponse(status_code=400, content={"detail": _("Invalid file name.", request)})
             ext = os.path.splitext(file.filename)[1].lower()
             if ext not in allowed_exts:
-                return JSONResponse(status_code=400, content={"detail": f"Invalid image file type: {file.filename}"})
+                return JSONResponse(
+                    status_code=400,
+                    content={"detail": _("Invalid image file type: ", request) + file.filename}
+                )
             contents = file.file.read()
             if len(contents) > max_size:
-                return JSONResponse(status_code=400, content={"detail": f"Image file too large (max 5MB): {file.filename}"})
+                return JSONResponse(
+                    status_code=400,
+                    content={"detail": _("Image file too large (max 5MB): ", request) + file.filename}
+                )
 
             # Xử lý trùng tên file
             base_name, ext = os.path.splitext(file.filename)
@@ -286,25 +312,25 @@ def upload_image(files: List[UploadFile] = File(...)):
             if total_length > 500:
                 return JSONResponse(
                     status_code=400,
-                    content={"detail": f"Total image URLs length too long (max 500 chars): {image_urls}"}
+                    content={"detail": _("Total image URLs length too long (max 500 chars): ", request) + str(image_urls)}
                 )
         return {"image_urls": image_urls}
     except Exception as e:
-        return JSONResponse(status_code=500, content={"detail": f"Internal server error: {str(e)}"})
+        return JSONResponse(status_code=500, content={"detail": _("Internal server error: ", request) + str(e)})
 
 #admin upload excel khi thêm auction
 @router.post("/upload/excel")
-def upload_excel(file: UploadFile = File(...)):
+def upload_excel(request: Request, file: UploadFile = File(...)):
     allowed_exts = {".xls", ".xlsx"}
     max_size = 10 * 1024 * 1024  # 10MB
     if not file.filename:
-        return JSONResponse(status_code=400, content={"detail": "No filename provided"})
+        return JSONResponse(status_code=400, content={"detail": _("No filename provided", request)})
     ext = os.path.splitext(file.filename)[1].lower()
     if ext not in allowed_exts:
-        return JSONResponse(status_code=400, content={"detail": "Invalid excel file type"})
+        return JSONResponse(status_code=400, content={"detail": _("Invalid excel file type", request)})
     contents = file.file.read()
     if len(contents) > max_size:
-        return JSONResponse(status_code=400, content={"detail": "Excel file too large (max 10MB)"})
+        return JSONResponse(status_code=400, content={"detail": _("Excel file too large (max 10MB)", request)})
     if not os.path.exists(UPLOAD_EXCEL_DIR):
         os.makedirs(UPLOAD_EXCEL_DIR)
     
@@ -317,19 +343,20 @@ def upload_excel(file: UploadFile = File(...)):
         file_location = os.path.join(UPLOAD_EXCEL_DIR, new_filename)
         counter += 1
 
-    # Lưu file với tên không trùng
-    with open(file_location, "wb") as f:
-        f.write(contents)
-    saved_filename = os.path.basename(file_location)
-    return {"file_excel": f"/uploads/excels/{saved_filename}"}
+    try:
+        with open(file_location, "wb") as f:
+            f.write(contents)
+        saved_filename = os.path.basename(file_location)
+        return {"file_excel": f"/uploads/excels/{saved_filename}"}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"detail": _("Internal server error: ", request) + str(e)})
 
 #user down excel auction_id
 @router.get("/download/excel/by-auction/{auction_id}")
-def download_excel_by_auction(auction_id: str, db: Session = Depends(get_db)):
+def download_excel_by_auction(request: Request, auction_id: str, db: Session = Depends(get_db)):
     auction = db.query(Auction).filter(Auction.id == auction_id).first()
     if not auction or not auction.file_exel:
-        raise HTTPException(status_code=404, detail="Auction or file not found")
-
+        raise HTTPException(status_code=404, detail=_("Auction or file not found", request))
     #auction.file_exel là '/uploads/excels/auction_xe_123.xlsx'
     # lấy filename = 'auction_xe_123.xlsx'
     filename = os.path.basename(auction.file_exel)
@@ -337,7 +364,7 @@ def download_excel_by_auction(auction_id: str, db: Session = Depends(get_db)):
     BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
     file_path = os.path.join(BASE_DIR, 'uploads', 'excels', filename)
     if not os.path.isfile(file_path):
-        raise HTTPException(status_code=404, detail="File not found on server")
+        raise HTTPException(status_code=404, detail=_("File not found on server", request))
 
     return FileResponse(
         path=file_path,
@@ -347,6 +374,7 @@ def download_excel_by_auction(auction_id: str, db: Session = Depends(get_db)):
 
 @router.get("/auctions/search", response_model=AuctionSearchResponse)
 def search_auctions(
+    request: Request,
     status: Optional[int] = Query(None, description="0: ongoing, 1: upcoming, 2: ended"),
     title: Optional[str] = Query(None, description="Tìm kiếm theo title auction"),
     sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: title, created_at, start_time, end_time"),
@@ -354,9 +382,10 @@ def search_auctions(
     page: int = Query(1, ge=1, description="Số trang"),
     page_size: int = Query(8, ge=1, le=100, description="Số item trên mỗi trang"),
     start_time: datetime = Query(None, description="Từ ngày"),
-    end_time: datetime = Query(None, description="Đến ngày"),
+    end_time: datetime = Query(None, description="Đến ngày"),    
     db: Session = Depends(get_db)
 ):
+
     """
     API tìm kiếm auction với các filter:
     - status: lọc theo trạng thái (0: đang diễn ra, 1: sắp diễn ra, 2: đã kết thúc)
@@ -373,7 +402,7 @@ def search_auctions(
     """
     now = datetime.now()
     query = db.query(Auction)
-
+    lang = request.state.locale
     # Filter theo trạng thái - phân tích trực tiếp điều kiện thời gian
     if status is not None:
         if status == 0:  # ongoing - đang diễn ra
@@ -425,7 +454,13 @@ def search_auctions(
     
     for auction in results:
         data = AuctionOut.from_orm(auction).model_dump()
-
+        #xử lý đa ngôn ngữ cho trường title và description
+        if lang == "vi" and getattr(auction, "title_vi", None):
+            data["title"] = auction.title_vi or auction.title
+            data["description"] = auction.description_vi or auction.description
+        elif lang == "ko" and getattr(auction, "title_ko", None):
+            data["title"] = auction.title_ko or auction.title
+            data["description"] = auction.description_ko or auction.description
         # Xử lý image_url lưu dưới dạng JSON string
         raw_image = getattr(auction, "image_url", None)
         if isinstance(raw_image, str):
@@ -485,13 +520,20 @@ def search_auctions(
 
 #lấy ra đấu giá chi tiết gồm các user đã đấu giá theo auction_id
 @router.get("/auctions/{auction_id}", response_model=AuctionDetailOut)
-def get_auction_by_id(auction_id: str, db: Session = Depends(get_db)):
+def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(get_db)):
+    lang = request.state.locale
     auction = db.query(Auction).filter(Auction.id == auction_id).first()
     if not auction:
-        raise HTTPException(status_code=404, detail="Auction not found")
+        raise HTTPException(status_code=404, detail=_("Auction not found", request))
     
     auction_data = AuctionOut.from_orm(auction).model_dump()
-    
+    #xử lý đa ngôn ngữ cho trường title và description
+    if lang == "vi" and getattr(auction, "title_vi", None):
+        auction_data["title"] = auction.title_vi or auction.title
+        auction_data["description"] = auction.description_vi or auction.description
+    elif lang == "ko" and getattr(auction, "title_ko", None):
+        auction_data["title"] = auction.title_ko or auction.title
+        auction_data["description"] = auction.description_ko or auction.description
     # Xử lý image_url
     if isinstance(auction.image_url, str):
         try:
@@ -582,105 +624,3 @@ def get_overview_stats(db: Session = Depends(get_db)):
         "total_unsuccessful_auctions": total_unsuccessful_auctions,
         "total_upcoming_auctions": total_upcoming_auctions
     }
-
-# Test endpoint để kiểm tra auto-approve task
-@router.get("/test/auto-approve-status")
-def test_auto_approve_status(db: Session = Depends(get_db)):
-    """
-    Endpoint test để kiểm tra trạng thái auto-approve task
-    """
-    now = datetime.now()
-    
-    # Lấy tất cả auction đã kết thúc
-    ended_auctions = db.query(Auction).filter(Auction.end_time < now).all()
-    
-    result = []
-    for auction in ended_auctions:
-        # Kiểm tra có winner chưa
-        winner_bid = db.query(Bid).filter(
-            Bid.auction_id == auction.id,
-            Bid.is_winner == True
-        ).first()
-        
-        # Lấy bid cao nhất
-        highest_bid = db.query(Bid).filter(
-            Bid.auction_id == auction.id
-        ).order_by(Bid.bid_amount.desc()).first()
-        
-        auction_info = {
-            "auction_id": auction.id,
-            "title": auction.title,
-            "end_time": auction.end_time,
-            "has_winner": winner_bid is not None,
-            "winner_bid_id": winner_bid.id if winner_bid else None,
-            "winner_amount": float(winner_bid.bid_amount) if winner_bid else None,
-            "highest_bid_id": highest_bid.id if highest_bid else None,
-            "highest_amount": float(highest_bid.bid_amount) if highest_bid else None,
-            "total_bids": db.query(Bid).filter(Bid.auction_id == auction.id).count()
-        }
-        result.append(auction_info)
-    
-    return {
-        "current_time": now,
-        "ended_auctions": result,
-        "total_ended": len(result)
-    }
-
-# Endpoint để chạy thủ công auto-approve task
-@router.post("/test/run-auto-approve")
-def run_auto_approve_manual(db: Session = Depends(get_db)):
-    """
-    Endpoint để chạy thủ công auto-approve task
-    """
-    try:
-        from app.tasks.auto_approve import auto_set_winner_task
-        import asyncio
-        
-        # Tạo event loop mới nếu chưa có
-        try:
-            loop = asyncio.get_event_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-        
-        # Chạy task một lần
-        now = datetime.now()
-        ended_auctions = db.query(Auction).filter(Auction.end_time < now).all()
-        
-        approved_count = 0
-        approved_auctions = []
-        
-        for auction in ended_auctions:
-            winner_bid = db.query(Bid).filter(
-                Bid.auction_id == auction.id,
-                Bid.is_winner == True
-            ).first()
-            
-            if not winner_bid:
-                highest_bid = db.query(Bid).filter(
-                    Bid.auction_id == auction.id
-                ).order_by(Bid.bid_amount.desc()).first()
-                
-                if highest_bid:
-                    # Reset tất cả bid về is_winner = False
-                    db.query(Bid).filter(Bid.auction_id == auction.id).update({"is_winner": False})
-                    highest_bid.is_winner = True
-                    approved_count += 1
-                    approved_auctions.append({
-                        "auction_id": auction.id,
-                        "title": auction.title,
-                        "winner_bid_id": highest_bid.id,
-                        "winner_amount": float(highest_bid.bid_amount)
-                    })
-        
-        db.commit()
-        
-        return {
-            "message": f"Auto-approve completed. Approved {approved_count} auctions.",
-            "approved_count": approved_count,
-            "approved_auctions": approved_auctions
-        }
-        
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Error running auto-approve: {str(e)}")

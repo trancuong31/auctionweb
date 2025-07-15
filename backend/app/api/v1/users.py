@@ -1,5 +1,5 @@
 import datetime
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
@@ -11,6 +11,7 @@ from app.models.User import User
 from app.core.auth import get_current_user_id_from_token
 from app.enums import UserRole
 from starlette.status import HTTP_400_BAD_REQUEST
+from app.i18n import _
 router = APIRouter()
 
 class UserOut(BaseModel):
@@ -29,20 +30,24 @@ class UserStatusUpdate(BaseModel):
 
 class UserUpdate(BaseModel):
     username: Optional[str]
-    email: Optional[str]
 
 class UsersListOut(BaseModel):
     users: list[UserOut]
     total_users: int
 
-def get_current_user(db: Session = Depends(get_db), user_id: str = Depends(get_current_user_id_from_token)):
+def get_current_user(
+    request: Request,
+    db: Session = Depends(get_db),
+    user_id: str = Depends(get_current_user_id_from_token)
+):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(status_code=401, detail=_("User not found", request))
     return user
     
 @router.get("/users", response_model=UsersListOut)
 def get_users(
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
     search_text: Optional[str] = Query(None, description="Tìm kiếm theo username hoặc email"),
@@ -54,7 +59,7 @@ def get_users(
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=403,
-            detail="You don't have permison watch users!"
+            detail=_("You don't have permison watch users!", request)
         )
     query = db.query(User)
     if search_text:
@@ -78,30 +83,32 @@ def get_users(
     return {"users": users, "total_users": total_users}
 
 @router.get("/users/{user_id}", response_model=UserOut)
-def get_user(db: Session = Depends(get_db)):
+def get_user(request: Request, db: Session = Depends(get_db)):
     users = db.query(User).first()
     return users
 
 @router.patch("/users/{user_id}/status")
 def set_user_status(
+    request: Request,
     user_id: str,
     data: UserStatusUpdate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=403, detail="Permission denied")
+        raise HTTPException(status_code=403, detail=_("Permission denied", request))
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail=_("User not found", request))
     if data.status not in (0, 1):
-        raise HTTPException(status_code=400, detail="Status must be 0 (disactive) or 1 (active)")
+        raise HTTPException(status_code=400, detail=_("Status must be 0 (disactive) or 1 (active)", request))
     user.status = data.status
     db.commit()
-    return {"message": f"User status updated to {data.status}."}
+    return {"message": _("User status updated to {data.status}.", request)}
 
 @router.put("/users/{user_id}")
 def update_user(
+    request: Request,
     user_id: str,
     data: UserUpdate,
     db: Session = Depends(get_db),
@@ -109,29 +116,26 @@ def update_user(
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    # Chỉ cho phép admin hoặc chính user đó sửa
-    if current_user.role != UserRole.ADMIN and current_user.id != user_id:
-        raise HTTPException(status_code=403, detail="Permission denied")
+        raise HTTPException(status_code=404, detail=_("User not found", request))
+    
     if data.username is not None:
         user.username = data.username
-    if data.email is not None:
-        user.email = data.email
     db.commit()
-    return {"message": "User updated successfully."}
+    return {"message": _("User updated successfully.", request)}
 
 
 @router.delete("/users/{user_id}")
 def delete_user(
+    request: Request,
     user_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=403, detail="Permission denied")
+        raise HTTPException(status_code=403, detail=_("Permission denied", request))
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail=_("User not found", request))
     db.delete(user)
     db.commit()
-    return {"message": "User deleted successfully."}
+    return {"message": _("User deleted successfully.", request)}

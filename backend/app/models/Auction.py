@@ -9,7 +9,11 @@ class Auction(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     title = Column(String, nullable=False)
+    title_vi = Column(String, nullable=False)
+    title_ko = Column(String, nullable=False)
     description = Column(Text)
+    description_vi = Column(Text)
+    description_ko = Column(Text)
     starting_price = Column(Numeric, nullable=False)
     step_price = Column(Numeric, nullable=False)
     image_url = Column(Text)

@@ -14,32 +14,9 @@ import { toast } from "react-hot-toast";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from 'react-i18next';
 
-const schema = z.object({
-  email: z
-    .string()
-    .nonempty("Email không được để trống")
-    .email("Email không đúng định dạng")
-    .max(255, "Email không được vượt quá 255 ký tự"),
-  username: z
-    .string()
-    .nonempty("Tên người dùng không được để trống")
-    .min(3, "Tên người dùng phải có ít nhất 3 ký tự")
-    .max(50, "Tên người dùng không được vượt quá 50 ký tự")
-    .regex(
-      /^[a-zA-Z0-9_]+$/,
-      "Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới"
-    ),
-  password: z
-    .string()
-    .nonempty("Mật khẩu không được để trống")
-    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
-    .max(100, "Mật khẩu không được vượt quá 100 ký tự")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-      "Mật khẩu phải bao gồm số, chữ cái thường , chữ hoa, ký tự đặc biệt"
-    ),
-});
+
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -47,7 +24,28 @@ function Register() {
   const [confirm, setConfirm] = useState("");
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
-
+  const { t, i18n } = useTranslation();
+  const schema = z.object({
+    email: z
+      .string()
+      .max(100, t('email_max')),
+    username: z
+      .string()
+      .min(3, t('username_min'))
+      .max(50, t('username_max'))
+      .regex(
+        /^[a-zA-Z]+$/,
+        t('username_regex')
+      ),
+    password: z
+      .string()
+      .min(8, t('password_min'))
+      .max(30, t('password_max'))
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+        t('password_regex')
+      ),
+  });
   const {
     handleSubmit,
     register,
@@ -67,9 +65,17 @@ function Register() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem('lang');
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
+
   const submitForm = async (formData) => {
     if (formData.password !== confirm) {
-      toast.error("password does not match");
+      toast.error(t('password_not_match', 'Password does not match'));
       return;
     }
     try {
@@ -80,10 +86,10 @@ function Register() {
       });
       const data = await response.json();
       if (response.ok) {
-        toast.success("Register successful!");
+        toast.success(t('register_success', 'Register successful!'));
         navigate("/login");
       } else {
-        toast.error(data.message || "Register failed!");
+        toast.error(data.message || t('register_failed', 'Register failed!'));
       }
     } catch (error) {
       console.error(error.detail);
@@ -98,7 +104,7 @@ function Register() {
           show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
-        <h1 className="login-title">Register</h1>
+        <h1 className="login-title">{t('register', 'Register')}</h1>
         <form onSubmit={handleSubmit(submitForm)}>
           <div className="input-group">
             <span className="input-icon">
@@ -107,11 +113,11 @@ function Register() {
             <input
               {...register("email")}
               type="email"
-              placeholder="Email*"
+              placeholder={t('email', 'Email*')}
               autoComplete="email"
             />
             {errors.email && (
-              <p className="text-red-500 text-sm absolute left-0 ml-1">
+              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
                 {errors.email.message}
               </p>
             )}
@@ -123,11 +129,11 @@ function Register() {
             <input
               {...register("username")}
               type="text"
-              placeholder="Username*"
+              placeholder={t('username', 'Username*')}
               autoComplete="username"
             />
             {errors.username && (
-              <p className="text-red-500 text-sm absolute left-0 ml-1">
+              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
                 {errors.username.message}
               </p>
             )}
@@ -139,11 +145,11 @@ function Register() {
             <input
               {...register("password")}
               type={showPassword ? "text" : "password"}
-              placeholder="Password*"
+              placeholder={t('password', 'Password*')}
               autoComplete="new-password"
             />
             {errors.password && (
-              <p className="text-red-500 text-sm absolute left-0 ml-1">
+              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
                 {errors.password.message}
               </p>
             )}
@@ -161,7 +167,7 @@ function Register() {
             </span>
             <input
               type={showConfirm ? "text" : "password"}
-              placeholder="Confirm Password*"
+              placeholder={t('confirm_password', 'Confirm Password*')}
               required
               autoComplete="new-password"
               value={confirm}
@@ -176,11 +182,11 @@ function Register() {
             </span>
           </div>
           <button type="submit" className="login-btn">
-            Register
+            {t('register', 'Register')}
           </button>
-          <div className="login-or">or</div>
+          <div className="login-or">{t('or', 'or')}</div>
           <div className="login-signup">
-            You already have an account? <Link to="/login">Sign in</Link>
+            {t('already_account', 'You already have an account?')} <Link to="/login">{t('sign_in', 'Sign in')}</Link>
           </div>
         </form>
       </div>

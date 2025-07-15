@@ -180,7 +180,7 @@ const OverViewAdmin = () => {
 
     try {
       await update("users", user.id, newUser, true);
-      toast.success("Update user successfull!");
+      toast.success("Update user successful!");
       setCurrentEditing(null);
       await getPageUser();
     } catch (error) {
@@ -203,7 +203,7 @@ const OverViewAdmin = () => {
       onConfirm: async () => {
         try {
           await deleteOne("users", id, true);
-          toast.success("Delete user successfull!");
+          toast.success("Delete user successful!");
           getPageUser();
         } catch (error) {
           toast.error("Delete user fail!");
@@ -229,7 +229,7 @@ const OverViewAdmin = () => {
       onConfirm: async () => {
         try {
           await updateSatus("users", user.id, { status: !user.status }, true);
-          toast.success("update status user successfull!");
+          toast.success("update status user successful!");
           getPageUser();
         } catch (error) {
           toast.error("update status user fail!");
