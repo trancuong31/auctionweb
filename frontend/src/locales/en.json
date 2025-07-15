@@ -27,5 +27,21 @@
   "username_regex": "Usernames must contain only letters",
   "password_min": "Password must be at least 8 characters",
   "password_max": "Password must not exceed 30 characters",
-  "password_regex": "Password must include numbers, lowercase, uppercase, special characters"
-} 
+  "password_regex": "Password must include numbers, lowercase, uppercase, special characters",
+  "home": "Home",
+  "auction": "Auction",
+  "information": "Information",
+  "history": "History",
+  "tutorial": "Tutorial",
+  "contact": "Contact",
+  "rule": "Rule",
+  "dashboard": "Dashboard",
+   "total_user": "Total Users",
+  "total_auction": "Total Auctions",
+  "total_successful_auctions": "Total Successful Auctions",
+  "total_auction_in_progress": "Total Auctions In Progress",
+  "total_upcoming_auctions": "Total Upcoming Auctions",
+  "total_unsuccessful_auctions": "Total Unsuccessful Auctions",
+  "manager_user": "MANAGER USERS",
+  "manager_auctions": "MANAGER AUCTIONS"
+}
