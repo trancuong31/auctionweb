@@ -1,0 +1,27 @@
+version: "3"
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+    networks:
+      - appnet
+    volumes:
+      - ./backend/uploads:/app/uploads # Giữ file upload ra ngoài container
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "8080:80" # Map cổng 8080 trên host đến 80 trong container
+    depends_on:
+      - backend
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
