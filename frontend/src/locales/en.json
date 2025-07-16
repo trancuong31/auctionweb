@@ -216,9 +216,37 @@
   "contact_fax_value": "012 345 6789",
   "contact_email_label": "Email:",
   "contact_email_value": "partronvina@gmail.com",
-   "rule_1": "1. Comply with the legal regulations on property auction.",
+  "rule_1": "1. Comply with the legal regulations on property auction.",
   "rule_2": "2. Maintain confidentiality of login accounts, bidder information, and other data in accordance with the law.",
   "rule_3": "3. Ensure objectivity, transparency, safety, and cybersecurity.",
   "rule_4": "4. Protect the legal rights and interests of asset owners, bidders, and relevant individuals or organizations.",
-  "auction_rules_title": "Online Auction Principles"
+  "auction_rules_title": "Online Auction Principles",
+  "no_winner": "No winner",
+  "no_description_available": "No description available",
+  "success": {
+    "add_new_auction": "Add new auction successful",
+    "bid_submitted": "Bid submitted successfully!",
+    "delete_success":"Delete user successful!",
+    "update_status": "update status user successful!"
+    
+  },
+  "error": {
+    "add_new_auction": "Error add auction",
+    "duplicate_photos": "Please do not select duplicate photos",
+    "error_upload_image": "Error while upload image",
+    "error_upload_excel": "Error while upload Excel",
+    "must_logged":"You must be logged in to participate in the auction!",
+    "auction_ended":"This auction has ended!",
+    "auction_not_start":"This auction has not started yet!",
+    "error_get_data":"Error while get data",
+    "get_user": "Error while get User data",
+    "delete_fail":"Delete user fail!",
+    "update_status": "update status user fail!"
+  },
+  "no_data":"No data available",
+  "no_file":"No file",
+  "no_announcements":"No announcements yet",
+  "user_not_valid": "Username is not valid!",
+  "update_user": "Update user successful!",
+  "update_user_fai": "Update user fail!"
 }
