@@ -1,15 +1,19 @@
-import React from "react";
 import AnimatedContent from "../ui/animatedContent";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 function Rule() {
-  const ruleTitle = "Nguyên tắc đấu giá trực tuyến";
+  const { t, i18n } = useTranslation();
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
+  const ruleTitle = t("auction_rules_title");
 
-  const ruleList = [
-    "1. Tuân thủ quy định của pháp luật về đấu giá tài sản.",
-    "2. Bảo mật về tài khoản truy cập, thông tin về người tham gia đấu giá và các thông tin khác theo quy định của pháp luật.",
-    "3. Bảo đảm tính khách quan, minh bạch, an toàn, an ninh mạng.",
-    "4. Bảo vệ quyền và lợi ích hợp pháp của người có tài sản, người tham gia đấu giá và cá nhân, tổ chức có liên quan.",
-  ];
+  const ruleList = [t("rule_1"), t("rule_2"), t("rule_3"), t("rule_4")];
 
   return (
     <AnimatedContent>

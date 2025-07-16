@@ -1,5 +1,17 @@
 import AnimatedContent from "../ui/animatedContent";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 function Information() {
+  const { t, i18n } = useTranslation();
+
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
+
   return (
     <AnimatedContent>
       <main className="information-content">
@@ -23,7 +35,7 @@ function Information() {
               textAlign: "center",
             }}
           >
-            Tầm nhìn & Định hướng phát triển
+            {t("vision_heading")}
           </h2>
           <div
             style={{
@@ -33,20 +45,8 @@ function Information() {
               marginBottom: "32px",
             }}
           >
-            <p>
-              Với vị thế là một trong những doanh nghiệp hàng đầu trong lĩnh vực
-              sản xuất linh kiện điện tử tại Việt Nam, Công ty TNHH Partron Vina
-              luôn không ngừng đổi mới và tiên phong trong việc áp dụng công
-              nghệ vào hoạt động kinh doanh. Việc triển khai nền tảng đấu giá
-              trực tuyến không chỉ là bước tiến trong việc đa dạng hóa kênh phân
-              phối sản phẩm mà còn thể hiện cam kết của công ty trong việc nâng
-              cao trải nghiệm khách hàng và tối ưu hóa giá trị sản phẩm.
-            </p>
-            <p>
-              Thông qua nền tảng này, Partron Vina hướng đến việc tạo ra một môi
-              trường giao dịch minh bạch, công bằng và hiệu quả, đồng thời mở
-              rộng cơ hội tiếp cận sản phẩm đến nhiều đối tượng khách hàng hơn.
-            </p>
+            <p>{t("vision_p1")}</p>
+            <p>{t("vision_p2")}</p>
           </div>
 
           <h3
@@ -57,7 +57,7 @@ function Information() {
               color: "#4a5568",
             }}
           >
-            Lĩnh vực hoạt động của nền tảng đấu giá
+            {t("auction_scope_heading")}
           </h3>
 
           <ul
@@ -69,36 +69,18 @@ function Information() {
               marginBottom: "24px",
             }}
           >
-            <li>
-              <strong>Đấu giá sản phẩm linh kiện điện tử:</strong> Cung cấp các
-              sản phẩm do Partron Vina sản xuất như cảm biến hình ảnh, ăng-ten,
-              mô-đun rung, tai nghe Bluetooth và các linh kiện điện tử khác.
-            </li>
-            <li>
-              <strong>Đấu giá thiết bị và máy móc:</strong> Đưa ra đấu giá các
-              thiết bị, máy móc đã qua sử dụng hoặc dư thừa trong quá trình sản
-              xuất, nhằm tối ưu hóa nguồn lực và giảm thiểu lãng phí.
-            </li>
-            <li>
-              <strong>Đấu giá sản phẩm nghiên cứu và phát triển (R&D):</strong>{" "}
-              Giới thiệu và đấu giá các sản phẩm mới, nguyên mẫu hoặc sản phẩm
-              thử nghiệm từ bộ phận R&D, tạo cơ hội cho khách hàng tiếp cận sớm
-              với các công nghệ tiên tiến.
-            </li>
-            <li>
-              <strong>Hợp tác đấu giá với đối tác:</strong> Mở rộng nền tảng để
-              các đối tác, nhà cung cấp có thể đưa sản phẩm của mình lên đấu
-              giá, tạo ra một hệ sinh thái giao dịch phong phú và đa dạng.
-            </li>
+            {[1, 2, 3, 4].map((i) => (
+              <li key={i} className="mb-2">
+                <span className="font-semibold">
+                  {t(`auction_scope_${i}_title`)}:
+                </span>{" "}
+                <span>{t(`auction_scope_${i}_desc`)}</span>
+              </li>
+            ))}
           </ul>
 
           <div style={{ fontSize: "18px", color: "#222", lineHeight: "2" }}>
-            <p>
-              Thông qua việc triển khai nền tảng đấu giá trực tuyến, Partron
-              Vina không chỉ khẳng định vị thế tiên phong trong lĩnh vực công
-              nghệ mà còn thể hiện cam kết mạnh mẽ trong việc mang lại giá trị
-              tối ưu cho khách hàng và đối tác.
-            </p>
+            <p>{t("vision_p3")}</p>
           </div>
         </div>
       </main>
