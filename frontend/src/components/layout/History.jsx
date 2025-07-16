@@ -1,6 +1,20 @@
 import AnimatedContent from "../ui/animatedContent";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 function History() {
+  const { t, i18n } = useTranslation();
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
+  const scopeList = t("history_scope_list", { returnObjects: true });
+  const contributionList = t("history_contribution_list", {
+    returnObjects: true,
+  });
   return (
     <AnimatedContent>
       <main className="history-content ">
@@ -24,7 +38,7 @@ function History() {
               textAlign: "center",
             }}
           >
-            Lịch sử hình thành Công ty TNHH Partron Vina
+            {t("history_title")}
           </h2>
           <div style={{ fontSize: "18px", color: "#222", lineHeight: "2" }}>
             <div
@@ -36,44 +50,28 @@ function History() {
                 borderRadius: "6px",
               }}
             >
-              <strong>2008:</strong> Thành lập tại Lô CN11, Khu công nghiệp Khai
-              Quang, Vĩnh Yên, Vĩnh Phúc với vốn đầu tư ban đầu 4 triệu USD từ
-              Hàn Quốc.
-              <br />
-              <strong>2015:</strong> Tổng vốn đầu tư nâng lên 150 triệu USD.
-              <br />
-              <strong>2024:</strong> Tiếp tục mở rộng quy mô sản xuất, tổng vốn
-              đầu tư đạt 269,4 triệu USD, đáp ứng nhu cầu thị trường điện tử
-              tiên tiến.
+              {[2008, 2015, 2024].map((year) => (
+                <div key={year}>
+                  <strong>{t(`history_milestone_${year}_title`)}:</strong>{" "}
+                  {t(`history_milestone_${year}_desc`)}
+                </div>
+              ))}
             </div>
             <div style={{ marginBottom: "24px" }}>
-              <strong>Lĩnh vực hoạt động:</strong>
+              <strong>{t("history_scope_title")}:</strong>
               <ul style={{ margin: "8px 0 0 24px", padding: 0 }}>
-                <li>Mô-đun cảm biến hình ảnh (ISM)</li>
-                <li>Mô-tơ rung (Motor)</li>
-                <li>Ăng-ten điện thoại (Intenna)</li>
-                <li>Sạc không dây, tai nghe Bluetooth</li>
-                <li>Các linh kiện điện tử khác</li>
+                {scopeList.map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
               </ul>
-              <span>
-                Partron Vina là nhà cung cấp vệ tinh hàng đầu của Samsung
-                Electronics Việt Nam, đồng thời sản xuất linh kiện cho các hãng
-                lớn như Amazon. Sản phẩm đã có mặt tại Hàn Quốc, EU, Brazil, Ấn
-                Độ...
-              </span>
+              <span>{t("history_scope_desc")}</span>
             </div>
             <div>
-              <strong>Đội ngũ & Đóng góp:</strong>
+              <strong>{t("history_contribution_title")}:</strong>
               <ul style={{ margin: "8px 0 0 24px", padding: 0 }}>
-                <li>Chuyên gia nước ngoài năng động, quản lý chuyên nghiệp</li>
-                <li>
-                  Tạo việc làm cho hàng nghìn lao động trong và ngoài tỉnh Vĩnh
-                  Phúc
-                </li>
-                <li>
-                  Góp phần phát triển kinh tế địa phương và ngành công nghiệp hỗ
-                  trợ điện tử Việt Nam
-                </li>
+                {contributionList.map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
               </ul>
             </div>
           </div>

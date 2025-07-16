@@ -1,8 +1,19 @@
 import AnimatedContent from "../ui/animatedContent";
 import login from "../../assets/images/login.png";
 import register from "../../assets/images/register.png";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 function Tutorial() {
+  const { t, i18n } = useTranslation();
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang") || "en";
+
+    i18n.changeLanguage(savedLang);
+  }, [i18n]);
+
   return (
     <AnimatedContent>
       <main className="tutorial-content">
@@ -23,7 +34,7 @@ function Tutorial() {
               marginBottom: "24px",
             }}
           >
-            Hướng dẫn tham gia đấu giá
+            {t("auction_guide_title")}
           </h3>
           <ol
             style={{
@@ -34,33 +45,11 @@ function Tutorial() {
             }}
           >
             <li>
-              <b>Bước 1: Đăng ký tài khoản</b> tại Trang thông tin điện tử đấu
-              giá trực tuyến, điền các thông tin cơ bản bao gồm email, username,
-              mật khẩu. Đăng ký bước đầu chỉ với username và email để có tài
-              khoản cơ bản, đủ điều kiện theo dõi các phiên đấu giá trực tuyến.
+              <b>{t("auction_guide_step_1_title")}</b>{" "}
+              {t("auction_guide_step_1_content")}
               <img
-                className="img"
-                style={{
-                  maxWidth: "60%",
-                  height: "auto",
-                  maxHeight: "400px",
-                  display: "block",
-                  margin: "16px auto",
-                }}
                 src={register}
                 alt="register"
-              />
-            </li>
-            <li>
-              <b>Bước 2: Đăng nhập và cập nhật thông tin tài khoản</b>
-              <br />
-              Nhập tài khoản và mật khẩu để đăng nhập hệ thống.
-              <br />
-              Sau khi có tài khoản, thực hiện điền đầy đủ thông tin để cập nhật
-              tài khoản. Sau khi cập nhật thành công, cá nhân, tổ chức sẽ có tài
-              khoản với đầy đủ các tính năng người dùng.
-              <br />
-              <img
                 className="img"
                 style={{
                   maxWidth: "60%",
@@ -69,52 +58,44 @@ function Tutorial() {
                   display: "block",
                   margin: "16px auto",
                 }}
-                src={login}
-                alt="login"
               />
             </li>
             <li>
-              <b>
-                Bước 3: Nghiên cứu Thông báo mời đấu giá, Quy chế cuộc đấu giá,
-                hồ sơ pháp lý về tài sản
-              </b>
+              <b>{t("auction_guide_step_2_title")}</b>
               <br />
-              Người có nhu cầu tham gia đấu giá sẽ tham khảo các thông tin về
-              tài sản đấu giá, nghiên cứu Thông báo mời đấu giá, Quy chế cuộc
-              đấu giá, hồ sơ pháp lý về tài sản được đăng tải trên Trang thông
-              tin điện tử đấu giá trực tuyến.
+              {t("auction_guide_step_2_content")}
+              <img
+                src={login}
+                alt="login"
+                className="img"
+                style={{
+                  maxWidth: "60%",
+                  height: "auto",
+                  maxHeight: "400px",
+                  display: "block",
+                  margin: "16px auto",
+                }}
+              />
             </li>
             <li>
-              <b>Bước 4: Đăng ký tham gia đấu giá</b>
+              <b>{t("auction_guide_step_3_title")}</b>
               <br />
-              Sau khi nghiên cứu Thông báo mời đấu giá, Quy chế cuộc đấu giá, hồ
-              sơ pháp lý về tài sản, nếu đủ điều kiện và có nguyện vọng tham gia
-              đấu giá thì tiến hành đăng ký tài khoản và cập nhật thông tin tài
-              khoản như Bước 1 và Bước 2 mục này.
+              {t("auction_guide_step_3_content")}
             </li>
             <li>
-              <b>Bước 5: Nộp hồ sơ tham gia đấu giá</b>
+              <b>{t("auction_guide_step_4_title")}</b>
               <br />
-              Người đăng ký tham gia đấu giá nộp hồ sơ tham gia đấu giá theo
-              đúng cách thức và thời hạn quy định tại Quy chế cuộc đấu giá và
-              email hướng dẫn.
-              <br />
-              Hồ sơ tham gia đấu giá gồm các tài liệu quy định tại Quy chế cuộc
-              đấu giá áp dụng với từng tài sản.
+              {t("auction_guide_step_4_content")}
             </li>
             <li>
-              <b>
-                Bước 6: Đăng nhập tài khoản, vào Phòng đấu giá để tham gia đấu
-                giá
-              </b>
+              <b>{t("auction_guide_step_5_title")}</b>
               <br />
-              Người đã đăng ký tham gia đấu giá thành công đăng nhập vào hệ
-              thống đấu giá trực tuyến, bấm chọn vào vị trí logo có thông tin về
-              tài sản đã nộp hồ sơ tham gia đấu giá, thực hiện bấm nút Điểm danh
-              để có thể tiến hành trả giá.
+              {t("auction_guide_step_5_content")}
+            </li>
+            <li>
+              <b>{t("auction_guide_step_6_title")}</b>
               <br />
-              Tại giao diện màn hình trả giá, nhập số tiền muốn trả và bấm vào
-              nút “Đấu giá”.
+              {t("auction_guide_step_6_content")}
             </li>
           </ol>
         </div>
