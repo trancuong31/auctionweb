@@ -14,6 +14,7 @@ class User(Base):
     created_at = Column(DateTime, nullable=False)
     status = Column(Integer, nullable=False, default=1)
     # Relationships
-    bids = relationship("Bid", back_populates="user")
+    # bids = relationship("Bid", back_populates="user")
+    bids = relationship("Bid", back_populates="user", cascade="all, delete-orphan")
     notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
     orders = relationship("Order", back_populates="user", cascade="all, delete-orphan")

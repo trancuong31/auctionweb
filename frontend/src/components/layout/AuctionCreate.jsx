@@ -72,10 +72,11 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
       };
       const language = sessionStorage.getItem("lang") || "en";
       await create("auctions", data, true, { lang: language });
-      toast.success("Add new auction successful");
+      // toast.success("Add new auction successful");
+      toast.success(t("success.add_new_auction"));
       onClickClose();
     } catch (error) {
-      toast.error("Error while add Auction");
+      toast.error(t("error.add_new_auction"));
       console.log(error);
     }
   };
@@ -85,9 +86,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    if (savedLang && savedLang !== i18n.language) {
       i18n.changeLanguage(savedLang);
-    }
   }, [i18n]);
 
   const imgFiles = watch("image_url") || [];
@@ -102,7 +101,8 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
     const hasDuplicate = newNames.some((name) => currentNames.includes(name));
 
     if (hasDuplicate) {
-      toast.error("Please do not select duplicate photos");
+      // toast.error("Please do not select duplicate photos");
+      toast.error(t("error.duplicate_photos"));
       return;
     }
 
@@ -136,7 +136,8 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
       const hasDuplicate = newNames.some((name) => currentNames.includes(name));
 
       if (hasDuplicate) {
-        toast.error("Please do not select duplicate photos");
+        // toast.error("Please do not select duplicate photos");
+        toast.error(t("error.duplicate_photos"));
         return;
       }
 
@@ -172,7 +173,8 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
       });
       return response.data.image_urls;
     } catch (error) {
-      toast.error("Error while upload image");
+      // toast.error("Error while upload image");
+      toast.error(t("error.error_upload_image"));
       throw error;
     }
   };
@@ -187,7 +189,8 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
       const response = await create("upload/excel", formData, true);
       return response.data.file_excel;
     } catch (error) {
-      toast.error("Error while upload Excel");
+      // toast.error("Error while upload Excel");
+      toast.error(t("error.error_upload_excel"));
       throw error;
     }
   };

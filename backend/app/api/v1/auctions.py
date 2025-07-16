@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, HTTPException, File, UploadFile, status, Request
+from fastapi import APIRouter, Depends, Query, HTTPException, File, UploadFile, status, Request, Path
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 from app.core.database import get_db
@@ -99,6 +99,20 @@ class OverviewStats(BaseModel):
     total_auction_in_progress: int
     total_unsuccessful_auctions: int
     total_upcoming_auctions: int
+
+class AuctionUpdate(BaseModel):
+    title: Optional[str] = None
+    title_vi: Optional[str] = None
+    title_ko: Optional[str] = None
+    description: Optional[str] = None
+    description_vi: Optional[str] = None
+    description_ko: Optional[str] = None
+    starting_price: Optional[float] = None
+    step_price: Optional[float] = None
+    image_url: Optional[List[str]] = None
+    file_exel: Optional[str] = None
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
 router = APIRouter()
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
@@ -217,16 +231,16 @@ def create_auction(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # chỉ admin mới được add đấu giá
-    if current_user.role != UserRole.ADMIN :
+    # Chỉ admin hoặc super admin mới được tạo đấu giá
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(
-            status_code = HTTP_400_BAD_REQUEST,
-            detail=_("You don't have permison create auction!", request)
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=_("You don't have permission to create auction!", request)
         )
     auction = db.query(Auction).filter(Auction.title == auction_in.title).first()
-    if auction :
+    if auction:
         raise HTTPException(
-            status_code= HTTP_400_BAD_REQUEST,
+            status_code=HTTP_400_BAD_REQUEST,
             detail=_("Auction title already exists", request)
         )
     """
@@ -256,7 +270,9 @@ def create_auction(
         file_exel=auction_in.file_exel,
         start_time=auction_in.start_time,
         end_time=auction_in.end_time,
-        status=status
+        status=status,
+        created_by=current_user.id
+        
     )
     db.add(auction)
     db.commit()
@@ -264,6 +280,55 @@ def create_auction(
     auction_data = auction.__dict__.copy()
     auction_data['image_url'] = json.loads(auction.image_url) if auction.image_url else []
     return AuctionOut(**auction_data)
+
+@router.put("/auctions/{auction_id}", response_model=AuctionOut)
+def update_auction(
+    request: Request,
+    auction_id: str = Path(..., description="ID của auction cần sửa"),    
+    auction_in: AuctionUpdate = ...,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    auction = db.query(Auction).filter(Auction.id == auction_id).first()
+    if not auction:
+        raise HTTPException(status_code=404, detail=_("Auction not found", request))
+
+    # Kiểm tra quyền
+    if current_user.role == UserRole.SUPER_ADMIN:
+        pass  # Được phép sửa tất cả
+    elif current_user.role == UserRole.ADMIN:
+        if auction.created_by != current_user.id:
+            raise HTTPException(status_code=403, detail=_("You are not allowed to edit this auction", request))
+    else:
+        raise HTTPException(status_code=403, detail=_("You are not allowed to edit auctions", request))
+
+    # Cập nhật các trường
+    update_data = auction_in.dict(exclude_unset=True)
+    if "title" in update_data:
+        existing = db.query(Auction).filter(Auction.title == update_data["title"], Auction.id != auction_id).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Auction title already exists")
+    if "start_time" in update_data and "end_time" in update_data:
+        if update_data["start_time"] >= update_data["end_time"]:
+            raise HTTPException(status_code=400, detail="start_time must be before end_time")
+    elif "start_time" in update_data:
+        if auction.end_time and update_data["start_time"] >= auction.end_time:
+            raise HTTPException(status_code=400, detail="start_time must be before end_time")
+    elif "end_time" in update_data:
+        if auction.start_time and auction.start_time >= update_data["end_time"]:
+            raise HTTPException(status_code=400, detail="end_time must be after start_time")
+    
+    if "image_url" in update_data and update_data["image_url"] is not None:
+        update_data["image_url"] = json.dumps(update_data["image_url"])
+    for key, value in update_data.items():
+        setattr(auction, key, value)
+
+    db.commit()
+    db.refresh(auction)
+    auction_data = auction.__dict__.copy()
+    auction_data['image_url'] = json.loads(auction.image_url) if auction.image_url else []
+    return AuctionOut(**auction_data)
+
 
 #admin upload ảnh khi thêm auction
 @router.post("/upload/image")
@@ -624,3 +689,5 @@ def get_overview_stats(db: Session = Depends(get_db)):
         "total_unsuccessful_auctions": total_unsuccessful_auctions,
         "total_upcoming_auctions": total_upcoming_auctions
     }
+
+    

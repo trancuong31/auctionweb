@@ -94,7 +94,6 @@ def create_bid(
         bid_in_bid_amount=bid_in.bid_amount,
         auction_title=auction.title
     )
-
     notification = Notification(
         user_id=user_id,
         auction_id = bid_in.auction_id,

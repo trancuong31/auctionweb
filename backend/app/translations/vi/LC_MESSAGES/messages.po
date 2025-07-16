@@ -144,3 +144,9 @@ msgstr "Cập nhật người dùng thành công."
 
 msgid "User deleted successfully."
 msgstr "Xóa người dùng thành công."
+
+msgid "You are not allowed to edit this auction"
+msgstr "Bạn không có quyền chỉnh sửa phiên đấu giá này"
+
+msgid "You are not allowed to edit auctions"
+msgstr "Bạn không có quyền chỉnh sửa các phiên đấu giá"

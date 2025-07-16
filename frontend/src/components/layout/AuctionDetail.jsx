@@ -35,9 +35,7 @@ const AuctionDetail = () => {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    if (savedLang && savedLang !== i18n.language) {
       i18n.changeLanguage(savedLang);
-    }
   }, [i18n]);
 
   function isTokenValid() {
@@ -167,7 +165,8 @@ const AuctionDetail = () => {
   //xử lý token hết hạn bắt user login để thực hiện thao tác đấu giá
   const openAuctionForm = () => {
     if (!isTokenValid()) {
-      toast.error("You must be logged in to participate in the auction!");
+      // toast.error("You must be logged in to participate in the auction!");
+      toast.error(t("error.must_logged"));
       setTimeout(() => {
         window.location.href = "/login";
       }, 2000);
@@ -175,12 +174,14 @@ const AuctionDetail = () => {
     }
     //chặn người dùng đấu giá khi phiên đấu giá đã kết thúc
     if (auction.status === 2) {
-      toast.error("This auction has ended!");
+      // toast.error("This auction has ended!");
+      toast.error(t("error.auction_ended"));
       return;
     }
     //chặn người dùng đấu giá khi phiên đấu giá chưa diễn ra
     else if (auction.status === 1) {
-      toast.error("This auction has not started yet.");
+      // toast.error("This auction has not started yet.");
+      toast.error(t("error.auction_not_start"));
       return;
     }
     setIsOpen(true);
@@ -237,7 +238,7 @@ const AuctionDetail = () => {
   };
 
   if (loading) return <div className="loader"></div>;
-  if (!auction) return <p>No data available</p>;
+  if (!auction) return <p>{t('no_data')}</p>;
 
   return (
     <div className="">
@@ -371,7 +372,7 @@ const AuctionDetail = () => {
                 <p>{auction.file_exel.split("/").pop()}</p>
               </button>
             ) : (
-              <span className="text-gray-400 italic">No file</span>
+              <span className="text-gray-400 italic">{t('no_file')}</span>
             )}
           </p>
           {(auction.status === 0 || auction.status === 2) &&
@@ -394,7 +395,7 @@ const AuctionDetail = () => {
                   {auction.bids.find((bid) => bid.is_winner).user_name}
                 </span>
               ) : (
-                <span className="text-red-500 font-semibold">No winner</span>
+                <span className="text-red-500 font-semibold">{t("no_winner")}</span>
               )}
             </p>
           )}
@@ -409,7 +410,7 @@ const AuctionDetail = () => {
             {auction.description}
           </p>
         ) : (
-          <p className="text-gray-400 italic">No description available</p>
+          <p className="text-gray-400 italic">{t("no_description_available")}</p>
         )}
       </div>
 

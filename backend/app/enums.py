@@ -3,6 +3,7 @@ import enum
 class UserRole(enum.Enum):
     USER = "USER"
     ADMIN = "ADMIN"
+    SUPER_ADMIN = "SUPER_ADMIN"
 
 class OrderStatus(enum.Enum):
     pending = "ongoing"

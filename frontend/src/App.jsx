@@ -15,8 +15,17 @@ import AccountInfo from "./components/layout/AccountInfo.jsx";
 import Information from "./components/layout/Information.jsx";
 import PrivateRoute from "./components/layout/PrivateRoute.jsx";
 import { Toaster } from "react-hot-toast";
-
+import React, { useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 function App() {
+  const { t, i18n } = useTranslation();
+  useEffect(() => {
+  const savedLang = sessionStorage.getItem("lang") || "en";
+  if (savedLang !== i18n.language) {
+    i18n.changeLanguage(savedLang);
+  }
+}, []);
+
   return (
     <>
       <Toaster position="top-center" reverseOrder={true} />

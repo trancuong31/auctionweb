@@ -4,7 +4,7 @@ import { faBell, faUser } from "@fortawesome/free-solid-svg-icons";
 import axiosClient from "../../services/axiosClient";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-
+import { useTranslation } from "react-i18next";
 dayjs.extend(relativeTime);
 
 const NotificationDropdown = ({ triggerRef }) => {
@@ -12,7 +12,7 @@ const NotificationDropdown = ({ triggerRef }) => {
   const [notifications, setNotifications] = useState([]);
   const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
-
+  const { t, i18n } = useTranslation();
   const closeDropdown = () => {
     setClosing(true);
     setTimeout(() => {
@@ -32,7 +32,11 @@ const NotificationDropdown = ({ triggerRef }) => {
     const intervalId = setInterval(fetchNotifications, 120000);
     return () => clearInterval(intervalId);
   }, []);
-
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+      i18n.changeLanguage(savedLang);
+  }, [i18n]);
   // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -111,7 +115,7 @@ const NotificationDropdown = ({ triggerRef }) => {
           </div>
           <ul className="notification-list">
             {notifications.length === 0 ? (
-              <li className="notification-item">No announcements yet.</li>
+              <li className="notification-item">{t('no_announcements')}</li>
             ) : (
               notifications.map((item) => (
                 <li
