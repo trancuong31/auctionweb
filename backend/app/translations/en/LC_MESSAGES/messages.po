@@ -147,3 +147,9 @@ msgstr "User updated successfully."
 
 msgid "User deleted successfully."
 msgstr "User deleted successfully."
+
+msgid "You are not allowed to edit this auction"
+msgstr "You are not allowed to edit this auction"
+
+msgid "You are not allowed to edit auctions"
+msgstr "You are not allowed to edit auctions"

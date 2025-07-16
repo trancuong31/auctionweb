@@ -129,5 +129,33 @@
   "vision_development_orientation": "Vision & Development Orientation",
   "company_history": "History of Partron Vina Company Limited",
   "phone": "Phone",
-  "auctioneer_assistance": "Auctioneer Assistance"
+  "auctioneer_assistance": "Auctioneer Assistance",
+  "no_winner": "No winner",
+  "no_description_available": "No description available",
+  "success": {
+    "add_new_auction": "Add new auction successful",
+    "bid_submitted": "Bid submitted successfully!",
+    "delete_success":"Delete user successful!",
+    "update_status": "update status user successful!"
+    
+  },
+  "error": {
+    "add_new_auction": "Error add auction",
+    "duplicate_photos": "Please do not select duplicate photos",
+    "error_upload_image": "Error while upload image",
+    "error_upload_excel": "Error while upload Excel",
+    "must_logged":"You must be logged in to participate in the auction!",
+    "auction_ended":"This auction has ended!",
+    "auction_not_start":"This auction has not started yet!",
+    "error_get_data":"Error while get data",
+    "get_user": "Error while get User data",
+    "delete_fail":"Delete user fail!",
+    "update_status": "update status user fail!"
+  },
+  "no_data":"No data available",
+  "no_file":"No file",
+  "no_announcements":"No announcements yet",
+  "user_not_valid": "Username is not valid!",
+  "update_user": "Update user successful!",
+  "update_user_fai": "Update user fail!"
 }

@@ -126,5 +126,31 @@
   "vision_development_orientation": "Tầm nhìn và định hướng phát triển",
   "company_history": "Lịch sử Công ty TNHH Partron Vina",
   "phone": "Điện thoại",
-  "auctioneer_assistance": "Hỗ trợ đấu giá"
+  "auctioneer_assistance": "Hỗ trợ đấu giá",
+  "no_winner": "Không có người chiếng thắng",
+  "no_description_available": "Không có mô tả",
+  "success": {
+    "add_new_auction": "Đã thêm phiên đấu giá thành công",
+    "bid_submitted": "Gửi đấu giá thành công!",
+    "delete_success":"Xóa người dùng thành công!",
+    "update_status": "Cập nhật trạng thái thành công!"
+  },
+  "error": {
+    "add_new_auction": "Lỗi tạo phiên đấu giá mới!",
+    "duplicate_photos": "Vui lòng không chọn trùng ảnh!",
+    "error_upload": "Lỗi tải ảnh!",
+    "error_upload_excel": "Lỗi tải excel!",
+    "must_logged":"Bạn phải đăng nhập trước khi tham gia đấu giá!",
+    "auction_ended":"Phiên đấu giá này đã kết thúc!",
+    "auction_not_start":"Phiên đấu giá này chưa bắt đầu!",
+    "error_get_data":"Lỗi lấy dữ liệu",
+    "delete_fail":"Xóa người dùng thất bại!",
+    "update_status": "Cập nhật trạng thái thất bại!"
+  },
+  "no_data":"Không có dữ liệu",
+  "no_file":"Không có file",
+  "no_announcements":"Không có thông báo",
+  "user_not_valid": "Tên người dùng không hợp lệ!",
+  "update_user_suc": "Cập nhật user thành công!",
+  "update_user_fai": "Cập nhật user thất bại!"
 }

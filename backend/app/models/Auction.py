@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, DateTime, Text, Numeric, UUID
+from sqlalchemy import Column, String, Integer, DateTime, Text, Numeric, UUID, ForeignKey
 from sqlalchemy.orm import relationship
 from app.models.base import Base
 import uuid
@@ -22,6 +22,7 @@ class Auction(Base):
     end_time = Column(DateTime, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     status = Column(Integer, nullable=False)
+    created_by = Column(String(36), ForeignKey("users.id"), nullable=False)
 
     bids = relationship("Bid", back_populates="auction")
     notifications = relationship("Notification", back_populates="auction")

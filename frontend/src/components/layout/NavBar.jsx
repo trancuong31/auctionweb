@@ -26,9 +26,7 @@ function NavBar() {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    if (savedLang && savedLang !== i18n.language) {
       i18n.changeLanguage(savedLang);
-    }
   }, [i18n]);
 
   useEffect(() => {

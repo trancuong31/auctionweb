@@ -9,7 +9,8 @@ class Bid(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     auction_id = Column(String(36), ForeignKey("auctions.id"), nullable=False)
-    user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
+    # user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     bid_amount = Column(Numeric, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     note = Column(Text)

@@ -56,7 +56,7 @@ def get_users(
     page: int = Query(1, ge=1, description="Số trang"),
     page_size: int = Query(8, ge=1, le=100, description="Số user mỗi trang")
 ):
-    if current_user.role != UserRole.ADMIN:
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(
             status_code=403,
             detail=_("You don't have permison watch users!", request)
@@ -95,7 +95,7 @@ def set_user_status(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role != UserRole.ADMIN:
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail=_("Permission denied", request))
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -131,7 +131,7 @@ def delete_user(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role != UserRole.ADMIN:
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail=_("Permission denied", request))
     user = db.query(User).filter(User.id == user_id).first()
     if not user:

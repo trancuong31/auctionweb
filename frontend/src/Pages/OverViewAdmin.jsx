@@ -67,13 +67,10 @@ const OverViewAdmin = () => {
     icon: null,
     onConfirm: () => {},
   });
-
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    if (savedLang && savedLang !== i18n.language) {
       i18n.changeLanguage(savedLang);
-    }
   }, [i18n]);
 
   const getOverView = async () => {
@@ -83,7 +80,7 @@ const OverViewAdmin = () => {
       });
       setOverViewData(response.data);
     } catch (error) {
-      toast.error("Error while get data");
+      toast.error(t("error.error_get_data"));
       console.log(error);
     }
   };
@@ -109,7 +106,8 @@ const OverViewAdmin = () => {
         )
       );
     } catch (error) {
-      toast.error("Error while get User data");
+      // toast.error("Error while get User data");
+      toast.error(t("error.get_user"));
       console.log(error);
     } finally {
       // setIsLoadingSearch(false);
@@ -132,7 +130,8 @@ const OverViewAdmin = () => {
         Math.ceil(response.data.total / Number(import.meta.env.VITE_PAGE_SIZE))
       );
     } catch (error) {
-      toast.error("Error while get Auction Data");
+      // toast.error("Error while get Auction Data");
+      toast.error(t("error.error_get_data", { detail: error.response.data.detail }));
       console.log(error);
     } finally {
       // setIsLoadingSearch(false);
@@ -187,7 +186,7 @@ const OverViewAdmin = () => {
   }, [cancelSearchUser]);
 
   const handleEditUser = async (user) => {
-    if (userName.length < 3) return toast.error("Username is not valid");
+    if (userName.length < 3) return toast.error(t("user_not_valid"));
     const newUser = {
       ...user,
       username: userName,
@@ -197,11 +196,11 @@ const OverViewAdmin = () => {
       await update("users", user.id, newUser, true, {
         lang: sessionStorage.getItem("lang") || "en",
       });
-      toast.success("Update user successful!");
+      toast.success(t("update_user_suc"));
       setCurrentEditing(null);
       await getPageUser();
     } catch (error) {
-      toast.error("update user fail!");
+      toast.error(t("update_user_fai"));
       console.log(error);
     }
   };
@@ -221,10 +220,10 @@ const OverViewAdmin = () => {
           await deleteOne("users", id, true, {
             lang: sessionStorage.getItem("lang") || "en",
           });
-          toast.success("Delete user successful!");
+          toast.success(t("success.delete_success"));
           getPageUser();
         } catch (error) {
-          toast.error("Delete user fail!");
+          toast.error(t("error.delete_fail"));
           console.log(error);
         }
       },
@@ -249,10 +248,10 @@ const OverViewAdmin = () => {
           await updateSatus("users", user.id, { status: !user.status }, true, {
             lang: sessionStorage.getItem("lang") || "en",
           });
-          toast.success("update status user successful!");
+          toast.success(t("success.update_status"));
           getPageUser();
         } catch (error) {
-          toast.error("update status user fail!");
+          toast.success(t("error.update_status"));
           console.log(error);
         }
       },
