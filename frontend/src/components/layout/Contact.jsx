@@ -1,11 +1,19 @@
 import AnimatedContent from "../ui/animatedContent";
 import imagefac from "../../assets/images/factory.jpg";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 function Contact() {
+  const { t, i18n } = useTranslation();
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
   return (
     <AnimatedContent>
-      {/* <Header />
-      <NavBar /> */}
       <main className="rule-content">
         <div
           style={{
@@ -25,7 +33,7 @@ function Contact() {
                   fontWeight: 400,
                 }}
               >
-                Contact
+                {t("contact_title")}
               </h1>
               <h2
                 style={{
@@ -33,35 +41,83 @@ function Contact() {
                   fontWeight: 400,
                 }}
               >
-                Partron Vina Co., Ltd.
+                {t("contact_company_name")}
               </h2>
-              <div style={{ fontSize: "16px", color: "#222", lineHeight: "1.8" }}>
-              <div style={{ marginBottom: "12px" }}>
-                <div style={{ fontWeight: "bold", fontSize: "18px", marginBottom: "8px" }}>1. Khai Quang</div>
-                <div style={{ marginLeft: "16px" }}>
-                  <div><p>Công ty TNHH Partron Vina</p></div>
-                  <div><strong>MST:</strong> 2500298765</div>
-                  <div> <span style={{ fontWeight: "bold"}}>Address: </span>Lô 11, Khu công nghiệp Khai Quang, Phường Vĩnh Phúc, Tỉnh Phú Thọ, Việt Nam.</div>
-                </div>
-              </div>
 
-              <div style={{ marginBottom: "12px" }}>
-                <div style={{ fontWeight: "bold", fontSize: "18px", marginBottom: "8px" }}>2. Đồng Sóc</div>
-                <div style={{ marginLeft: "16px" }}>
-                  <div><p>Công ty TNHH Partron Vina - Chi nhánh Đồng Sóc</p></div>
-                  <div><strong>MST:</strong> 2500298765-002</div>
-                  <div> <span style={{ fontWeight: "bold"}}>Address: </span>Lô CN03-03, Cụm Công nghiệp Đồng Sóc, Xã Vĩnh Tường, Tỉnh Phú Thọ, Việt Nam.</div>
+              <div
+                style={{ fontSize: "16px", color: "#222", lineHeight: "1.8" }}
+              >
+                <div style={{ marginBottom: "12px" }}>
+                  <div
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: "18px",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    {t("contact_1_title")}
+                  </div>
+                  <div style={{ marginLeft: "16px" }}>
+                    <div>
+                      <p>{t("contact_1_company")}</p>
+                    </div>
+                    <div>
+                      <strong>{t("contact_1_tax_label")}</strong>{" "}
+                      {t("contact_1_tax_value")}
+                    </div>
+                    <div>
+                      <span style={{ fontWeight: "bold" }}>
+                        {t("contact_1_address_label")}
+                      </span>{" "}
+                      {t("contact_1_address_value")}
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <div><strong>Phone:</strong> 012 345 6789</div>
-                <div><strong>Fax:</strong> 012 345 6789</div>
-                <div><strong>Email:</strong> partronvina@gmail.com</div>
+                <div style={{ marginBottom: "12px" }}>
+                  <div
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: "18px",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    {t("contact_2_title")}
+                  </div>
+                  <div style={{ marginLeft: "16px" }}>
+                    <div>
+                      <p>{t("contact_2_company")}</p>
+                    </div>
+                    <div>
+                      <strong>{t("contact_2_tax_label")}</strong>{" "}
+                      {t("contact_2_tax_value")}
+                    </div>
+                    <div>
+                      <span style={{ fontWeight: "bold" }}>
+                        {t("contact_2_address_label")}
+                      </span>{" "}
+                      {t("contact_2_address_value")}
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div>
+                    <strong>{t("contact_phone_label")}</strong>{" "}
+                    {t("contact_phone_value")}
+                  </div>
+                  <div>
+                    <strong>{t("contact_fax_label")}</strong>{" "}
+                    {t("contact_fax_value")}
+                  </div>
+                  <div>
+                    <strong>{t("contact_email_label")}</strong>{" "}
+                    {t("contact_email_value")}
+                  </div>
+                </div>
               </div>
             </div>
 
-            </div>
             <img
               src={imagefac}
               alt="Liên hệ"
@@ -73,13 +129,11 @@ function Contact() {
                 objectFit: "cover",
                 boxShadow:
                   "0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08)",
-                
               }}
             />
           </div>
         </div>
       </main>
-      {/* <Footer /> */}
     </AnimatedContent>
   );
 }
