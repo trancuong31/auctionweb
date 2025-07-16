@@ -50,26 +50,17 @@ def create_bid(
     user = db.query(User).filter(User.id == user_id, User.status == 1).first()
     if not user:
         raise HTTPException(status_code=403, detail=_("User not allowed to bid", request))
-    # Luôn yêu cầu bid_amount >= starting_price + step_price
-    highest_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id).order_by(Bid.bid_amount.desc()).first()
-    if highest_bid:
-        min_bid = float(highest_bid.bid_amount) + float(auction.step_price or 0)
-        min_bid_msg = f"(which is the current highest bid plus the step price)."
-    else:
-        min_bid = float(auction.starting_price or 0)
-        min_bid_msg = f"(which is the starting price)."
-
-    if float(bid_in.bid_amount) < min_bid:
+    
+    if float(bid_in.bid_amount) < float(auction.starting_price):
         raise HTTPException(
             status_code=400,
-            detail=_("Bid amount is invalid. Your bid must be at least {min_bid:,.0f}$ {min_bid_msg}", request).format(
-        min_bid=min_bid, min_bid_msg=min_bid_msg
-    )
+            detail=_("Bid amount must be at least the starting price", request)
         )
-    # Kiểm tra user đã đặt bid cho auction này chưa
+    # Kiểm tra user đã đặt bid cho auction này chưa 
     existing_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id, Bid.user_id == user_id).first()
     if existing_bid:
-        raise HTTPException(status_code=400, detail=_("User has already placed a bid for this auction", request))
+        db.delete(existing_bid)
+        db.commit()
     bid = Bid(
         auction_id=bid_in.auction_id,
         user_id=user_id,

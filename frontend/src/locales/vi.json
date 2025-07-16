@@ -215,7 +215,32 @@
   "rule_2": "2. Bảo mật về tài khoản truy cập, thông tin về người tham gia đấu giá và các thông tin khác theo quy định của pháp luật.",
   "rule_3": "3. Bảo đảm tính khách quan, minh bạch, an toàn, an ninh mạng.",
   "rule_4": "4. Bảo vệ quyền và lợi ích hợp pháp của người có tài sản, người tham gia đấu giá và cá nhân, tổ chức có liên quan.",
-  "auction_rules_title": "Nguyên tắc đấu giá trực tuyến"
+  "auction_rules_title": "Nguyên tắc đấu giá trực tuyến",
 
-
+  "no_winner": "Không có người chiếng thắng",
+  "no_description_available": "Không có mô tả",
+  "success": {
+    "add_new_auction": "Đã thêm phiên đấu giá thành công",
+    "bid_submitted": "Gửi đấu giá thành công!",
+    "delete_success":"Xóa người dùng thành công!",
+    "update_status": "Cập nhật trạng thái thành công!"
+  },
+  "error": {
+    "add_new_auction": "Lỗi tạo phiên đấu giá mới!",
+    "duplicate_photos": "Vui lòng không chọn trùng ảnh!",
+    "error_upload": "Lỗi tải ảnh!",
+    "error_upload_excel": "Lỗi tải excel!",
+    "must_logged":"Bạn phải đăng nhập trước khi tham gia đấu giá!",
+    "auction_ended":"Phiên đấu giá này đã kết thúc!",
+    "auction_not_start":"Phiên đấu giá này chưa bắt đầu!",
+    "error_get_data":"Lỗi lấy dữ liệu",
+    "delete_fail":"Xóa người dùng thất bại!",
+    "update_status": "Cập nhật trạng thái thất bại!"
+  },
+  "no_data":"Không có dữ liệu",
+  "no_file":"Không có file",
+  "no_announcements":"Không có thông báo",
+  "user_not_valid": "Tên người dùng không hợp lệ!",
+  "update_user_suc": "Cập nhật user thành công!",
+  "update_user_fai": "Cập nhật user thất bại!"
 }
