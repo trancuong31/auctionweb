@@ -243,9 +243,22 @@
   "user_not_valid": "Tên người dùng không hợp lệ!",
   "update_user_suc": "Cập nhật user thành công!",
   "update_user_fai": "Cập nhật user thất bại!",
-  "addresses": [
-    "Lô 11, Khu công nghiệp Khai Quang, Phường Vĩnh Phúc, Tỉnh Phú Thọ, Việt Nam",
-    "Lô CN03-03, Cụm công nghiệp Đồng Sóc, Xã Vĩnh Tường, Tỉnh Phú Thọ, Việt Nam"
-  ],
-  "account_info": "Thông tin tài khoản"
+  "validate_auction": {
+    "title_required": "Tiêu đề là bắt buộc",
+    "title_max": "Tiêu đề không được vượt quá 200 ký tự",
+    "description_required": "Mô tả là bắt buộc",
+    "description_max": "Mô tả không được vượt quá 2000 ký tự",
+    "starting_price_min": "Giá khởi điểm phải lớn hơn 0",
+    "step_price_min": "Bước giá phải ≥ 1$",
+    "image_url_min": "Phải chọn ít nhất một tệp",
+    "file_exel_instance": "Phải chọn tệp Excel",
+    "end_time_required": "Thời gian là bắt buộc"
+  },
+  "validate_bid": {
+    "address_required": "Địa chỉ là bắt buộc",
+    "address_max": "Địa chỉ không được vượt quá 100 ký tự",
+    "bid_amount_positive": "Giá trị phải lớn hơn 0",
+    "bid_amount_decimal": "Chỉ cho phép tối đa 2 chữ số thập phân",
+    "note_max": "Ghi chú không được vượt quá 1000 ký tự."
+  }
 }

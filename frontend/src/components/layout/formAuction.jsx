@@ -4,29 +4,28 @@ import { toast } from "react-hot-toast";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
+import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
-import clsx from "clsx";
-
-const schema = z.object({
-  auction_id: z.any(),
-  address: z
-    .string()
-    .trim()
-    .min(1, "Address is required")
-    .max(100, "Address cannot exceed 100 characters"),
-  bid_amount: z
-    .number()
-    .positive("Value must be greater than 0")
-    .refine((val) => /^\d+(\.\d{1,2})?$/.test(val.toFixed(2)), {
-      message: "Only allow up to 2 decimal places",
-    }),
-  note: z.string().trim().max(1000, "Notes must not exceed 1000 characters."),
-});
 
 function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { t, i18n } = useTranslation();
+  const schema = z.object({
+    auction_id: z.any(),
+    address: z
+      .string()
+      .trim()
+      .min(1, t("validate_bid.address_required"))
+      .max(100, t("validate_bid.address_max")),
+    bid_amount: z
+      .number()
+      .positive(t("validate_bid.bid_amount_positive"))
+      .refine((val) => /^\d+(\.\d{1,2})?$/.test(val.toFixed(2)), {
+        message: t("validate_bid.bid_amount_decimal"),
+      }),
+    note: z.string().trim().max(1000, t("validate_bid.note_max")),
+  });
 
   const {
     handleSubmit,
