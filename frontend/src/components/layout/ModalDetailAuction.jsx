@@ -247,7 +247,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     </td>
                     <td className="px-4 py-2">
                       {bid.created_at
-                        ? new Date(auction.end_time).toLocaleString("en-US", {
+                        ? new Date(bid.created_at).toLocaleString("en-US", {
                             year: "numeric",
                             month: "2-digit",
                             day: "2-digit",

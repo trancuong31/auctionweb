@@ -242,5 +242,10 @@
   "no_announcements":"Không có thông báo",
   "user_not_valid": "Tên người dùng không hợp lệ!",
   "update_user_suc": "Cập nhật user thành công!",
-  "update_user_fai": "Cập nhật user thất bại!"
+  "update_user_fai": "Cập nhật user thất bại!",
+  "addresses": [
+    "Lô 11, Khu công nghiệp Khai Quang, Phường Vĩnh Phúc, Tỉnh Phú Thọ, Việt Nam",
+    "Lô CN03-03, Cụm công nghiệp Đồng Sóc, Xã Vĩnh Tường, Tỉnh Phú Thọ, Việt Nam"
+  ],
+  "account_info": "Thông tin tài khoản"
 }

@@ -248,5 +248,10 @@
   "no_announcements":"No announcements yet",
   "user_not_valid": "Username is not valid!",
   "update_user": "Update user successful!",
-  "update_user_fai": "Update user fail!"
+  "update_user_fai": "Update user fail!",
+  "addresses": [
+    "Lot 11, Khai Quang Industrial Park, Vinh Phuc Ward, Phu Tho Province, Vietnam",
+    "Lot CN03-03, Dong Soc Industrial Cluster, Vinh Tuong Commune, Phu Tho Province, Vietnam"
+  ],
+  "account_info": "Account Infomation"
 }
