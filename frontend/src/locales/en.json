@@ -267,5 +267,10 @@
     "bid_amount_positive": "Value must be greater than 0",
     "bid_amount_decimal": "Only allow up to 2 decimal places",
     "note_max": "Notes must not exceed 1000 characters."
-  }
+  },
+  "addresses": [
+    "Lot 11, Khai Quang Industrial Park, Vinh Phuc Ward, Phu Tho Province, Vietnam",
+    "Lot CN03-03, Dong Soc Industrial Cluster, Vinh Tuong Commune, Phu Tho Province, Vietnam"
+  ],
+  "account_info": "Account Infomation"
 }
