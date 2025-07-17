@@ -91,7 +91,7 @@ function NavBar() {
         {user ? (
           <>
             <NotificationDropdown triggerRef={bellRef} />
-            <span className="user-greeting nav-link">Account Infomation</span>
+            <span className="user-greeting nav-link">{t("account_info")}</span>
             <button className="nav-link button-link" onClick={handleLogout}>
               {t("logout", "Logout")}
             </button>

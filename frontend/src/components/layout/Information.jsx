@@ -1,6 +1,7 @@
 import AnimatedContent from "../ui/animatedContent";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import { Indent } from "lucide-react";
 function Information() {
   const { t, i18n } = useTranslation();
 

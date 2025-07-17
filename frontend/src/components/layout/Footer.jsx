@@ -11,6 +11,8 @@ import { useTranslation } from "react-i18next";
 
 export const Footer = () => {
   const { t, i18n } = useTranslation();
+  const addresses = t("addresses", { returnObjects: true });
+
   const companyInfo = {
     name: "Partron Vina Co., Ltd.",
     phone: "+84 123 456 789",
@@ -59,7 +61,7 @@ export const Footer = () => {
               />
               <span className="footer__label">{t("address")}:</span>
               <ul className="footer__address-list">
-                {companyInfo.addresses.map((addr, index) => (
+                {addresses.map((addr, index) => (
                   <li key={index} className="footer__address-item">
                     {addr}
                   </li>

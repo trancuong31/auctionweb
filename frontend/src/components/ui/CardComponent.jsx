@@ -28,7 +28,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
     <div className={gridClass}>
       {!arrAuction || arrAuction.length === 0 ? (
         <p className="text-gray-600 col-span-full text-center">
-          No data available
+          {t("no_data")}
         </p>
       ) : (
         arrAuction.map((item) => (
