@@ -51,6 +51,7 @@
   "role": "Role",
   "active": "Active",
   "create_auction_btn": "Create auction",
+  "edit_auction_btn": "Edit auction",
   "title": "Title",
   "start_time": "Start Time",
   "end_time": "End Time",
@@ -249,9 +250,22 @@
   "user_not_valid": "Username is not valid!",
   "update_user": "Update user successful!",
   "update_user_fai": "Update user fail!",
-  "addresses": [
-    "Lot 11, Khai Quang Industrial Park, Vinh Phuc Ward, Phu Tho Province, Vietnam",
-    "Lot CN03-03, Dong Soc Industrial Cluster, Vinh Tuong Commune, Phu Tho Province, Vietnam"
-  ],
-  "account_info": "Account Infomation"
+  "validate_auction": {
+    "title_required": "Title is required",
+    "title_max": "Title must not exceed 200 characters",
+    "description_required": "Description is required",
+    "description_max": "Description must not exceed 2000 characters",
+    "starting_price_min": "Starting price must be > 0",
+    "step_price_min": "Price step must be ≥ 1$",
+    "image_url_min": "Must select at least one file",
+    "file_exel_instance": "Must select Excel file",
+    "end_time_required": "Time is required"
+  },
+   "validate_bid": {
+    "address_required": "Address is required",
+    "address_max": "Address cannot exceed 100 characters",
+    "bid_amount_positive": "Value must be greater than 0",
+    "bid_amount_decimal": "Only allow up to 2 decimal places",
+    "note_max": "Notes must not exceed 1000 characters."
+  }
 }
