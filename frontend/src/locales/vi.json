@@ -260,5 +260,10 @@
     "bid_amount_positive": "Giá trị phải lớn hơn 0",
     "bid_amount_decimal": "Chỉ cho phép tối đa 2 chữ số thập phân",
     "note_max": "Ghi chú không được vượt quá 1000 ký tự."
-  }
+  },
+    "addresses": [
+    "Lô 11, Khu công nghiệp Khai Quang, Phường Vĩnh Phúc, Tỉnh Phú Thọ, Việt Nam",
+    "Lô CN03-03, Cụm công nghiệp Đồng Sóc, Xã Vĩnh Tường, Tỉnh Phú Thọ, Việt Nam"
+  ],
+  "account_info": "Thông tin tài khoản"
 }
