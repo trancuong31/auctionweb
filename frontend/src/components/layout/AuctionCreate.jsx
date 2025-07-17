@@ -1,5 +1,5 @@
 import RangeCalender from "../ui/RangeCalender";
-import { create } from "../../services/api";
+import { create, update } from "../../services/api";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -11,29 +11,35 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 
-const auctionSchema = z.object({
-  title: z
-    .string()
-    .trim()
-    .min(1, "Title is required")
-    .max(200, "Title must not exceed 200 characters"),
-  description: z
-    .string()
-    .trim()
-    .min(1, "Description is required")
-    .max(2000, "Description must not exceed 2000 characters"),
-  starting_price: z.number().min(1, "Starting price must be > 0"),
-  step_price: z.number().min(1, "Price step must be ≥ 1$"),
-  image_url: z
-    .array(z.instanceof(File))
-    .min(1, "Must select at least one file"),
-  file_exel: z.instanceof(File, { message: "Must select Excel file" }),
-  end_time: z.string().min(1, "Time is required"),
-  start_time: z.string().min(1),
-});
-
-const CreateAuctionForm = ({ isOpen, onClickClose }) => {
+const CreateAuctionForm = ({
+  isOpen,
+  onClickClose,
+  mode = "create",
+  auction = {},
+}) => {
   const [isDragging, setIsDragging] = useState(false);
+  const { t, i18n } = useTranslation();
+  const auctionSchema = z.object({
+    title: z
+      .string()
+      .trim()
+      .min(1, t("validate_auction.title_required"))
+      .max(200, t("validate_auction.title_max")),
+    description: z
+      .string()
+      .trim()
+      .min(1, t("validate_auction.description_required"))
+      .max(2000, t("validate_auction.description_max")),
+    starting_price: z.number().min(1, t("validate_auction.starting_price_min")),
+    step_price: z.number().min(1, t("validate_auction.step_price_min")),
+    image_url: z
+      .array(z.instanceof(File))
+      .min(1, t("validate_auction.image_url_min")),
+    file_exel: z.instanceof(File, {
+      message: t("validate_auction.file_exel_instance"),
+    }),
+    end_time: z.string().min(1, t("validate_auction.end_time_required")),
+  });
 
   dayjs.extend(utc);
   dayjs.extend(timezone);
@@ -60,6 +66,12 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
     },
   });
 
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    i18n.changeLanguage(savedLang);
+  }, [i18n]);
+
   const onSubmit = async (formData) => {
     const arrLinkImg = await handlerUploadImgs(formData.image_url);
     const linkExcel = await handleUpLoadExcel();
@@ -71,7 +83,11 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
         file_exel: linkExcel,
       };
       const language = sessionStorage.getItem("lang") || "en";
-      await create("auctions", data, true, { lang: language });
+      if (mode === "create") {
+        await create("auctions", data, true, { lang: language });
+      } else {
+        await update("auctions", auction.id, data, true, { lang: language });
+      }
       // toast.success("Add new auction successful");
       toast.success(t("success.add_new_auction"));
       onClickClose();
@@ -81,12 +97,10 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
     }
   };
 
-  const { t, i18n } = useTranslation();
-
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-      i18n.changeLanguage(savedLang);
+    i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   const imgFiles = watch("image_url") || [];
@@ -212,7 +226,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
       >
         <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white sm:p-1 absolute top-0 left-0 w-full h-[7%] min-[1500px]:h-[10%]">
           <h2 className="uppercase text-lg sm:text-2xl font-bold text-center absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-1/2">
-            {t("create_auction_btn")}
+            {mode == "create" ? t("create_auction_btn") : t("edit_auction_btn")}
           </h2>
           <button
             onClick={() => onClickClose()}
@@ -560,7 +574,7 @@ const CreateAuctionForm = ({ isOpen, onClickClose }) => {
               type="submit"
               className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded hover:bg-blue-600"
             >
-              {t("create")}
+              {mode == "create" ? t("create") : t("edit")}
             </button>
           </div>
         </form>
