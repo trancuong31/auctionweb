@@ -111,7 +111,7 @@ const NotificationDropdown = ({ triggerRef }) => {
         >
           <div className="notification-dropdown-header">
             <FontAwesomeIcon icon={faBell} style={{ marginRight: "8px" }} />
-            Notification
+            {t("notification")}
           </div>
           <ul className="notification-list">
             {notifications.length === 0 ? (

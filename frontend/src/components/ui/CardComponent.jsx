@@ -3,15 +3,13 @@ import imagedefault from "../../assets/images/imagedefault.png";
 import CountdownTimer from "../../common/CountDownTime";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
-const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
+  const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
   const { t, i18n } = useTranslation();
 
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    if (savedLang && savedLang !== i18n.language) {
-      i18n.changeLanguage(savedLang);
-    }
+    i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   const gridClass = clsx(
@@ -28,7 +26,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
     <div className={gridClass}>
       {!arrAuction || arrAuction.length === 0 ? (
         <p className="text-gray-600 col-span-full text-center">
-          No data available
+          {t("no_data")}
         </p>
       ) : (
         arrAuction.map((item) => (

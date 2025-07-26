@@ -168,10 +168,14 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                       onClick={() => handleDownload(auction.id)}
                       className="text-blue-600 text-left hover:underline font-medium"
                     >
-                      <p>{auction.file_exel.split("/").pop()}</p>
+                      <p title={auction.file_exel.split("/").pop()}>
+                        {auction.file_exel.split("/").pop().length > 30
+                          ? auction.file_exel.split("/").pop().slice(0, 20) + "..."
+                          : auction.file_exel.split("/").pop()}
+                      </p>
                     </button>
                   ) : (
-                    <span className="text-gray-400 italic">No file</span>
+                    <span className="text-gray-400 italic">{t("no_file")}</span>
                   )}
                 </p>
               </div>
@@ -182,7 +186,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 {t("description")}
               </p>
               <p className="text-gray-700 text-sm max-h-20 overflow-y-auto">
-                {auction.description || "No description available."}
+                {auction.description || t("no_description_available")}
               </p>
             </div>
           </div>
@@ -247,7 +251,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     </td>
                     <td className="px-4 py-2">
                       {bid.created_at
-                        ? new Date(bid.end_time).toLocaleString("en-US", {
+                        ? new Date(bid.created_at).toLocaleString("en-US", {
                             year: "numeric",
                             month: "2-digit",
                             day: "2-digit",
