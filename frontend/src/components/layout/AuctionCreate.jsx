@@ -15,7 +15,7 @@ const CreateAuctionForm = ({
   isOpen,
   onClickClose,
   mode = "create",
-  auction = {},
+  auction,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const { t, i18n } = useTranslation();
@@ -39,6 +39,7 @@ const CreateAuctionForm = ({
       message: t("validate_auction.file_exel_instance"),
     }),
     end_time: z.string().min(1, t("validate_auction.end_time_required")),
+    start_time: z.any(),
   });
 
   dayjs.extend(utc);
@@ -71,6 +72,19 @@ const CreateAuctionForm = ({
     const savedLang = sessionStorage.getItem("lang");
     i18n.changeLanguage(savedLang);
   }, [i18n]);
+
+  useEffect(() => {
+    if (auction && mode === "edit") {
+      setValue("title", auction.title || "");
+      setValue("description", auction.description || "");
+      setValue("starting_price", auction.starting_price || 0);
+      setValue("step_price", auction.step_price || 0);
+      setValue("start_time", auction.start_time || "");
+      setValue("end_time", auction.end_time || "");
+      setValue("file_exel", auction.file_exel || null);
+      setValue("image_url", []);
+    }
+  }, [auction]);
 
   const onSubmit = async (formData) => {
     const arrLinkImg = await handlerUploadImgs(formData.image_url);
@@ -274,7 +288,6 @@ const CreateAuctionForm = ({
               {...register("title")}
               type="text"
               className="w-full p-2 rounded shadow"
-              onChange={(e) => setTitle(e.target.value)}
             />
             {errors.title && (
               <p className="text-red-500 absolute right-1 text-xs">
@@ -367,7 +380,6 @@ const CreateAuctionForm = ({
               <span className="text-red-500">*</span>
             </label>
             <RangeCalender
-              // value={watch(["start_time", "end_time"])}
               onChange={(dates) => {
                 if (dates.length === 2) {
                   setValue(
@@ -380,6 +392,14 @@ const CreateAuctionForm = ({
                   );
                 }
               }}
+              value={
+                auction?.start_time && auction?.end_time
+                  ? [
+                      dayjs(auction.start_time).toDate(),
+                      dayjs(auction.end_time).toDate(),
+                    ]
+                  : []
+              }
               allowMinDate={false}
             />
             {errors.end_time && (
@@ -410,6 +430,7 @@ const CreateAuctionForm = ({
             <textarea
               {...register("description")}
               className="w-full p-2 rounded shadow h-24  max-[1500px]:max-h-14"
+              // defaultValue={auction.description || ""}
               onChange={(e) => setDescription(e.target.value)}
             />
             {errors.description && (
@@ -454,6 +475,7 @@ const CreateAuctionForm = ({
                     type="file"
                     accept=".xlsx,.xls"
                     className="w-full p-2 rounded shadow bg-white"
+                    // defaultValue={auction.file_exel || ""}
                     onChange={(e) => {
                       const file = e.target.files[0];
                       onChange(file || null);
@@ -530,43 +552,73 @@ const CreateAuctionForm = ({
                     className="grid grid-cols-6 gap-2 ml-1"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {imgFiles.map((file, index) => (
-                      <div
-                        key={`${file.name}-${file.size}-${file.lastModified}`}
-                        className="relative"
-                      >
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt={`preview-${index}`}
-                          className="object-cover rounded border"
-                        />
-                        <div
-                          onClick={() => removeFile(index)}
-                          className="absolute top-1 right-1 bg-gray-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
-                          title="Delete image"
-                        >
-                          ×
-                        </div>
-                      </div>
-                    ))}
+                    {mode == "create"
+                      ? imgFiles.map((file, index) => (
+                          <div
+                            key={`${file.name}-${file.size}-${file.lastModified}`}
+                            className="relative"
+                          >
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`preview-${index}`}
+                              className="object-cover rounded border"
+                            />
+                            <div
+                              onClick={() => removeFile(index)}
+                              className="absolute top-1 right-1 bg-gray-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
+                              title="Delete image"
+                            >
+                              ×
+                            </div>
+                          </div>
+                        ))
+                      : (auction.image_url || []).map((url, index) => (
+                          <div key={url} className="relative">
+                            <img
+                              src={url}
+                              alt={`preview-${index}`}
+                              className="object-cover rounded border"
+                            />
+                            <div
+                              onClick={() => removeFile(index)}
+                              className="absolute top-1 right-1 bg-gray-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
+                              title="Delete image"
+                            >
+                              ×
+                            </div>
+                          </div>
+                        ))}
                   </div>
                 </div>
               </div>
             </div>
             {/* Hidden Input */}
-            <input
-              id="imageInput"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              multiple
-              onChange={handleFileChange}
+            <Controller
+              name="image_url"
+              control={control}
+              render={({
+                field: { onChange, value, ...field },
+                fieldState,
+              }) => (
+                <>
+                  <input
+                    {...field}
+                    id="imageInput"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    multiple
+                    onChange={handleFileChange}
+                  />
+
+                  {fieldState.error && (
+                    <p className="text-red-500 absolute right-1 text-xs">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </>
+              )}
             />
-            {errors.image_url && (
-              <p className="text-red-500 absolute right-1 text-xs">
-                {errors.image_url.message}
-              </p>
-            )}
           </div>
 
           <div className="flex justify-center pt-4">

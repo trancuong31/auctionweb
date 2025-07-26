@@ -37,6 +37,8 @@ const OverViewAdmin = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+  const [auctionObject, setAuctionObject] = useState({});
+  const [mode, setMode] = useState("create");
   const { t, i18n } = useTranslation();
   const [userParam, setUserParam] = useState({
     sort_by: "",
@@ -70,7 +72,7 @@ const OverViewAdmin = () => {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-      i18n.changeLanguage(savedLang);
+    i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   const getOverView = async () => {
@@ -83,6 +85,17 @@ const OverViewAdmin = () => {
       toast.error(t("error.error_get_data"));
       console.log(error);
     }
+  };
+
+  const setModeCreate = () => {
+    setMode("create");
+    setDisplayCreateForm(true);
+  };
+
+  const setModeEdit = (auction) => {
+    setMode("edit");
+    setDisplayCreateForm(true);
+    setAuctionObject(auction);
   };
 
   const handleClickClose = () => {
@@ -131,7 +144,9 @@ const OverViewAdmin = () => {
       );
     } catch (error) {
       // toast.error("Error while get Auction Data");
-      toast.error(t("error.error_get_data", { detail: error.response.data.detail }));
+      toast.error(
+        t("error.error_get_data", { detail: error.response.data.detail })
+      );
       console.log(error);
     } finally {
       // setIsLoadingSearch(false);
@@ -297,6 +312,8 @@ const OverViewAdmin = () => {
         onClickClose={() => {
           setDisplayCreateForm(false);
         }}
+        mode={mode}
+        auction={auctionObject}
       />
       <ModalDetailAuction
         isOpen={isOpenModal}
@@ -578,7 +595,7 @@ const OverViewAdmin = () => {
             <div className="flex gap-10 w-full items-center max-sm:flex-col max-sm:gap-4 max-sm:mb-4">
               <h2 className="text-lg font-bold"> {t("manager_auctions")}</h2>
               <button
-                onClick={() => setDisplayCreateForm(true)}
+                onClick={() => setModeCreate()}
                 className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-3 py-2 rounded max-sm:w-full"
               >
                 {t("create_auction_btn")}
@@ -704,7 +721,8 @@ const OverViewAdmin = () => {
                   return (
                     <tr
                       key={auction.id || idx}
-                      className="odd:bg-white even:bg-gray-100 hover:bg-blue-400 hover:text-white transition"
+                      className="odd:bg-white even:bg-gray-100 hover:bg-blue-400 hover:text-white transition cursor-pointer"
+                      onClick={() => setModeEdit(auction)}
                     >
                       <td className="border px-2 py-1 max-w-96 text-center break-words">
                         {idx + 1}
