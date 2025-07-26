@@ -36,7 +36,13 @@ async def serve_vite_app(full_path: str):
     if os.path.exists(index_path):
         return FileResponse(index_path)
     return {"detail": "index.html not found"}
-
+# async def serve_vite_app(request: Request, full_path: str):
+#     if request.url.path.startswith("/api/") or request.url.path.startswith("/uploads/") or request.url.path.startswith("/assets/"):
+#         return {"detail": "Not Found"}
+#     index_path = os.path.join("app", "dist", "index.html")
+#     if os.path.exists(index_path):
+#         return FileResponse(index_path)
+#     return {"detail": "index.html not found"}
 @app.on_event("startup")
 async def startup_event():
     start_auto_set_winner_task()

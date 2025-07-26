@@ -6,14 +6,17 @@ import axiosClient from "../../services/axiosClient";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import NotificationDropdown from "./NotificationDropdown";
+import AuctionHistory from "./AuctionHistory";
 import { useTranslation } from "react-i18next";
-
+// import AccountInfo from "./AccountInfo";
 dayjs.extend(relativeTime);
 
 function NavBar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState(false);
+  const [showAccountInfo, setShowAccountInfo] = useState(false);
+  const [showAuctionHistory, setShowAuctionHistory] =useState(false);
   const bellRef = useRef();
   const dropdownRef = useRef();
   const { t, i18n } = useTranslation();
@@ -58,6 +61,7 @@ function NavBar() {
   }, [showNotification]);
 
   return (
+    <>
     <nav className="nav-wrapper">
       <div className="nav-left">
         <NavLink to="/" className="nav-link">
@@ -91,7 +95,29 @@ function NavBar() {
         {user ? (
           <>
             <NotificationDropdown triggerRef={bellRef} />
-            <span className="user-greeting nav-link">{t("account_info")}</span>
+            <span
+                className="user-greeting nav-link"
+                onClick={() => setShowAccountInfo(false)}
+                style={{ cursor: "pointer" }}
+                // tabIndex={0}
+                onKeyDown={e => (e.key === "Enter" || e.key === " ") && setShowAccountInfo(false)}
+                aria-label={t("account_info")}
+                role="button"
+              >
+                {t("account_info")}
+              </span>
+
+              <span
+                className="nav-link"
+                onClick={() => setShowAuctionHistory(true)}
+                style={{ cursor: "pointer" }}
+                // tabIndex={0}
+                onKeyDown={e => (e.key === "Enter" || e.key === " ") && setShowAuctionHistory(true)}
+                aria-label={t("auction_history")}
+                role="button"
+              >
+                {t("auction_history")}
+              </span>
             <button className="nav-link button-link" onClick={handleLogout}>
               {t("logout", "Logout")}
             </button>
@@ -108,6 +134,41 @@ function NavBar() {
         )}
       </div>
     </nav>
+    {showAccountInfo && (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+        onClick={() => setShowAccountInfo(true)}
+        aria-modal="true"
+        role="dialog"
+      >
+        <div
+          onClick={e => e.stopPropagation()}
+          // className="max-h-[90vh] overflow-y-auto"
+        >
+          <AccountInfo onClose={() => setShowAccountInfo(false)} />
+        </div>
+      </div>
+    )}
+
+    {showAuctionHistory && (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+        onClick={() => setShowAuctionHistory(false)}
+        aria-modal="true"
+        role="dialog"
+      >
+        <div
+          onClick={e => e.stopPropagation()}
+          // className="max-h-[90vh] overflow-y-auto"
+        >
+          <AuctionHistory 
+            isOpen={showAuctionHistory} 
+            onClose={() => setShowAuctionHistory(false)} 
+          />
+        </div>
+      </div>
+    )}
+    </>
   );
 }
 

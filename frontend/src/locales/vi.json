@@ -43,7 +43,7 @@
   "manager_auctions": "QUẢN LÝ ĐẤU GIÁ",
   "search_btn": "Tìm kiếm",
   "sort_by": "Sắp xếp theo",
-  "name": "Tên",
+  "name": "Tên người dùng",
   "created_at": "Ngày tạo",
   "role": "Vai trò",
   "active": "Đang hoạt động",
@@ -61,7 +61,7 @@
   "cancel": "Hủy",
   "disactive": "Không hoạt động",
   "view": "Xem",
-  "action": "Thao tác",
+  "action": "Hành động",
   "deadline": "Hạn chót",
   "step_price": "Bước giá",
   "attached_file": "Tệp đính kèm",
@@ -106,7 +106,7 @@
   "photo_limit": "Giới hạn ảnh là 10MB",
   "create": "Tạo mới",
   "number_of_bids": "Số lượt đấu giá",
-  "submit_your_bid": "Gửi giá thầu của bạn",
+  "submit_your_bid": "Gửi giá đấu của bạn",
   "enter_auction_details": "Nhập thông tin đấu giá của bạn bên dưới",
   "supplier_email": "Email nhà cung cấp",
   "address": "Địa chỉ",
@@ -217,7 +217,7 @@
   "rule_4": "4. Bảo vệ quyền và lợi ích hợp pháp của người có tài sản, người tham gia đấu giá và cá nhân, tổ chức có liên quan.",
   "auction_rules_title": "Nguyên tắc đấu giá trực tuyến",
 
-  "no_winner": "Không có người chiếng thắng",
+  "no_winner": "Không có người chiến thắng",
   "no_description_available": "Không có mô tả",
   "success": {
     "add_new_auction": "Đã thêm phiên đấu giá thành công",
@@ -265,5 +265,10 @@
     "Lô 11, Khu công nghiệp Khai Quang, Phường Vĩnh Phúc, Tỉnh Phú Thọ, Việt Nam",
     "Lô CN03-03, Cụm công nghiệp Đồng Sóc, Xã Vĩnh Tường, Tỉnh Phú Thọ, Việt Nam"
   ],
-  "account_info": "Thông tin tài khoản"
+  "account_info": "Thông tin tài khoản",
+  "ongoing": "Đang diễn ra",
+  "upcoming": "Sắp diễn ra",
+  "ended": "Đã kết thúc",
+  "notification": "Thông báo",
+  "auction_history": "Lịch sử đấu giá"
 }

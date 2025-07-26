@@ -272,5 +272,10 @@
     "Lot 11, Khai Quang Industrial Park, Vinh Phuc Ward, Phu Tho Province, Vietnam",
     "Lot CN03-03, Dong Soc Industrial Cluster, Vinh Tuong Commune, Phu Tho Province, Vietnam"
   ],
-  "account_info": "Account Infomation"
+  "account_info": "Account Infomation",
+  "Ongoing": "Ongoing",
+  "Upcoming": "Upcoming",
+  "Ended": "Ended",
+  "notification": "Notification",
+  "auction_history": "Auction history"
 }
