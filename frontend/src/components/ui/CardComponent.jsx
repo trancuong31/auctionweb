@@ -3,15 +3,13 @@ import imagedefault from "../../assets/images/imagedefault.png";
 import CountdownTimer from "../../common/CountDownTime";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
-const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
+  const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
   const { t, i18n } = useTranslation();
 
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    if (savedLang && savedLang !== i18n.language) {
-      i18n.changeLanguage(savedLang);
-    }
+    i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   const gridClass = clsx(

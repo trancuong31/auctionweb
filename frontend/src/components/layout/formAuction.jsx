@@ -81,7 +81,7 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
         "fixed inset-0 bg-black bg-opacity-50 flex items-center pt-[80px] max-sm:pt-[140px] justify-center p-2 z-50",
         isOpen ? "visible" : "invisible"
       )}
-      onClick={onClose}
+      // onClick={onClose}
     >
       <div
         className={clsx(

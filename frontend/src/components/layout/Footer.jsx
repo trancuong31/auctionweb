@@ -12,7 +12,11 @@ import { useTranslation } from "react-i18next";
 export const Footer = () => {
   const { t, i18n } = useTranslation();
   const addresses = t("addresses", { returnObjects: true });
-
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+    i18n.changeLanguage(savedLang);
+  }, [i18n]);
   const companyInfo = {
     name: "Partron Vina Co., Ltd.",
     phone: "+84 123 456 789",
@@ -33,9 +37,7 @@ export const Footer = () => {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    if (savedLang && savedLang !== i18n.language) {
-      i18n.changeLanguage(savedLang);
-    }
+    i18n.changeLanguage(savedLang);    
   }, [i18n]);
 
   return (
@@ -63,7 +65,7 @@ export const Footer = () => {
               <ul className="footer__address-list">
                 {addresses.map((addr, index) => (
                   <li key={index} className="footer__address-item">
-                    {addr}
+                    {"- "+addr}
                   </li>
                 ))}
               </ul>
