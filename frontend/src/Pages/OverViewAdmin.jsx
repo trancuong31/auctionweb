@@ -714,9 +714,9 @@ const OverViewAdmin = () => {
               </thead>
               <tbody>
                 {auctionData?.map((auction, idx) => {
-                  let statusText = "Ended";
-                  if (auction.status === 0) statusText = "Ongoing";
-                  else if (auction.status === 1) statusText = "Upcoming";
+                  let statusText = t("ended");
+                  if (auction.status === 0) statusText = t("ongoing");
+                  else if (auction.status === 1) statusText = t("upcoming");
 
                   return (
                     <tr

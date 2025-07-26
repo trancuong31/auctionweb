@@ -171,13 +171,13 @@ function Register() {
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
             />
-            <span
+            {/* <span
               className="input-icon right"
               style={{ cursor: "pointer" }}
               onClick={() => setShowConfirm((prev) => !prev)}
             >
               <FontAwesomeIcon icon={showConfirm ? faEyeSlash : faEye} />
-            </span>
+            </span> */}
           </div>
           <button type="submit" className="login-btn">
             {t('register', 'Register')}

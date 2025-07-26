@@ -150,3 +150,6 @@ msgstr "Bạn không có quyền chỉnh sửa phiên đấu giá này"
 
 msgid "You are not allowed to edit auctions"
 msgstr "Bạn không có quyền chỉnh sửa các phiên đấu giá"
+
+msgid "Your new price must be at least one price step away from your old price."
+msgstr "Giá mới của bạn phải cách giá cũ ít nhất một bước giá."

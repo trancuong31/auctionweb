@@ -20,6 +20,7 @@ const CreateAuctionForm = ({
   const [isDragging, setIsDragging] = useState(false);
   const { t, i18n } = useTranslation();
   const auctionSchema = z.object({
+    start_time: z.any(),
     title: z
       .string()
       .trim()
@@ -37,7 +38,9 @@ const CreateAuctionForm = ({
       .min(1, t("validate_auction.image_url_min")),
     file_exel: z.instanceof(File, {
       message: t("validate_auction.file_exel_instance"),
-    }),
+    })
+    .optional()
+    .nullable(),
     end_time: z.string().min(1, t("validate_auction.end_time_required")),
     start_time: z.any(),
   });
@@ -106,7 +109,8 @@ const CreateAuctionForm = ({
       toast.success(t("success.add_new_auction"));
       onClickClose();
     } catch (error) {
-      toast.error(t("error.add_new_auction"));
+      const detail = error?.response?.data?.detail;
+      toast.error(detail || t("error.add_new_auction"));
       console.log(error);
     }
   };
@@ -209,7 +213,7 @@ const CreateAuctionForm = ({
 
   const handleUpLoadExcel = async () => {
     const excelFile = watch("file_exel");
-
+    if (!excelFile) return null;
     const formData = new FormData();
     formData.append("file", excelFile);
 

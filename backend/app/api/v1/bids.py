@@ -7,7 +7,7 @@ from app.models.Auction import Auction
 from app.models.User import User
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from app.core.auth import get_current_user_id_from_token
 from app.models.Notification import Notification
 from app.i18n import _
@@ -29,7 +29,7 @@ class BidOut(BaseModel):
     created_at: datetime
     address: Optional[str] = None
     note: Optional[str] = None
-
+    is_winner: bool = False
     class Config:
         from_attributes = True
 
@@ -58,6 +58,13 @@ def create_bid(
         )
     # Kiểm tra user đã đặt bid cho auction này chưa 
     existing_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id, Bid.user_id == user_id).first()
+    
+    # khoảng cách giá cũ và giá mới tối thiểu phải >= bước giá của acution_id
+    if existing_bid and abs(float(bid_in.bid_amount) - float(existing_bid.bid_amount)) < float(auction.step_price):
+        raise HTTPException(
+            status_code=400,
+            detail=_("Your new price must be at least one price step away from your old price.", request)
+        )
     if existing_bid:
         db.delete(existing_bid)
         db.commit()
@@ -97,3 +104,13 @@ def create_bid(
     db.add(notification)
     db.commit()
     return bid
+
+
+@router.get("/bids/user", response_model=List[BidOut])
+def get_bids_by_user(
+    request: Request,
+    db: Session = Depends(get_db),
+    user_id: str = Depends(get_current_user_id_from_token)
+):
+    bids = db.query(Bid).filter(Bid.user_id == user_id).order_by(Bid.created_at.desc()).all()
+    return bids
