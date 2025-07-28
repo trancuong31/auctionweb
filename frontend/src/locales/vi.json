@@ -111,7 +111,7 @@
   "supplier_email": "Email nhà cung cấp",
   "address": "Địa chỉ",
   "bid_amount_usd": "Giá thầu (USD)",
-  "additional_notes": "Ghi chú bổ sung",
+  "additional_notes": "Ghi chú",
   "enter_delivery_address": "Nhập địa chỉ giao hàng của bạn",
   "add_special_requirement_or_comment": "thêm yêu cầu đặc biệt hoặc ghi chú nếu có",
   "submit_bid": "Gửi giá thầu",
@@ -273,5 +273,8 @@
   "ended": "Đã kết thúc",
   "notification": "Thông báo",
   "auction_history": "Lịch sử đấu giá",
-  "winning_bid_price": "Giá trúng thầu"
+  "winning_bid_price": "Giá trúng thầu",
+  "unsuccessful": "Thất bại",
+  "load_more":"Xem thêm",
+  "bid_count": "Số phiên đấu giá tham gia"
 }

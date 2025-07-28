@@ -50,7 +50,6 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
       lang: sessionStorage.getItem("lang") || "en",
     })
       .then((response) => {
-        // toast.success("Bid submitted successfully!");
         toast.success(t("success.bid_submitted"));
       })
       .catch((error) => {

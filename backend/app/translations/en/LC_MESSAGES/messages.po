@@ -156,3 +156,6 @@ msgstr "You are not allowed to edit auctions"
 
 msgid "Your new price must be at least one price step away from your old price."
 msgstr "Your new price must be at least one price step away from your old price."
+
+msgid "Admin cannot modify Super Admin information"
+msgstr "Admin cannot modify Super Admin information"

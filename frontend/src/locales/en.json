@@ -279,5 +279,8 @@
   "Ended": "Ended",
   "notification": "Notification",
   "auction_history": "Auction history",
-  "winning_bid_price": "Winning Bid Price"
+  "winning_bid_price": "Winning Bid Price",
+  "unsuccessful": "Unsuccessful",
+  "load_more":"Load more",
+  "bid_count": "Number of auctions participated"
 }

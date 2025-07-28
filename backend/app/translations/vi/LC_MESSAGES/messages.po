@@ -153,3 +153,6 @@ msgstr "Bạn không có quyền chỉnh sửa các phiên đấu giá"
 
 msgid "Your new price must be at least one price step away from your old price."
 msgstr "Giá mới của bạn phải cách giá cũ ít nhất một bước giá."
+
+msgid "Admin cannot modify Super Admin information"
+msgstr "Admin không có quyền chỉnh sửa thông tin của supper Admin"
