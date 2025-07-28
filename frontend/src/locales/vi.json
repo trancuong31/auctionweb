@@ -223,10 +223,12 @@
     "add_new_auction": "Đã thêm phiên đấu giá thành công",
     "bid_submitted": "Gửi đấu giá thành công!",
     "delete_success":"Xóa người dùng thành công!",
-    "update_status": "Cập nhật trạng thái thành công!"
+    "update_status": "Cập nhật trạng thái thành công!",
+    "update_auction": "Cập nhật phiên đấu giá thành công!"
   },
   "error": {
     "add_new_auction": "Lỗi tạo phiên đấu giá mới!",
+    "update_auction": "Cập nhật phiên đấu giá thất bại!",
     "duplicate_photos": "Vui lòng không chọn trùng ảnh!",
     "error_upload": "Lỗi tải ảnh!",
     "error_upload_excel": "Lỗi tải excel!",
@@ -270,5 +272,6 @@
   "upcoming": "Sắp diễn ra",
   "ended": "Đã kết thúc",
   "notification": "Thông báo",
-  "auction_history": "Lịch sử đấu giá"
+  "auction_history": "Lịch sử đấu giá",
+  "winning_bid_price": "Giá trúng thầu"
 }
