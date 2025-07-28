@@ -2,19 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Gavel, X, Clock, User, DollarSign, MapPin, Trophy, FileText } from 'lucide-react';
 import axiosClient from '../../services/axiosClient';
 import { useNavigate } from 'react-router-dom';
-
+import { useTranslation } from "react-i18next";
+import clsx from "clsx";
 const AuctionHistory = ({ isOpen, onClose }) => {
   const [auctionHistory, setAuctionHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [displayedItems, setDisplayedItems] = useState(5); 
   const navigate = useNavigate();
-
+  const { t, i18n } = useTranslation();
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem("lang");
+      i18n.changeLanguage(savedLang);
+  }, [i18n]);
   useEffect(() => {
     if (!isOpen) return;
     setLoading(true);
     setError(null);
-    setDisplayedItems(5); // Reset về 10 mỗi khi mở modal
+    setDisplayedItems(5);
     axiosClient.get('/bids/user')
       .then(res => setAuctionHistory(res.data))
       .catch(err => setError('Lỗi khi tải dữ liệu lịch sử đấu giá'))
@@ -39,7 +44,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
   };
 
   const truncateId = (id) => {
-    return id.length > 20 ? `${id.substring(0, 8)}...${id.substring(id.length - 8)}` : id;
+    return id.length > 50 ? `${id.substring(0, 30)}...${id.substring(id.length - 8)}` : id;
   };
 
   return (
@@ -47,7 +52,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
       {/* Modal Overlay */}
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="mt-[220px] sm:mt-[60px] md:mt-[55px] bg-white rounded-xl shadow-2xl w-full max-w-lg sm:max-w-2xl sm:mt-[220px] md:max-w-4xl md:mt-[100px] lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col">
+          <div className="mt-[220px] sm:mt-[60px] md:mt-[55px] bg-white rounded-xl shadow-2xl w-full max-w-lg sm:max-w-2xl  md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col">
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-3 flex items-center justify-between relative">
 
@@ -73,7 +78,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                     {auctionHistory.slice(0, displayedItems).map((bid, index) => (
                       <div
                         key={bid.id}
-                        className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300 hover:border-blue-500 cursor-pointer"
+                        className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300 hover:border-blue-500 cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.30)]"
                         onClick={() => {
                           onClose();
                           navigate(`/auctions/${bid.auction_id}`);
@@ -110,7 +115,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                             <div className="flex items-start gap-3">
                               <DollarSign className="text-green-500 mt-1" size={18} />
                               <div>
-                                <p className="text-sm text-gray-500">Bid Amount</p>
+                                <p className="text-sm text-gray-500">{t("bid_amount_usd")}</p>
                                 <p className="text-lg font-bold text-green-600">
                                   {formatCurrency(bid.bid_amount)}
                                 </p>
@@ -120,22 +125,22 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                             <div className="flex items-start gap-3">
                               <Clock className="text-blue-500 mt-1" size={18} />
                               <div>
-                                <p className="text-sm text-gray-500">Bid submit Time</p>
+                                <p className="text-sm text-gray-500">{t("submitted_at")}</p>
                                 <p className="font-medium text-gray-900">
                                   {formatDateTime(bid.created_at)}
                                 </p>
                               </div>
                             </div>
 
-                            {/* <div className="flex items-start gap-3">
-                            <User className="text-purple-500 mt-1" size={18} />
+                            <div className="flex items-start gap-3">
+                            <DollarSign className="text-purple-500 mt-1" size={18} />
                             <div>
-                              <p className="text-sm text-gray-500">User ID</p>
-                              <p className="font-mono text-sm text-gray-700">
-                                {truncateId(bid.user_id)}
+                              <p className="text-sm text-gray-500">Starting price</p>
+                              <p className="text-lg font-bold text-gray-700">
+                                {formatCurrency(bid.auction_starting_price)}
                               </p>
                             </div>
-                          </div> */}
+                          </div>
                           </div>
 
                           {/* Right Column */}
@@ -143,7 +148,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                             <div className="flex items-start gap-3">
                               <MapPin className="text-red-500 mt-1" size={18} />
                               <div>
-                                <p className="text-sm text-gray-500">Address</p>
+                                <p className="text-sm text-gray-500">{t("address")}</p>
                                 <p className="text-gray-900">{bid.address}</p>
                               </div>
                             </div>
@@ -152,16 +157,16 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                               <div className="flex items-start gap-3">
                                 <FileText className="text-amber-500 mt-1" size={18} />
                                 <div>
-                                  <p className="text-sm text-gray-500">Note</p>
+                                  <p className="text-sm text-gray-500">{t("additional_notes")}</p>
                                   <p className="text-gray-900">{bid.note}</p>
                                 </div>
                               </div>
                             )}
 
                             <div className="bg-gray-200 rounded-lg p-3">
-                              <p className="text-xs text-gray-500 mb-1">Auction ID</p>
+                              <p className="text-xs text-gray-500 mb-1">Auction Title</p>
                               <p className="font-mono text-xs text-gray-600">
-                                {truncateId(bid.auction_id)}
+                                {truncateId(bid.auction_title)}
                               </p>
                             </div>
                           </div>
@@ -174,9 +179,9 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                     <div className="mt-6 text-center">
                       <button
                         onClick={handleLoadMore}
-                        className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                        className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                       >
-                        Load More ({auctionHistory.length - displayedItems} remaining)
+                        {t("load_more")} ({auctionHistory.length - displayedItems})
                       </button>
                     </div>
                   )}

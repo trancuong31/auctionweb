@@ -277,5 +277,8 @@
   "Upcoming": "Upcoming",
   "Ended": "Ended",
   "notification": "Notification",
-  "auction_history": "Auction history"
+  "auction_history": "Auction history",
+  "unsuccessful": "Unsuccessful",
+  "load_more":"Load more",
+  "bid_count": "Number of auctions participated"
 }

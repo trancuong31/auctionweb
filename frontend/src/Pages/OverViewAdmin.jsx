@@ -131,7 +131,6 @@ const OverViewAdmin = () => {
       );
     } catch (error) {
       // toast.error("Error while get Auction Data");
-      toast.error(t("error.error_get_data", { detail: error.response.data.detail }));
       console.log(error);
     } finally {
       // setIsLoadingSearch(false);
@@ -473,7 +472,9 @@ const OverViewAdmin = () => {
                   <th className="border px-2 py-1">{t("email")}</th>
                   <th className="border px-2 py-1">{t("created_at")}</th>
                   <th className="border px-2 py-1">{t("role")}</th>
+                  <th className="border px-2 py-1">{t("bid_count")}</th>
                   <th className="border px-2 py-1">{t("status")}</th>
+                  
                   <th className="border px-2 py-1">{t("action")}</th>
                 </tr>
               </thead>
@@ -502,6 +503,7 @@ const OverViewAdmin = () => {
                       {dayjs(user.created_at).format("MM/DD/YYYY HH:mm")}
                     </td>
                     <td className="border px-2 py-1">{user.role}</td>
+                    <td className="border px-2 py-1">{user.bid_count}</td>
                     <td className="border px-2 py-1">
                       <div className="flex justify-center">
                         {user.status ? (

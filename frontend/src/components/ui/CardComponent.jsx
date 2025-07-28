@@ -120,7 +120,7 @@ import { useEffect } from "react";
                 ) : (
                   <p className="flex justify-end">
                     <span className="font-semibold text-red-500">
-                      Unsuccessful
+                      {t("unsuccessful")}
                     </span>
                   </p>
                 )

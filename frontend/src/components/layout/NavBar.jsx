@@ -85,7 +85,7 @@ function NavBar() {
         <NavLink to="/policy" className="nav-link">
           {t("rule", "Rule")}
         </NavLink>
-        {user?.role === "admin" && (
+        {user?.role === "admin" ||user?.role === "super_admin" && (
           <NavLink to="/admin" className="nav-link">
             {t("dashboard", "Dashboard")}
           </NavLink>
@@ -94,7 +94,7 @@ function NavBar() {
       <div className="nav-right">
         {user ? (
           <>
-            <NotificationDropdown triggerRef={bellRef} />
+            
             <span
                 className="user-greeting nav-link"
                 onClick={() => setShowAccountInfo(false)}
@@ -118,6 +118,8 @@ function NavBar() {
               >
                 {t("auction_history")}
               </span>
+              <NotificationDropdown triggerRef={bellRef} />
+              
             <button className="nav-link button-link" onClick={handleLogout}>
               {t("logout", "Logout")}
             </button>
@@ -143,7 +145,6 @@ function NavBar() {
       >
         <div
           onClick={e => e.stopPropagation()}
-          // className="max-h-[90vh] overflow-y-auto"
         >
           <AccountInfo onClose={() => setShowAccountInfo(false)} />
         </div>
@@ -152,14 +153,12 @@ function NavBar() {
 
     {showAuctionHistory && (
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
         onClick={() => setShowAuctionHistory(false)}
         aria-modal="true"
         role="dialog"
       >
         <div
           onClick={e => e.stopPropagation()}
-          // className="max-h-[90vh] overflow-y-auto"
         >
           <AuctionHistory 
             isOpen={showAuctionHistory} 

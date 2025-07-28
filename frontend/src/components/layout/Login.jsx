@@ -66,7 +66,7 @@ function Login() {
           },
         });
         navigate("/");
-      } else if (response.ok && data.role === "admin") {
+      } else if (response.ok && (data.role === "admin" || data.role === "super_admin")) {
         login(data, remember);
         navigate("/admin");
         toast.success(t('login_success', 'Login successfully!'), {
