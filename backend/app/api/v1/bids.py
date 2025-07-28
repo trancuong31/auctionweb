@@ -33,6 +33,27 @@ class BidOut(BaseModel):
     class Config:
         from_attributes = True
 
+class BidWithAuctionOut(BaseModel):
+    id: str
+    auction_id: str
+    user_id: str
+    bid_amount: float
+    created_at: datetime
+    address: Optional[str] = None
+    note: Optional[str] = None
+    is_winner: bool = False
+    # Auction information
+    auction_title: str
+    # auction_description: Optional[str] = None
+    auction_starting_price: float
+    auction_step_price: float
+    # auction_image_url: Optional[str] = None
+    auction_start_time: datetime
+    auction_end_time: datetime
+    # auction_status: int
+    
+    class Config:
+        from_attributes = True
 
 @router.post("/bids", response_model=BidOut)
 def create_bid(
@@ -106,11 +127,39 @@ def create_bid(
     return bid
 
 
-@router.get("/bids/user", response_model=List[BidOut])
+@router.get("/bids/user", response_model=List[BidWithAuctionOut])
 def get_bids_by_user(
     request: Request,
     db: Session = Depends(get_db),
     user_id: str = Depends(get_current_user_id_from_token)
 ):
-    bids = db.query(Bid).filter(Bid.user_id == user_id).order_by(Bid.created_at.desc()).all()
-    return bids
+    # Join Bid với Auction để lấy thông tin đầy đủ
+    bids_with_auction = db.query(Bid, Auction).join(
+        Auction, Bid.auction_id == Auction.id
+    ).filter(
+        Bid.user_id == user_id
+    ).order_by(Bid.created_at.desc()).all()
+    
+    result = []
+    for bid, auction in bids_with_auction:
+        bid_with_auction = BidWithAuctionOut(
+            id=bid.id,
+            auction_id=bid.auction_id,
+            user_id=bid.user_id,
+            bid_amount=float(bid.bid_amount),
+            created_at=bid.created_at,
+            address=bid.address,
+            note=bid.note,
+            is_winner=bid.is_winner,
+            auction_title=auction.title,
+            auction_description=auction.description,
+            auction_starting_price=float(auction.starting_price),
+            auction_step_price=float(auction.step_price),
+            auction_image_url=auction.image_url,
+            auction_start_time=auction.start_time,
+            auction_end_time=auction.end_time,
+            auction_status=auction.status
+        )
+        result.append(bid_with_auction)
+    
+    return result

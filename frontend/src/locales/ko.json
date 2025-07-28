@@ -125,10 +125,10 @@
   "highest_bid": "최고 입찰가",
   "current_status": "현재 상태",
   "auction_online": "온라인 경매",
-  "register_account_pricing": "가격 확인을 위해 계정 생성",
+  "register_account_pricing": "계정 등록 후 견적 제출",
   "policy_security": "보안 정책 및 온라인 입찰 규정",
   "vision_development_orientation": "비전 및 개발 방향",
-  "company_history": "Partron Vina 연혁",
+  "company_history": "회사의 연혁",
   "phone": "전화",
   "auctioneer_assistance": "경매 지원",
   "vision_heading": "비전 & 개발 방향",
@@ -252,6 +252,9 @@
   "ongoing": "진행 중",
   "upcoming": "예정됨",
   "ended": "종료됨",
-  "notification": "알림"
-  
+  "notification": "알림",
+  "unsuccessful": "실패",
+  "load_more":"자세히 보기",
+  "auction_history": "경매 내역",
+  "bid_count": "Number of auctions participated"
 }
