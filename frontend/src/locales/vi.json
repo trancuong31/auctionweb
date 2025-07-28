@@ -123,11 +123,10 @@
   "auction_online": "Đấu giá trực tuyến",
   "register_account_pricing": "Đăng ký tài khoản để báo giá",
   "policy_security": "Chính sách bảo mật và quy định báo giá trực tuyến",
-  "vision_development_orientation": "Tầm nhìn và định hướng phát triển",
   "company_history": "Lịch sử Công ty TNHH Partron Vina",
   "phone": "Điện thoại",
   "auctioneer_assistance": "Hỗ trợ đấu giá",
-  "vision_heading": "Tầm nhìn & Định hướng phát triển",
+  "vision_title": "Tầm nhìn và định hướng phát triển",
   "vision_p1": "Với vị thế là một trong những doanh nghiệp hàng đầu trong lĩnh vực sản xuất linh kiện điện tử tại Việt Nam, Công ty TNHH Partron Vina luôn không ngừng đổi mới và tiên phong trong việc áp dụng công nghệ vào hoạt động kinh doanh. Việc triển khai nền tảng đấu giá trực tuyến không chỉ là bước tiến trong việc đa dạng hóa kênh phân phối sản phẩm mà còn thể hiện cam kết của công ty trong việc nâng cao trải nghiệm khách hàng và tối ưu hóa giá trị sản phẩm.",
   "vision_p2": "Thông qua nền tảng này, Partron Vina hướng đến việc tạo ra một môi trường giao dịch minh bạch, công bằng và hiệu quả, đồng thời mở rộng cơ hội tiếp cận sản phẩm đến nhiều đối tượng khách hàng hơn.",
   "auction_scope_heading": "Lĩnh vực hoạt động của nền tảng đấu giá",
@@ -173,10 +172,13 @@
   "auction_guide_title": "Hướng dẫn tham gia đấu giá",
 
   "auction_guide_step_1_title": "Bước 1: Đăng ký tài khoản",
-  "auction_guide_step_1_content": "tại Trang thông tin điện tử đấu giá trực tuyến, điền các thông tin cơ bản bao gồm email, username, mật khẩu. Đăng ký bước đầu chỉ với username và email để có tài khoản cơ bản, đủ điều kiện theo dõi các phiên đấu giá trực tuyến.",
-
+  "auction_guide_step_1_content_1": "Tại Trang thông tin điện tử đấu giá trực tuyến, điền các thông tin cơ bản bao gồm email, username, mật khẩu.",
+  "auction_guide_step_1_content_2": "Đăng ký bước đầu chỉ với username và email.",
+  "auction_guide_step_1_content_3": "Tài khoản cơ bản đủ điều kiện theo dõi các phiên đấu giá trực tuyến.",
   "auction_guide_step_2_title": "Bước 2: Đăng nhập và cập nhật thông tin tài khoản",
-  "auction_guide_step_2_content": "Nhập tài khoản và mật khẩu để đăng nhập hệ thống. Sau khi có tài khoản, thực hiện điền đầy đủ thông tin để cập nhật tài khoản. Sau khi cập nhật thành công, cá nhân, tổ chức sẽ có tài khoản với đầy đủ các tính năng người dùng.",
+  "auction_guide_step_2_content_1": "Nhập tài khoản và mật khẩu để đăng nhập hệ thống.",
+  "auction_guide_step_2_content_2": "Sau khi có tài khoản, thực hiện điền đầy đủ thông tin để cập nhật tài khoản.",
+  "auction_guide_step_2_content_3": "Sau khi cập nhật thành công, cá nhân, tổ chức sẽ có tài khoản với đầy đủ các tính năng người dùng.",
 
   "auction_guide_step_3_title": "Bước 3: Nghiên cứu Thông báo mời đấu giá, Quy chế cuộc đấu giá, hồ sơ pháp lý về tài sản",
   "auction_guide_step_3_content": "Người có nhu cầu tham gia đấu giá sẽ tham khảo các thông tin về tài sản đấu giá, nghiên cứu Thông báo mời đấu giá, Quy chế cuộc đấu giá, hồ sơ pháp lý về tài sản được đăng tải trên Trang thông tin điện tử đấu giá trực tuyến.",
@@ -185,7 +187,8 @@
   "auction_guide_step_4_content": "Sau khi nghiên cứu Thông báo mời đấu giá, Quy chế cuộc đấu giá, hồ sơ pháp lý về tài sản, nếu đủ điều kiện và có nguyện vọng tham gia đấu giá thì tiến hành đăng ký tài khoản và cập nhật thông tin tài khoản như Bước 1 và Bước 2 mục này.",
 
   "auction_guide_step_5_title": "Bước 5: Nộp hồ sơ tham gia đấu giá",
-  "auction_guide_step_5_content": "Người đăng ký tham gia đấu giá nộp hồ sơ tham gia đấu giá theo đúng cách thức và thời hạn quy định tại Quy chế cuộc đấu giá và email hướng dẫn. Hồ sơ tham gia đấu giá gồm các tài liệu quy định tại Quy chế cuộc đấu giá áp dụng với từng tài sản.",
+  "auction_guide_step_5_content_1": "Người đăng ký tham gia đấu giá nộp hồ sơ tham gia đấu giá theo đúng cách thức và thời hạn quy định tại Quy chế cuộc đấu giá và email hướng dẫn.",
+"auction_guide_step_5_content_2": "Hồ sơ tham gia đấu giá gồm các tài liệu quy định tại Quy chế cuộc đấu giá áp dụng với từng tài sản.",
 
   "auction_guide_step_6_title": "Bước 6: Đăng nhập tài khoản, vào Phòng đấu giá để tham gia đấu giá",
   "auction_guide_step_6_content": "Người đã đăng ký tham gia đấu giá thành công đăng nhập vào hệ thống đấu giá trực tuyến, bấm chọn vào vị trí logo có thông tin về tài sản đã nộp hồ sơ tham gia đấu giá, thực hiện bấm nút Điểm danh để có thể tiến hành trả giá. Tại giao diện màn hình trả giá, nhập số tiền muốn trả và bấm vào nút “Đấu giá”.",
@@ -222,7 +225,7 @@
   "success": {
     "add_new_auction": "Đã thêm phiên đấu giá thành công",
     "bid_submitted": "Gửi đấu giá thành công!",
-    "delete_success":"Xóa người dùng thành công!",
+    "delete_success": "Xóa người dùng thành công!",
     "update_status": "Cập nhật trạng thái thành công!",
     "update_auction": "Cập nhật phiên đấu giá thành công!"
   },
@@ -232,16 +235,16 @@
     "duplicate_photos": "Vui lòng không chọn trùng ảnh!",
     "error_upload": "Lỗi tải ảnh!",
     "error_upload_excel": "Lỗi tải excel!",
-    "must_logged":"Bạn phải đăng nhập trước khi tham gia đấu giá!",
-    "auction_ended":"Phiên đấu giá này đã kết thúc!",
-    "auction_not_start":"Phiên đấu giá này chưa bắt đầu!",
-    "error_get_data":"Lỗi lấy dữ liệu",
-    "delete_fail":"Xóa người dùng thất bại!",
+    "must_logged": "Bạn phải đăng nhập trước khi tham gia đấu giá!",
+    "auction_ended": "Phiên đấu giá này đã kết thúc!",
+    "auction_not_start": "Phiên đấu giá này chưa bắt đầu!",
+    "error_get_data": "Lỗi lấy dữ liệu",
+    "delete_fail": "Xóa người dùng thất bại!",
     "update_status": "Cập nhật trạng thái thất bại!"
   },
-  "no_data":"Không có dữ liệu",
-  "no_file":"Không có file",
-  "no_announcements":"Không có thông báo",
+  "no_data": "Không có dữ liệu",
+  "no_file": "Không có file",
+  "no_announcements": "Không có thông báo",
   "user_not_valid": "Tên người dùng không hợp lệ!",
   "update_user_suc": "Cập nhật user thành công!",
   "update_user_fai": "Cập nhật user thất bại!",
@@ -263,7 +266,7 @@
     "bid_amount_decimal": "Chỉ cho phép tối đa 2 chữ số thập phân",
     "note_max": "Ghi chú không được vượt quá 1000 ký tự."
   },
-    "addresses": [
+  "addresses": [
     "Lô 11, Khu công nghiệp Khai Quang, Phường Vĩnh Phúc, Tỉnh Phú Thọ, Việt Nam",
     "Lô CN03-03, Cụm công nghiệp Đồng Sóc, Xã Vĩnh Tường, Tỉnh Phú Thọ, Việt Nam"
   ],
@@ -275,6 +278,10 @@
   "auction_history": "Lịch sử đấu giá",
   "winning_bid_price": "Giá trúng thầu",
   "unsuccessful": "Thất bại",
-  "load_more":"Xem thêm",
-  "bid_count": "Số phiên đấu giá tham gia"
+  "load_more": "Xem thêm",
+  "bid_count": "Số phiên đấu giá tham giá",
+  "user_name": "Tên người dùng",
+    "winning_bids": "Số lần thắng",
+  "highest_value": "Giá cao nhất",
+  "success_rate": "Tỷ lệ thành công"
 }

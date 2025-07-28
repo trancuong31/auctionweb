@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 function Tutorial() {
   const { t, i18n } = useTranslation();
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
-  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang") || "en";
 
@@ -29,9 +28,10 @@ function Tutorial() {
         >
           <h3
             style={{
-              fontStyle: "italic",
               fontWeight: "bold",
               marginBottom: "24px",
+              textAlign: "center",
+              fontSize: "2rem",
             }}
           >
             {t("auction_guide_title")}
@@ -40,13 +40,16 @@ function Tutorial() {
             style={{
               fontSize: "18px",
               color: "#222",
-              fontStyle: "italic",
               lineHeight: "2",
             }}
           >
             <li>
-              <b>{t("auction_guide_step_1_title")}</b>{" "}
-              {t("auction_guide_step_1_content")}
+              <b className="italic">{t("auction_guide_step_1_title")}</b>{" "}
+              <ul className="list-disc pl-5">
+                <li>{t("auction_guide_step_1_content_1")}</li>
+                <li>{t("auction_guide_step_1_content_2")}</li>
+                <li>{t("auction_guide_step_1_content_3")}</li>
+              </ul>
               <img
                 src={register}
                 alt="register"
@@ -61,9 +64,13 @@ function Tutorial() {
               />
             </li>
             <li>
-              <b>{t("auction_guide_step_2_title")}</b>
+              <b className="italic">{t("auction_guide_step_2_title")}</b>
               <br />
-              {t("auction_guide_step_2_content")}
+              <ul className="list-disc pl-5">
+                <li>{t("auction_guide_step_2_content_1")}</li>
+                <li>{t("auction_guide_step_2_content_2")}</li>
+                <li>{t("auction_guide_step_2_content_3")}</li>
+              </ul>
               <img
                 src={login}
                 alt="login"
@@ -78,22 +85,27 @@ function Tutorial() {
               />
             </li>
             <li>
-              <b>{t("auction_guide_step_3_title")}</b>
+              <b className="italic">{t("auction_guide_step_3_title")}</b>
               <br />
               {t("auction_guide_step_3_content")}
             </li>
             <li>
-              <b>{t("auction_guide_step_4_title")}</b>
+              <b className="italic">{t("auction_guide_step_4_title")}</b>
               <br />
               {t("auction_guide_step_4_content")}
             </li>
             <li>
-              <b>{t("auction_guide_step_5_title")}</b>
+              <b className="italic">{t("auction_guide_step_5_title")}</b>
               <br />
-              {t("auction_guide_step_5_content")}
+              {
+                <ul className="list-disc pl-5">
+                  <li>{t("auction_guide_step_5_content_1")}</li>
+                  <li>{t("auction_guide_step_5_content_2")}</li>
+                </ul>
+              }
             </li>
             <li>
-              <b>{t("auction_guide_step_6_title")}</b>
+              <b className="italic">{t("auction_guide_step_6_title")}</b>
               <br />
               {t("auction_guide_step_6_content")}
             </li>

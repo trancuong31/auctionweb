@@ -127,7 +127,6 @@
   "auction_online": "Auction Online",
   "register_account_pricing": "Register for Account Pricing",
   "policy_security": "Online Pricing Rules Policy Security",
-  "vision_development_orientation": "Vision & Development Orientation",
   "company_history": "History of Partron Vina Company Limited",
   "phone": "Phone",
   "auctioneer_assistance": "Auction support",
@@ -135,7 +134,7 @@
   "vision_p2": "Through this platform, Partron Vina aims to create a transparent, fair, and efficient trading environment while expanding access to its products for a broader range of customers.",
 
   "auction_scope_heading": "Fields of Operation for the Auction Platform",
-   "auction_scope_1_title": "Auction of electronic components",
+  "auction_scope_1_title": "Auction of electronic components",
   "auction_scope_1_desc": "Providing products manufactured by Partron Vina such as image sensors, antennas, vibration modules, Bluetooth headsets, and other electronic components.",
 
   "auction_scope_2_title": "Auction of equipment and machinery",
@@ -178,10 +177,13 @@
   "auction_guide_title": "Instructions for Participating in the Auction",
 
   "auction_guide_step_1_title": "Step 1: Register an account",
-  "auction_guide_step_1_content": "on the online auction information page, fill in basic information including email, username, and password. Initial registration only requires a username and email to create a basic account, which is sufficient to follow online auctions.",
-
+  "auction_guide_step_1_content_1": "On the online auction information page, fill in basic information including email, username, and password.",
+  "auction_guide_step_1_content_2": "Initial registration only requires a username and email.",
+  "auction_guide_step_1_content_3": "This basic account is sufficient to follow online auctions.",
   "auction_guide_step_2_title": "Step 2: Log in and update account information",
-  "auction_guide_step_2_content": "Enter your username and password to log in. After having an account, complete the information update. Once successfully updated, individuals and organizations will have a fully functional user account.",
+  "auction_guide_step_2_content_1": "Enter your username and password to log in.",
+  "auction_guide_step_2_content_2": "After having an account, complete the information update.",
+  "auction_guide_step_2_content_3": "Once successfully updated, individuals and organizations will have a fully functional user account.",
 
   "auction_guide_step_3_title": "Step 3: Review the Auction Invitation Notice, Auction Rules, and Legal Documents",
   "auction_guide_step_3_content": "Interested participants should consult information about the auctioned assets, review the Auction Invitation Notice, Auction Rules, and legal documents available on the online auction information page.",
@@ -190,7 +192,8 @@
   "auction_guide_step_4_content": "After reviewing the Auction Invitation Notice, Rules, and legal documents, if eligible and willing to participate, proceed to register an account and update the information as described in Step 1 and Step 2.",
 
   "auction_guide_step_5_title": "Step 5: Submit auction participation documents",
-  "auction_guide_step_5_content": "The registrant must submit their documents in accordance with the methods and deadlines specified in the auction rules and instructions sent via email. The application includes documents as stipulated in the auction rules for each asset.",
+  "auction_guide_step_5_content_1": "The registrant must submit their documents in accordance with the methods and deadlines specified in the auction rules and instructions sent via email.",
+"auction_guide_step_5_content_2": "The application includes documents as stipulated in the auction rules for each asset.",
 
   "auction_guide_step_6_title": "Step 6: Log in to your account and join the Auction Room",
   "auction_guide_step_6_content": "Successful registrants log in to the online auction system, click on the logo representing the asset they've registered for, and press the Check-in button to start bidding. On the bidding screen, enter your bid amount and click the 'Bid' button.",
@@ -226,10 +229,9 @@
   "success": {
     "add_new_auction": "Add new auction successful",
     "bid_submitted": "Bid submitted successfully!",
-    "delete_success":"Delete user successful!",
+    "delete_success": "Delete user successful!",
     "update_status": "update status user successful!",
     "update_auction": "update auction successful!"
-    
   },
   "error": {
     "add_new_auction": "Error add auction",
@@ -237,17 +239,17 @@
     "duplicate_photos": "Please do not select duplicate photos",
     "error_upload_image": "Error while upload image",
     "error_upload_excel": "Error while upload Excel",
-    "must_logged":"You must be logged in to participate in the auction!",
-    "auction_ended":"This auction has ended!",
-    "auction_not_start":"This auction has not started yet!",
-    "error_get_data":"Error while get data",
+    "must_logged": "You must be logged in to participate in the auction!",
+    "auction_ended": "This auction has ended!",
+    "auction_not_start": "This auction has not started yet!",
+    "error_get_data": "Error while get data",
     "get_user": "Error while get User data",
-    "delete_fail":"Delete user fail!",
+    "delete_fail": "Delete user fail!",
     "update_status": "update status user fail!"
   },
-  "no_data":"No data available",
-  "no_file":"No file",
-  "no_announcements":"No announcements yet",
+  "no_data": "No data available",
+  "no_file": "No file",
+  "no_announcements": "No announcements yet",
   "user_not_valid": "Username is not valid!",
   "update_user": "Update user successful!",
   "update_user_fai": "Update user fail!",
@@ -262,7 +264,7 @@
     "file_exel_instance": "Must select Excel file",
     "end_time_required": "Time is required"
   },
-   "validate_bid": {
+  "validate_bid": {
     "address_required": "Address is required",
     "address_max": "Address cannot exceed 100 characters",
     "bid_amount_positive": "Value must be greater than 0",
@@ -281,6 +283,10 @@
   "auction_history": "Auction history",
   "winning_bid_price": "Winning Bid Price",
   "unsuccessful": "Unsuccessful",
-  "load_more":"Load more",
-  "bid_count": "Number of auctions participated"
+  "load_more": "Load more",
+  "bid_count": "Number of auctions participated",
+  "user_name": "Username",
+  "winning_bids": "Winning Bids",
+  "highest_value": "Highest Value",
+  "success_rate": "Success Rate"
 }

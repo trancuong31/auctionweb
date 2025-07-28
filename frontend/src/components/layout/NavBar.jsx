@@ -16,7 +16,7 @@ function NavBar() {
   const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState(false);
   const [showAccountInfo, setShowAccountInfo] = useState(false);
-  const [showAuctionHistory, setShowAuctionHistory] =useState(false);
+  const [showAuctionHistory, setShowAuctionHistory] = useState(false);
   const bellRef = useRef();
   const dropdownRef = useRef();
   const { t, i18n } = useTranslation();
@@ -29,7 +29,7 @@ function NavBar() {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-      i18n.changeLanguage(savedLang);
+    i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   useEffect(() => {
@@ -62,45 +62,47 @@ function NavBar() {
 
   return (
     <>
-    <nav className="nav-wrapper">
-      <div className="nav-left">
-        <NavLink to="/" className="nav-link">
-          {t("home", "Home")}
-        </NavLink>
-        <NavLink to="/auctions/search" className="nav-link">
-          {t("auction", "Auction")}
-        </NavLink>
-        <NavLink to="/about" className="nav-link">
-          {t("information", "Information")}
-        </NavLink>
-        <NavLink to="/history" className="nav-link">
-          {t("history", "History")}
-        </NavLink>
-        <NavLink to="/guide" className="nav-link">
-          {t("tutorial", "Tutorial")}
-        </NavLink>
-        <NavLink to="/contact" className="nav-link">
-          {t("contact", "Contact")}
-        </NavLink>
-        <NavLink to="/policy" className="nav-link">
-          {t("rule", "Rule")}
-        </NavLink>
-        {user?.role === "admin" ||user?.role === "super_admin" && (
-          <NavLink to="/admin" className="nav-link">
-            {t("dashboard", "Dashboard")}
+      <nav className="nav-wrapper">
+        <div className="nav-left">
+          <NavLink to="/" className="nav-link">
+            {t("home", "Home")}
           </NavLink>
-        )}
-      </div>
-      <div className="nav-right">
-        {user ? (
-          <>
-            
-            <span
+          <NavLink to="/auctions/search" className="nav-link">
+            {t("auction", "Auction")}
+          </NavLink>
+          <NavLink to="/about" className="nav-link">
+            {t("information", "Information")}
+          </NavLink>
+          <NavLink to="/history" className="nav-link">
+            {t("history", "History")}
+          </NavLink>
+          <NavLink to="/guide" className="nav-link">
+            {t("tutorial", "Tutorial")}
+          </NavLink>
+          <NavLink to="/contact" className="nav-link">
+            {t("contact", "Contact")}
+          </NavLink>
+          <NavLink to="/policy" className="nav-link">
+            {t("rule", "Rule")}
+          </NavLink>
+          {(user?.role === "admin" || user?.role === "super_admin") && (
+            <NavLink to="/admin" className="nav-link">
+              {t("dashboard", "Dashboard")}
+            </NavLink>
+          )}
+        </div>
+        <div className="nav-right">
+          {user ? (
+            <>
+              <span
                 className="user-greeting nav-link"
                 onClick={() => setShowAccountInfo(false)}
                 style={{ cursor: "pointer" }}
                 // tabIndex={0}
-                onKeyDown={e => (e.key === "Enter" || e.key === " ") && setShowAccountInfo(false)}
+                onKeyDown={(e) =>
+                  (e.key === "Enter" || e.key === " ") &&
+                  setShowAccountInfo(false)
+                }
                 aria-label={t("account_info")}
                 role="button"
               >
@@ -112,61 +114,60 @@ function NavBar() {
                 onClick={() => setShowAuctionHistory(true)}
                 style={{ cursor: "pointer" }}
                 // tabIndex={0}
-                onKeyDown={e => (e.key === "Enter" || e.key === " ") && setShowAuctionHistory(true)}
+                onKeyDown={(e) =>
+                  (e.key === "Enter" || e.key === " ") &&
+                  setShowAuctionHistory(true)
+                }
                 aria-label={t("auction_history")}
                 role="button"
               >
                 {t("auction_history")}
               </span>
               <NotificationDropdown triggerRef={bellRef} />
-              
-            <button className="nav-link button-link" onClick={handleLogout}>
-              {t("logout", "Logout")}
-            </button>
-          </>
-        ) : (
-          <>
-            <NavLink to="/login" className="nav-link">
-              {t("login", "Đăng nhập")}
-            </NavLink>
-            <NavLink to="/register" className="nav-link">
-              {t("register", "Register")}
-            </NavLink>
-          </>
-        )}
-      </div>
-    </nav>
-    {showAccountInfo && (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
-        onClick={() => setShowAccountInfo(true)}
-        aria-modal="true"
-        role="dialog"
-      >
-        <div
-          onClick={e => e.stopPropagation()}
-        >
-          <AccountInfo onClose={() => setShowAccountInfo(false)} />
-        </div>
-      </div>
-    )}
 
-    {showAuctionHistory && (
-      <div
-        onClick={() => setShowAuctionHistory(false)}
-        aria-modal="true"
-        role="dialog"
-      >
-        <div
-          onClick={e => e.stopPropagation()}
-        >
-          <AuctionHistory 
-            isOpen={showAuctionHistory} 
-            onClose={() => setShowAuctionHistory(false)} 
-          />
+              <button className="nav-link button-link" onClick={handleLogout}>
+                {t("logout", "Logout")}
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" className="nav-link">
+                {t("login", "Đăng nhập")}
+              </NavLink>
+              <NavLink to="/register" className="nav-link">
+                {t("register", "Register")}
+              </NavLink>
+            </>
+          )}
         </div>
-      </div>
-    )}
+      </nav>
+      {showAccountInfo && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+          onClick={() => setShowAccountInfo(true)}
+          aria-modal="true"
+          role="dialog"
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <AccountInfo onClose={() => setShowAccountInfo(false)} />
+          </div>
+        </div>
+      )}
+
+      {showAuctionHistory && (
+        <div
+          onClick={() => setShowAuctionHistory(false)}
+          aria-modal="true"
+          role="dialog"
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <AuctionHistory
+              isOpen={showAuctionHistory}
+              onClose={() => setShowAuctionHistory(false)}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }
