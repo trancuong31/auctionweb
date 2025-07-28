@@ -5,9 +5,10 @@ from typing import Optional
 from datetime import datetime
 from sqlalchemy.engine import create
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.functions import user
+from sqlalchemy.sql.functions import user, func
 from app.core.database import get_db
 from app.models.User import User
+from app.models.Bid import Bid
 from app.core.auth import get_current_user_id_from_token
 from app.enums import UserRole
 from starlette.status import HTTP_400_BAD_REQUEST
@@ -20,7 +21,9 @@ class UserOut(BaseModel):
     email: Optional[str]
     role: str
     created_at: datetime
-    status : int
+    status: int
+    bid_count: int  # Thêm trường đếm số bid
+    
     class Config:
         # orm_mode = True
         from_attributes = True
@@ -51,7 +54,7 @@ def get_users(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
     search_text: Optional[str] = Query(None, description="Tìm kiếm theo username hoặc email"),
-    sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: username, email, created_at"),
+    sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: username, email, created_at, bid_count"),
     sort_order: Optional[str] = Query("desc", description="Thứ tự sắp xếp: asc, desc"),
     page: int = Query(1, ge=1, description="Số trang"),
     page_size: int = Query(8, ge=1, le=100, description="Số user mỗi trang")
@@ -61,7 +64,13 @@ def get_users(
             status_code=403,
             detail=_("You don't have permison watch users!", request)
         )
-    query = db.query(User)
+    
+    # Query với join và đếm số bid
+    query = db.query(
+        User,
+        func.count(Bid.id).label('bid_count')
+    ).outerjoin(Bid, User.id == Bid.user_id).group_by(User.id)
+    
     if search_text:
         query = query.filter(
             (User.username.ilike(f"%{search_text}%")) | (User.email.ilike(f"%{search_text}%"))
@@ -71,6 +80,8 @@ def get_users(
         order_col = User.username
     elif sort_by == "email":
         order_col = User.email
+    elif sort_by == "bid_count":
+        order_col = func.count(Bid.id)
     else:
         order_col = User.created_at
     if sort_order == "asc":
@@ -79,7 +90,22 @@ def get_users(
         query = query.order_by(order_col.desc())
     total_users = query.count()
     offset = (page - 1) * page_size
-    users = query.offset(offset).limit(page_size).all()
+    results = query.offset(offset).limit(page_size).all()
+    
+    # Chuyển đổi kết quả thành format mong muốn
+    users = []
+    for user_obj, bid_count in results:
+        user_dict = {
+            "id": user_obj.id,
+            "username": user_obj.username,
+            "email": user_obj.email,
+            "role": user_obj.role.value,
+            "created_at": user_obj.created_at,
+            "status": user_obj.status,
+            "bid_count": bid_count
+        }
+        users.append(user_dict)
+    
     return {"users": users, "total_users": total_users}
 
 @router.get("/users/{user_id}", response_model=UserOut)
@@ -117,6 +143,8 @@ def update_user(
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail=_("User not found", request))
+    if current_user.role == UserRole.ADMIN and user.role == UserRole.SUPER_ADMIN:
+        raise HTTPException(status_code=403, detail=_("Admin cannot modify Super Admin information", request))
     
     if data.username is not None:
         user.username = data.username

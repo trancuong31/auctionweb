@@ -199,6 +199,7 @@ const AuctionDetail = () => {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
+      toast.error("Error download file:", error);
       console.error("Error download file:", error);
     }
   };
@@ -316,7 +317,7 @@ const AuctionDetail = () => {
             <FontAwesomeIcon icon={faTags} className="mr-4 text-blue-500" />
             {t("deadline")}:{" "}
             <span className="font-semibold">
-              {new Date(auction.end_time).toLocaleString()}
+              {new Date(auction.end_time).toLocaleString('vi-VN')}
             </span>
           </p>
           <p>
@@ -369,7 +370,10 @@ const AuctionDetail = () => {
                 onClick={() => handleDownload(auction.id)}
                 className="text-blue-600 hover:underline font-medium"
               >
-                <p>{auction.file_exel.split("/").pop()}</p>
+                <p>{auction.file_exel.split("/").pop().length > 30
+                ? auction.file_exel.split("/").pop().slice(0, 30) + "...xlsx"
+                : auction.file_exel.split("/").pop()}
+                </p>
               </button>
             ) : (
               <span className="text-gray-400 italic">{t('no_file')}</span>
