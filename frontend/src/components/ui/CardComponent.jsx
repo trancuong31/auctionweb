@@ -3,7 +3,7 @@ import imagedefault from "../../assets/images/imagedefault.png";
 import CountdownTimer from "../../common/CountDownTime";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
-  const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
+const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
   const { t, i18n } = useTranslation();
 
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
@@ -108,7 +108,7 @@ import { useEffect } from "react";
                 item.highest_amount !== null && item.winner_info !== null ? (
                   <p className="flex justify-between">
                     <span className="font-semibold text-gray-500">
-                      Winning bid price:
+                      {t("winning_bid_price")}:
                     </span>{" "}
                     <span className="text-red-500 font-bold">
                       {item.highest_amount?.toLocaleString("en-US", {

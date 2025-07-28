@@ -20,6 +20,7 @@ import {
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
+import clsx from "clsx";
 
 const OverViewAdmin = () => {
   const [currentIndexPageUser, setCurrentIndexPageUser] = useState(0);
@@ -721,8 +722,17 @@ const OverViewAdmin = () => {
                   return (
                     <tr
                       key={auction.id || idx}
-                      className="odd:bg-white even:bg-gray-100 hover:bg-blue-400 hover:text-white transition cursor-pointer"
-                      onClick={() => setModeEdit(auction)}
+                      className={clsx(
+                        "odd:bg-white even:bg-gray-100 hover:bg-blue-400 hover:text-white transition",
+                        {
+                          "cursor-pointer": auction.status === 1,
+                        }
+                      )}
+                      onClick={
+                        auction.status === 1
+                          ? () => setModeEdit(auction)
+                          : undefined
+                      }
                     >
                       <td className="border px-2 py-1 max-w-96 text-center break-words">
                         {idx + 1}

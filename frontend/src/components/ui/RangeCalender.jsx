@@ -12,8 +12,11 @@ function RangeCalender({ onChange, value, allowMinDate }) {
     calendarRef.current?.focus();
   };
 
+  const fpInstance = useRef(null);
+
+  // Khởi tạo flatpickr một lần
   useEffect(() => {
-    const fp = flatpickr(calendarRef.current, {
+    fpInstance.current = flatpickr(calendarRef.current, {
       mode: "range",
       enableTime: true,
       time_24hr: true,
@@ -25,8 +28,20 @@ function RangeCalender({ onChange, value, allowMinDate }) {
       },
     });
 
-    return () => fp.destroy();
-  }, []);
+    return () => {
+      if (fpInstance.current) {
+        fpInstance.current.destroy();
+        fpInstance.current = null;
+      }
+    };
+  }, [allowMinDate]); // Chỉ phụ thuộc vào allowMinDate
+
+  // Cập nhật giá trị khi value thay đổi
+  useEffect(() => {
+    if (fpInstance.current && value) {
+      fpInstance.current.setDate(value, false);
+    }
+  }, [value]);
 
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {

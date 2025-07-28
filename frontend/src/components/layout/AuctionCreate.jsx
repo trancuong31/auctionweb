@@ -20,7 +20,6 @@ const CreateAuctionForm = ({
   const [isDragging, setIsDragging] = useState(false);
   const { t, i18n } = useTranslation();
   const auctionSchema = z.object({
-    start_time: z.any(),
     title: z
       .string()
       .trim()
@@ -38,9 +37,7 @@ const CreateAuctionForm = ({
       .min(1, t("validate_auction.image_url_min")),
     file_exel: z.instanceof(File, {
       message: t("validate_auction.file_exel_instance"),
-    })
-    .optional()
-    .nullable(),
+    }),
     end_time: z.string().min(1, t("validate_auction.end_time_required")),
     start_time: z.any(),
   });
@@ -102,15 +99,20 @@ const CreateAuctionForm = ({
       const language = sessionStorage.getItem("lang") || "en";
       if (mode === "create") {
         await create("auctions", data, true, { lang: language });
+        toast.success(t("success.add_new_auction"));
       } else {
         await update("auctions", auction.id, data, true, { lang: language });
+        toast.success(t("success.update_auction"));
       }
-      // toast.success("Add new auction successful");
-      toast.success(t("success.add_new_auction"));
+
       onClickClose();
     } catch (error) {
       const detail = error?.response?.data?.detail;
-      toast.error(detail || t("error.add_new_auction"));
+      toast.error(
+        detail || mode === "create"
+          ? t("error.add_new_auction")
+          : t("error.update_auction")
+      );
       console.log(error);
     }
   };

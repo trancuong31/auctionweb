@@ -130,8 +130,7 @@
   "vision_development_orientation": "Vision & Development Orientation",
   "company_history": "History of Partron Vina Company Limited",
   "phone": "Phone",
-  "auctioneer_assistance": "Auctioneer Assistance",
-  "vision_heading": "Vision & Development Orientation",
+  "auctioneer_assistance": "Auction support",
   "vision_p1": "As one of the leading companies in the field of electronic component manufacturing in Vietnam, Partron Vina Co., Ltd. continuously innovates and pioneers in applying technology to its business operations. The implementation of the online auction platform is not only a step forward in diversifying product distribution channels but also a demonstration of the company’s commitment to enhancing customer experience and optimizing product value.",
   "vision_p2": "Through this platform, Partron Vina aims to create a transparent, fair, and efficient trading environment while expanding access to its products for a broader range of customers.",
 
@@ -228,11 +227,13 @@
     "add_new_auction": "Add new auction successful",
     "bid_submitted": "Bid submitted successfully!",
     "delete_success":"Delete user successful!",
-    "update_status": "update status user successful!"
+    "update_status": "update status user successful!",
+    "update_auction": "update auction successful!"
     
   },
   "error": {
     "add_new_auction": "Error add auction",
+    "update_auction": "update auction fail !",
     "duplicate_photos": "Please do not select duplicate photos",
     "error_upload_image": "Error while upload image",
     "error_upload_excel": "Error while upload Excel",
@@ -277,5 +278,6 @@
   "Upcoming": "Upcoming",
   "Ended": "Ended",
   "notification": "Notification",
-  "auction_history": "Auction history"
+  "auction_history": "Auction history",
+  "winning_bid_price": "Winning Bid Price"
 }
