@@ -267,7 +267,7 @@ const OverViewAdmin = () => {
           toast.success(t("success.update_status"));
           getPageUser();
         } catch (error) {
-          toast.success(t("error.update_status"));
+          toast.error(t(error.response.data.detail));
           console.log(error);
         }
       },

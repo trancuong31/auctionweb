@@ -170,7 +170,8 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     >
                       <p title={auction.file_exel.split("/").pop()}>
                         {auction.file_exel.split("/").pop().length > 30
-                          ? auction.file_exel.split("/").pop().slice(0, 20) + "..."
+                          ? auction.file_exel.split("/").pop().slice(0, 20) +
+                            "..."
                           : auction.file_exel.split("/").pop()}
                       </p>
                     </button>
@@ -215,7 +216,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 <th className="px-4 py-2 font-semibold uppercase">
                   {t("supplier_email")}
                 </th>
-                <th className="px-4 py-2 font-semibold uppercase">User Name</th>
+                <th className="px-4 py-2 font-semibold uppercase">
+                  {t("user_name")}
+                </th>
                 <th className="px-4 py-2 font-semibold uppercase">
                   {t("bid_amount_usd")}
                 </th>

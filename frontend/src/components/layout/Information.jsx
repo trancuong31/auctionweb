@@ -36,7 +36,7 @@ function Information() {
               textAlign: "center",
             }}
           >
-            {t("vision_heading")}
+            {t("vision_title")}
           </h2>
           <div
             style={{

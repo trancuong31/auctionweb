@@ -30,14 +30,14 @@ export const Footer = () => {
   const helpLinks = [
     { label: t("register_account_pricing"), to: "/guide" },
     { label: t("policy_security"), to: "/policy" },
-    { label: t("vision_development_orientation"), to: "/about" },
+    { label: t("vision_title"), to: "/about" },
     { label: t("company_history"), to: "/history" },
   ];
 
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    i18n.changeLanguage(savedLang);    
+    i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   return (
@@ -65,7 +65,7 @@ export const Footer = () => {
               <ul className="footer__address-list">
                 {addresses.map((addr, index) => (
                   <li key={index} className="footer__address-item">
-                    {"- "+addr}
+                    {"- " + addr}
                   </li>
                 ))}
               </ul>
