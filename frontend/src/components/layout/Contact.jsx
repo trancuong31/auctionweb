@@ -25,16 +25,18 @@ function Contact() {
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
           }}
         >
+          <h3
+            style={{
+              fontWeight: "bold",
+              marginBottom: "24px",
+              textAlign: "center",
+              fontSize: "2rem",
+            }}
+          >
+            {t("contact_title")}
+          </h3>
           <div style={{ display: "flex", alignItems: "center", gap: "40px" }}>
             <div style={{ flex: 1 }}>
-              <h1
-                style={{
-                  fontSize: "48px",
-                  fontWeight: 400,
-                }}
-              >
-                {t("contact_title")}
-              </h1>
               <h2
                 style={{
                   fontSize: "32px",
@@ -47,6 +49,20 @@ function Contact() {
               <div
                 style={{ fontSize: "16px", color: "#222", lineHeight: "1.8" }}
               >
+                <div className="text-[18px] my-3">
+                  <div>
+                    <strong>{t("contact_phone_label")}</strong>{" "}
+                    {t("contact_phone_value")}
+                  </div>
+                  <div>
+                    <strong>{t("contact_fax_label")}</strong>{" "}
+                    {t("contact_fax_value")}
+                  </div>
+                  <div>
+                    <strong>{t("contact_email_label")}</strong>{" "}
+                    {t("contact_email_value")}
+                  </div>
+                </div>
                 <div style={{ marginBottom: "12px" }}>
                   <div
                     style={{
@@ -98,21 +114,6 @@ function Contact() {
                       </span>{" "}
                       {t("contact_2_address_value")}
                     </div>
-                  </div>
-                </div>
-
-                <div>
-                  <div>
-                    <strong>{t("contact_phone_label")}</strong>{" "}
-                    {t("contact_phone_value")}
-                  </div>
-                  <div>
-                    <strong>{t("contact_fax_label")}</strong>{" "}
-                    {t("contact_fax_value")}
-                  </div>
-                  <div>
-                    <strong>{t("contact_email_label")}</strong>{" "}
-                    {t("contact_email_value")}
                   </div>
                 </div>
               </div>

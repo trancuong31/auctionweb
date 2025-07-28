@@ -30,9 +30,10 @@ function Rule() {
         >
           <h3
             style={{
-              fontStyle: "italic",
               fontWeight: "bold",
               marginBottom: "24px",
+              textAlign: "center",
+              fontSize: "2rem",
             }}
           >
             {ruleTitle}
