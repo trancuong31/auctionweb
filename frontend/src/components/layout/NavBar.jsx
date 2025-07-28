@@ -85,7 +85,7 @@ function NavBar() {
         <NavLink to="/policy" className="nav-link">
           {t("rule", "Rule")}
         </NavLink>
-        {user?.role === "admin" ||user?.role === "super_admin" && (
+        {(user?.role === "admin" || user?.role === "super_admin") && (
           <NavLink to="/admin" className="nav-link">
             {t("dashboard", "Dashboard")}
           </NavLink>

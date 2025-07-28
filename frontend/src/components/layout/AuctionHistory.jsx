@@ -57,7 +57,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
             <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-3 flex items-center justify-between relative">
 
               <div className="flex-1 text-center">
-                <h2 className="text-xl font-bold">AUCTION HISTORY</h2>
+              <h2 className="text-xl font-bold">{t("auction_history")}</h2>
               </div>
               <button
                 onClick={onClose}
@@ -135,7 +135,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                             <div className="flex items-start gap-3">
                             <DollarSign className="text-purple-500 mt-1" size={18} />
                             <div>
-                              <p className="text-sm text-gray-500">Starting price</p>
+                              <p className="text-sm text-gray-500">{t("starting_price")}</p>
                               <p className="text-lg font-bold text-gray-700">
                                 {formatCurrency(bid.auction_starting_price)}
                               </p>
@@ -164,7 +164,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                             )}
 
                             <div className="bg-gray-200 rounded-lg p-3">
-                              <p className="text-xs text-gray-500 mb-1">Auction Title</p>
+                              <p className="text-xs text-gray-500 mb-1">{t("title")}</p>
                               <p className="font-mono text-xs text-gray-600">
                                 {truncateId(bid.auction_title)}
                               </p>
