@@ -254,5 +254,9 @@
   "Ended": "종료됨",
   "notification": "알림",
   "auction_history": "경매 경매",
-  "winning_bid_price": "낙찰가"
+  "winning_bid_price": "낙찰가",
+  "unsuccessful": "낙찰 실패",
+  "load_more": "더 보기",
+  "bid_count": "참여한 경매 수",
+  "step_price": "호가 단위"
 }

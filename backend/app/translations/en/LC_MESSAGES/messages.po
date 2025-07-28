@@ -158,4 +158,10 @@ msgid "Your new price must be at least one price step away from your old price."
 msgstr "Your new price must be at least one price step away from your old price."
 
 msgid "Admin cannot modify Super Admin information"
-msgstr "Admin cannot modify Super Admin information"
+msgstr "Admin cannot modify Super Admin and Admin information"
+
+msgid "Admin cannot delete Super Admin information"
+msgstr "Admin cannot delete account Super Admin, Admin"
+
+msgid "Super Admin cannot delete Super Admin information"
+msgstr "Super Admin cannot delete Super Admin"

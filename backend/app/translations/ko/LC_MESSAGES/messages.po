@@ -156,3 +156,6 @@ msgstr "새 가격은 이전 가격과 최소 한 단계 이상 차이가 있어
 
 msgid "Admin cannot modify Super Admin information"
 msgstr "관리자는 슈퍼 관리자 정보를 수정할 수 없습니다"
+
+msgid "Super Admin cannot delete Super Admin information"
+msgstr "Super Admin cannot delete Super Admin"
