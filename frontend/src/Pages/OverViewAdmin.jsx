@@ -216,8 +216,10 @@ const OverViewAdmin = () => {
       setCurrentEditing(null);
       await getPageUser();
     } catch (error) {
-      toast.error(t("update_user_fai"));
+      // toast.error(t("update_user_fai"));
       console.log(error);
+      const detail = error?.response?.data?.detail;
+      toast.error(detail || t("update_user_fai"));
     }
   };
 
@@ -239,7 +241,8 @@ const OverViewAdmin = () => {
           toast.success(t("success.delete_success"));
           getPageUser();
         } catch (error) {
-          toast.error(t("error.delete_fail"));
+          const detail = error?.response?.data?.detail;
+          toast.error(detail || t("error.delete_fail"));
           console.log(error);
         }
       },
@@ -267,7 +270,8 @@ const OverViewAdmin = () => {
           toast.success(t("success.update_status"));
           getPageUser();
         } catch (error) {
-          toast.error(t(error.response.data.detail));
+          const detail = error?.response?.data?.detail;
+          toast.error(detail || t("error.update_status"));
           console.log(error);
         }
       },
@@ -493,7 +497,6 @@ const OverViewAdmin = () => {
                   <th className="border px-2 py-1">{t("role")}</th>
                   <th className="border px-2 py-1">{t("bid_count")}</th>
                   <th className="border px-2 py-1">{t("status")}</th>
-
                   <th className="border px-2 py-1">{t("action")}</th>
                 </tr>
               </thead>

@@ -62,39 +62,40 @@ function NavBar() {
 
   return (
     <>
-      <nav className="nav-wrapper">
-        <div className="nav-left">
-          <NavLink to="/" className="nav-link">
-            {t("home", "Home")}
+    <nav className="nav-wrapper">
+      <div className="nav-left">
+        <NavLink to="/" className="nav-link">
+          {t("home", "Home")}
+        </NavLink>
+        <NavLink to="/auctions/search" className="nav-link">
+          {t("auction", "Auction")}
+        </NavLink>
+        <NavLink to="/about" className="nav-link">
+          {t("information", "Information")}
+        </NavLink>
+        <NavLink to="/history" className="nav-link">
+          {t("history", "History")}
+        </NavLink>
+        <NavLink to="/guide" className="nav-link">
+          {t("tutorial", "Tutorial")}
+        </NavLink>
+        <NavLink to="/contact" className="nav-link">
+          {t("contact", "Contact")}
+        </NavLink>
+        <NavLink to="/policy" className="nav-link">
+          {t("rule", "Rule")}
+        </NavLink>
+        {(user?.role === "admin" || user?.role === "super_admin") && (
+          <NavLink to="/admin" className="nav-link">
+            {t("dashboard", "Dashboard")}
           </NavLink>
-          <NavLink to="/auctions/search" className="nav-link">
-            {t("auction", "Auction")}
-          </NavLink>
-          <NavLink to="/about" className="nav-link">
-            {t("information", "Information")}
-          </NavLink>
-          <NavLink to="/history" className="nav-link">
-            {t("history", "History")}
-          </NavLink>
-          <NavLink to="/guide" className="nav-link">
-            {t("tutorial", "Tutorial")}
-          </NavLink>
-          <NavLink to="/contact" className="nav-link">
-            {t("contact", "Contact")}
-          </NavLink>
-          <NavLink to="/policy" className="nav-link">
-            {t("rule", "Rule")}
-          </NavLink>
-          {(user?.role === "admin" || user?.role === "super_admin") && (
-            <NavLink to="/admin" className="nav-link">
-              {t("dashboard", "Dashboard")}
-            </NavLink>
-          )}
-        </div>
-        <div className="nav-right">
-          {user ? (
-            <>
-              <span
+        )}
+      </div>
+      <div className="nav-right">
+        {user ? (
+          <>
+            
+            <span
                 className="user-greeting nav-link"
                 onClick={() => setShowAccountInfo(false)}
                 style={{ cursor: "pointer" }}

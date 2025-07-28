@@ -3,7 +3,6 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
-from sqlalchemy.engine import create
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.functions import user, func
 from app.core.database import get_db
@@ -124,6 +123,9 @@ def set_user_status(
     if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail=_("Permission denied", request))
     user = db.query(User).filter(User.id == user_id).first()
+
+    if current_user.role == UserRole.ADMIN and (user.role == UserRole.SUPER_ADMIN or user.role == UserRole.ADMIN):
+        raise HTTPException(status_code=403, detail=_("Admin cannot modify Super Admin, Admin information", request))
     if not user:
         raise HTTPException(status_code=404, detail=_("User not found", request))
     if data.status not in (0, 1):
@@ -143,7 +145,7 @@ def update_user(
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail=_("User not found", request))
-    if current_user.role == UserRole.ADMIN and user.role == UserRole.SUPER_ADMIN:
+    if current_user.role == UserRole.ADMIN and (user.role == UserRole.SUPER_ADMIN or user.role == UserRole.ADMIN):
         raise HTTPException(status_code=403, detail=_("Admin cannot modify Super Admin information", request))
     
     if data.username is not None:
@@ -164,6 +166,12 @@ def delete_user(
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail=_("User not found", request))
+
+    if current_user.role == UserRole.ADMIN and (user.role == UserRole.SUPER_ADMIN or user.role == UserRole.ADMIN):
+        raise HTTPException(status_code=403, detail=_("Admin cannot delete Super Admin information", request))
+
+    if current_user.role == UserRole.SUPER_ADMIN and user.role == UserRole.SUPER_ADMIN:
+        raise HTTPException(status_code=403, detail=_("Super Admin cannot delete Super Admin information", request))
     db.delete(user)
-    db.commit()
+    db.commit() 
     return {"message": _("User deleted successfully.", request)}

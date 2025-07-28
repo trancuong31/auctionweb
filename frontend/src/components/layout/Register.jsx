@@ -87,7 +87,7 @@ function Register() {
         toast.success(t('register_success', 'Register successful!'));
         navigate("/login");
       } else {
-        toast.error(data.message || t('register_failed', 'Register failed!'));
+        toast.error(data.detail || t('register_failed', 'Register failed!'));
       }
     } catch (error) {
       console.error(error.detail);
@@ -164,7 +164,7 @@ function Register() {
               <FontAwesomeIcon icon={faLock} />
             </span>
             <input
-              type={showConfirm ? "text" : "password"}
+              type="password"
               placeholder={t('confirm_password', 'Confirm Password*')}
               required
               autoComplete="new-password"
