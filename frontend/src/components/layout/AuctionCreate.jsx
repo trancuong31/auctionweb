@@ -35,9 +35,7 @@ const CreateAuctionForm = ({
     image_url: z
       .array(z.instanceof(File))
       .min(1, t("validate_auction.image_url_min")),
-    file_exel: z.instanceof(File, {
-      message: t("validate_auction.file_exel_instance"),
-    }),
+    file_exel: z.any().optional(),
     end_time: z.string().min(1, t("validate_auction.end_time_required")),
     start_time: z.any(),
   });
@@ -108,11 +106,7 @@ const CreateAuctionForm = ({
       onClickClose();
     } catch (error) {
       const detail = error?.response?.data?.detail;
-      toast.error(
-        detail || mode === "create"
-          ? t("error.add_new_auction")
-          : t("error.update_auction")
-      );
+      toast.error(detail);
       console.log(error);
     }
   };
@@ -135,7 +129,6 @@ const CreateAuctionForm = ({
     const hasDuplicate = newNames.some((name) => currentNames.includes(name));
 
     if (hasDuplicate) {
-      // toast.error("Please do not select duplicate photos");
       toast.error(t("error.duplicate_photos"));
       return;
     }
@@ -170,7 +163,6 @@ const CreateAuctionForm = ({
       const hasDuplicate = newNames.some((name) => currentNames.includes(name));
 
       if (hasDuplicate) {
-        // toast.error("Please do not select duplicate photos");
         toast.error(t("error.duplicate_photos"));
         return;
       }
@@ -207,8 +199,8 @@ const CreateAuctionForm = ({
       });
       return response.data.image_urls;
     } catch (error) {
-      // toast.error("Error while upload image");
-      toast.error(t("error.error_upload_image"));
+      const detail = error?.response?.data?.detail;
+      toast.error(detail || t("error.error_upload_image"));
       throw error;
     }
   };
@@ -223,8 +215,8 @@ const CreateAuctionForm = ({
       const response = await create("upload/excel", formData, true);
       return response.data.file_excel;
     } catch (error) {
-      // toast.error("Error while upload Excel");
-      toast.error(t("error.error_upload_excel"));
+      const detail = error?.response?.data?.detail;
+      toast.error(detail || t("error.error_upload_excel"));
       throw error;
     }
   };
@@ -235,7 +227,7 @@ const CreateAuctionForm = ({
         "fixed inset-0 flex items-center pt-[50px] justify-center bg-black bg-opacity-50 z-50 max-sm:pt-[200px] ",
         isOpen ? "visible" : "invisible"
       )}
-      onClick={onClickClose}
+      // onClick={onClickClose}
     >
       <div
         className={clsx(
