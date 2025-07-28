@@ -2,7 +2,7 @@
   "login": "로그인",
   "email": "이메일",
   "password": "비밀번호",
-  "remember_me": "로그인 상태 유지",
+  "remember_me": "계정 저장",
   "forget_password": "비밀번호를 잊으셨나요?",
   "contact_admin": "비밀번호를 찾으려면 관리자에게 문의하세요!",
   "sign_in": "로그인",
