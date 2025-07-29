@@ -212,7 +212,7 @@ const OverViewAdmin = () => {
       await update("users", user.id, newUser, true, {
         lang: sessionStorage.getItem("lang") || "en",
       });
-      toast.success(t("update_user_suc"));
+      toast.success(t("update_user"));
       setCurrentEditing(null);
       await getPageUser();
     } catch (error) {
@@ -762,7 +762,10 @@ const OverViewAdmin = () => {
                         {statusText}
                       </td>
                       <td
-                        onClick={() => openDetailBid(auction.id)}
+                        onClick={(e) => {
+                          e.stopPropagation(); 
+                          openDetailBid(auction.id);
+                        }}
                         className="border px-2 py-1 max-w-96 text-blue-500 underline cursor-pointer break-words"
                       >
                         {t("view")}

@@ -43,6 +43,11 @@ async def serve_vite_app(full_path: str):
 #     if os.path.exists(index_path):
 #         return FileResponse(index_path)
 #     return {"detail": "index.html not found"}
+
+@app.get("/api/v1/health")
+def health():
+    return {"status": "ok"}
+
 @app.on_event("startup")
 async def startup_event():
     start_auto_set_winner_task()
