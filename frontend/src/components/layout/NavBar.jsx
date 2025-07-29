@@ -155,20 +155,10 @@ function NavBar() {
         </div>
       )}
 
-      {showAuctionHistory && (
-        <div
-          onClick={() => setShowAuctionHistory(false)}
-          aria-modal="true"
-          role="dialog"
-        >
-          <div onClick={(e) => e.stopPropagation()}>
-            <AuctionHistory
-              isOpen={showAuctionHistory}
-              onClose={() => setShowAuctionHistory(false)}
-            />
-          </div>
-        </div>
-      )}
+      <AuctionHistory
+        isOpen={showAuctionHistory}
+        onClose={() => setShowAuctionHistory(false)}
+      />
     </>
   );
 }
