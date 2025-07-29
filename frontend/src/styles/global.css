@@ -100,3 +100,18 @@ body {
   top: 0 !important;
   position: static !important;
 }
+
+.overlay-fade-in {
+  animation: overlayFadeIn 0.3s forwards;
+}
+.overlay-fade-out {
+  animation: overlayFadeOut 0.3s forwards;
+}
+@keyframes overlayFadeIn {
+  from { background-color: rgba(0,0,0,0); }
+  to   { background-color: rgba(0,0,0,0.5); }
+}
+@keyframes overlayFadeOut {
+  from { background-color: rgba(0,0,0,0.5); }
+  to   { background-color: rgba(0,0,0,0); }
+}
