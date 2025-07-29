@@ -165,3 +165,6 @@ msgstr "Admin cannot delete account Super Admin, Admin"
 
 msgid "Super Admin cannot delete Super Admin information"
 msgstr "Super Admin cannot delete Super Admin"
+
+msgid "Admin cannot modify Super Admin, Admin information"
+msgstr "Admin cannot modify Super Admin, Admin information"

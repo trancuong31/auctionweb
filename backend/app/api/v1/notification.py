@@ -66,4 +66,6 @@ def set_read_notification(
     
     db.commit()
     return {"detail": _("Set read successful!", request)}
+
+
  

@@ -94,7 +94,7 @@ function NavBar() {
       <div className="nav-right">
         {user ? (
           <>
-            
+            <NotificationDropdown triggerRef={bellRef} />
             <span
                 className="user-greeting nav-link"
                 onClick={() => setShowAccountInfo(false)}
@@ -124,7 +124,7 @@ function NavBar() {
               >
                 {t("auction_history")}
               </span>
-              <NotificationDropdown triggerRef={bellRef} />
+              
 
               <button className="nav-link button-link" onClick={handleLogout}>
                 {t("logout", "Logout")}
