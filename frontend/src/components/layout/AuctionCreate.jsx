@@ -9,14 +9,10 @@ import z from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useImperativeHandle, forwardRef } from "react";
 
-const CreateAuctionForm = ({
-  isOpen,
-  onClickClose,
-  mode = "create",
-  auction,
-}) => {
+const CreateAuctionForm = forwardRef((props, ref) => {
+  const { isOpen, onClickClose, mode = "create", auction } = props;
   const [isDragging, setIsDragging] = useState(false);
   const { t, i18n } = useTranslation();
   const auctionSchema = z.object({
@@ -33,7 +29,7 @@ const CreateAuctionForm = ({
     starting_price: z.number().min(1, t("validate_auction.starting_price_min")),
     step_price: z.number().min(1, t("validate_auction.step_price_min")),
     image_url: z
-      .array(z.instanceof(File))
+      .array(z.union([z.instanceof(File), z.string()]))
       .min(1, t("validate_auction.image_url_min")),
     file_exel: z.any().optional(),
     end_time: z.string().min(1, t("validate_auction.end_time_required")),
@@ -49,6 +45,7 @@ const CreateAuctionForm = ({
     setValue,
     watch,
     register,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(auctionSchema),
@@ -65,24 +62,55 @@ const CreateAuctionForm = ({
     },
   });
 
+  const startTime = watch("start_time");
+  const endTime = watch("end_time");
+
+  useEffect(() => {
+    if (mode === "create") {
+      reset({
+        title: "",
+        starting_price: 0,
+        step_price: 0,
+        start_time: "",
+        end_time: "",
+        description: "",
+        file_exel: null,
+        image_url: [],
+      });
+    } else if (mode === "edit" && auction) {
+      reset({
+        title: auction.title || "",
+        starting_price: auction.starting_price || 0,
+        step_price: auction.step_price || 0,
+        start_time: auction.start_time || "",
+        end_time: auction.end_time || "",
+        description: auction.description || "",
+        file_exel: null,
+        image_url: auction.image_url || [],
+      });
+    }
+  }, [mode, auction, reset]);
+
+  useImperativeHandle(ref, () => ({
+    resetForm: () => {
+      reset({
+        title: "",
+        starting_price: 0,
+        step_price: 0,
+        start_time: "",
+        end_time: "",
+        description: "",
+        file_exel: null,
+        image_url: [],
+      });
+    },
+  }));
+
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
     i18n.changeLanguage(savedLang);
   }, [i18n]);
-
-  useEffect(() => {
-    if (auction && mode === "edit") {
-      setValue("title", auction.title || "");
-      setValue("description", auction.description || "");
-      setValue("starting_price", auction.starting_price || 0);
-      setValue("step_price", auction.step_price || 0);
-      setValue("start_time", auction.start_time || "");
-      setValue("end_time", auction.end_time || "");
-      setValue("file_exel", auction.file_exel || null);
-      setValue("image_url", []);
-    }
-  }, [auction]);
 
   const onSubmit = async (formData) => {
     const arrLinkImg = await handlerUploadImgs(formData.image_url);
@@ -103,10 +131,15 @@ const CreateAuctionForm = ({
         toast.success(t("success.update_auction"));
       }
 
-      onClickClose();
+      onClickClose(true);
     } catch (error) {
       const detail = error?.response?.data?.detail;
-      toast.error(detail);
+      toast.error(
+        detail ||
+          (mode === "create"
+            ? t("error.add_new_auction")
+            : t("error.update_auction"))
+      );
       console.log(error);
     }
   };
@@ -176,9 +209,6 @@ const CreateAuctionForm = ({
     const updatedFiles = currentFiles.filter(
       (_, index) => index !== indexToRemove
     );
-    console.log(currentFiles);
-    console.log(updatedFiles);
-    console.log("a");
     setValue("image_url", updatedFiles);
   };
 
@@ -186,18 +216,23 @@ const CreateAuctionForm = ({
     document.getElementById("imageInput").click();
   };
 
-  const handlerUploadImgs = async (files) => {
-    const images = watch("image_url");
+  const handlerUploadImgs = async (imgs) => {
+    const files = imgs.filter((img) => img instanceof File);
+    const existingUrls = imgs.filter((img) => typeof img === "string");
     const formData = new FormData();
-    images.forEach((img) => {
+    files.forEach((img) => {
       formData.append("files", img);
     });
     try {
       const language = sessionStorage.getItem("lang") || "en";
-      const response = await create("upload/image", formData, true, {
-        lang: language,
-      });
-      return response.data.image_urls;
+      let uploadedUrls = [];
+      if (files.length > 0) {
+        const response = await create("upload/image", formData, true, {
+          lang: language,
+        });
+        uploadedUrls = response.data.image_urls;
+      }
+      return [...existingUrls, ...uploadedUrls];
     } catch (error) {
       const detail = error?.response?.data?.detail;
       toast.error(detail || t("error.error_upload_image"));
@@ -391,11 +426,8 @@ const CreateAuctionForm = ({
                 }
               }}
               value={
-                auction?.start_time && auction?.end_time
-                  ? [
-                      dayjs(auction.start_time).toDate(),
-                      dayjs(auction.end_time).toDate(),
-                    ]
+                startTime && endTime
+                  ? [dayjs(startTime).toDate(), dayjs(endTime).toDate()]
                   : []
               }
               allowMinDate={false}
@@ -550,42 +582,33 @@ const CreateAuctionForm = ({
                     className="grid grid-cols-6 gap-2 ml-1"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {mode == "create"
-                      ? imgFiles.map((file, index) => (
+                    {[...(imgFiles || [])].map((item, index) => {
+                      const isFile = item instanceof File;
+                      const key = isFile
+                        ? `${item.name}-${item.size}-${item.lastModified}`
+                        : item;
+
+                      const src = isFile
+                        ? URL.createObjectURL(item)
+                        : `${import.meta.env.VITE_BASE_URL}${item}`;
+
+                      return (
+                        <div key={key} className="relative">
+                          <img
+                            src={src}
+                            alt={`preview-${index}`}
+                            className="object-cover rounded border"
+                          />
                           <div
-                            key={`${file.name}-${file.size}-${file.lastModified}`}
-                            className="relative"
+                            onClick={() => removeFile(index)}
+                            className="absolute top-1 right-1 bg-gray-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
+                            title="Delete image"
                           >
-                            <img
-                              src={URL.createObjectURL(file)}
-                              alt={`preview-${index}`}
-                              className="object-cover rounded border"
-                            />
-                            <div
-                              onClick={() => removeFile(index)}
-                              className="absolute top-1 right-1 bg-gray-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
-                              title="Delete image"
-                            >
-                              ×
-                            </div>
+                            ×
                           </div>
-                        ))
-                      : (auction.image_url || []).map((url, index) => (
-                          <div key={url} className="relative">
-                            <img
-                              src={url}
-                              alt={`preview-${index}`}
-                              className="object-cover rounded border"
-                            />
-                            <div
-                              onClick={() => removeFile(index)}
-                              className="absolute top-1 right-1 bg-gray-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
-                              title="Delete image"
-                            >
-                              ×
-                            </div>
-                          </div>
-                        ))}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -631,6 +654,6 @@ const CreateAuctionForm = ({
       </div>
     </div>
   );
-};
+});
 
 export default CreateAuctionForm;
