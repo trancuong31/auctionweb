@@ -62,10 +62,16 @@ const AuctionHistory = ({ isOpen, onClose }) => {
       : id;
 
   const handleClose = () => onClose();
-
+  
   return (
-    <>
-      {/* Modal Overlay */}
+    <div
+      className={
+        "fixed inset-0 flex items-center justify-center z-50 max-sm:pt-[60px] bg-black bg-opacity-50 " +
+        (isOpen ? "visible" : "invisible")
+      }
+      style={{ pointerEvents: isOpen ? "auto" : "none" }}
+      // onClick={handleClose} 
+    >
       <div
         className={
           "mt-[220px] sm:mt-[60px] md:mt-[55px] bg-white rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up " +
@@ -76,9 +82,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
         {/* Modal Header */}
         <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-3 flex items-center justify-between relative">
           <div className="flex-1 text-center">
-            <h2 className="text-xl font-bold uppercase">
-              {t("auction_history")}
-            </h2>
+            <h2 className="text-xl font-bold uppercase">{t("auction_history")}</h2>
           </div>
           <button
             onClick={handleClose}
@@ -95,131 +99,136 @@ const AuctionHistory = ({ isOpen, onClose }) => {
           {!loading && !error && (
             <>
               <div className="space-y-4">
-                {auctionHistory.slice(0, displayedItems).map((bid, index) => (
-                  <div
-                    key={bid.id}
-                    className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300 hover:border-blue-500 cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.30)]"
-                    onClick={() => {
-                      handleClose();
-                      navigate(`/auctions/${bid.auction_id}`);
-                    }}
-                  >
-                    {/* Header Row */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
+                {auctionHistory
+                  .slice(0, displayedItems)
+                  .map((bid, index) => (
+                    <div
+                      key={bid.id}
+                      className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300 hover:border-blue-500 cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.30)]"
+                      onClick={() => {
+                        handleClose();
+                        navigate(`/auctions/${bid.auction_id}`);
+                      }}
+                    >
+                      {/* Header Row */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${
+                              bid.is_winner ? "bg-green-500" : "bg-gray-400"
+                            }`}
+                          >
+                            {bid.is_winner ? (
+                              <Trophy size={20} />
+                            ) : (
+                              index + 1
+                            )}
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-900">
+                              Bid #{index + 1}
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              ID: {truncateId(bid.id)}
+                            </p>
+                          </div>
+                        </div>
                         <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${
-                            bid.is_winner ? "bg-green-500" : "bg-gray-400"
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            bid.is_winner
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-100 text-gray-600"
                           }`}
                         >
-                          {bid.is_winner ? <Trophy size={20} /> : index + 1}
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-gray-900">
-                            Bid #{index + 1}
-                          </h3>
-                          <p className="text-sm text-gray-500">
-                            ID: {truncateId(bid.id)}
-                          </p>
-                        </div>
-                      </div>
-                      <div
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          bid.is_winner
-                            ? "bg-green-100 text-green-700"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        {bid.is_winner ? "Winning" : "Participated"}
-                      </div>
-                    </div>
-
-                    {/* Content Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-                      {/* Left Column */}
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <DollarSign
-                            className="text-green-500 mt-1"
-                            size={18}
-                          />
-                          <div>
-                            <p className="text-sm text-gray-500">
-                              {t("bid_amount_usd")}
-                            </p>
-                            <p className="text-lg font-bold text-green-600">
-                              {formatCurrency(bid.bid_amount)}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                          <Clock className="text-blue-500 mt-1" size={18} />
-                          <div>
-                            <p className="text-sm text-gray-500">
-                              {t("submitted_at")}
-                            </p>
-                            <p className="font-medium text-gray-900">
-                              {formatDateTime(bid.created_at)}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                          <DollarSign
-                            className="text-purple-500 mt-1"
-                            size={18}
-                          />
-                          <div>
-                            <p className="text-sm text-gray-500">
-                              {t("starting_price")}
-                            </p>
-                            <p className="text-lg font-bold text-gray-700">
-                              {formatCurrency(bid.auction_starting_price)}
-                            </p>
-                          </div>
+                          {bid.is_winner ? "Winning" : "Participated"}
                         </div>
                       </div>
 
-                      {/* Right Column */}
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <MapPin className="text-red-500 mt-1" size={18} />
-                          <div>
-                            <p className="text-sm text-gray-500">
-                              {t("address")}
-                            </p>
-                            <p className="text-gray-900">{bid.address}</p>
-                          </div>
-                        </div>
-
-                        {bid.note && (
+                      {/* Content Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                        {/* Left Column */}
+                        <div className="space-y-4">
                           <div className="flex items-start gap-3">
-                            <FileText
-                              className="text-amber-500 mt-1"
+                            <DollarSign
+                              className="text-green-500 mt-1"
                               size={18}
                             />
                             <div>
                               <p className="text-sm text-gray-500">
-                                {t("additional_notes")}
+                                {t("bid_amount_usd")}
                               </p>
-                              <p className="text-gray-900">{bid.note}</p>
+                              <p className="text-lg font-bold text-green-600">
+                                {formatCurrency(bid.bid_amount)}
+                              </p>
                             </div>
                           </div>
-                        )}
 
-                        <div className="bg-gray-200 rounded-lg p-3">
-                          <p className="text-xs text-gray-500 mb-1">
-                            {t("title")}
-                          </p>
-                          <p className="font-mono text-xs text-gray-600">
-                            {truncateId(bid.auction_title)}
-                          </p>
+                          <div className="flex items-start gap-3">
+                            <Clock
+                              className="text-blue-500 mt-1"
+                              size={18}
+                            />
+                            <div>
+                              <p className="text-sm text-gray-500">
+                                {t("submitted_at")}
+                              </p>
+                              <p className="font-medium text-gray-900">
+                                {formatDateTime(bid.created_at)}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-3">
+                            <DollarSign className="text-purple-500 mt-1" size={18} />
+                            <div>
+                              <p className="text-sm text-gray-500">{t("starting_price")}</p>
+                              <p className="text-lg font-bold text-gray-700">
+                                {formatCurrency(bid.auction_starting_price)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right Column */}
+                        <div className="space-y-4">
+                          <div className="flex items-start gap-3">
+                            <MapPin
+                              className="text-red-500 mt-1"
+                              size={18}
+                            />
+                            <div>
+                              <p className="text-sm text-gray-500">
+                                {t("address")}
+                              </p>
+                              <p className="text-gray-900">{bid.address}</p>
+                            </div>
+                          </div>
+
+                          {bid.note && (
+                            <div className="flex items-start gap-3">
+                              <FileText
+                                className="text-amber-500 mt-1"
+                                size={18}
+                              />
+                              <div>
+                                <p className="text-sm text-gray-500">
+                                  {t("additional_notes")}
+                                </p>
+                                <p className="text-gray-900">{bid.note}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="bg-gray-200 rounded-lg p-3">
+                            <p className="text-xs text-gray-500 mb-1">{t("title")}</p>
+                            <p className="font-mono text-xs text-gray-600">
+                              {truncateId(bid.auction_title)}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
               {/* Load More Button */}
               {hasMoreItems && (
@@ -269,7 +278,8 @@ const AuctionHistory = ({ isOpen, onClose }) => {
               <div className="text-2xl font-bold text-purple-700">
                 {auctionHistory.length > 0
                   ? Math.round(
-                      (auctionHistory.filter((bid) => bid.is_winner).length /
+                      (auctionHistory.filter((bid) => bid.is_winner)
+                        .length /
                         auctionHistory.length) *
                         100
                     )
@@ -280,7 +290,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

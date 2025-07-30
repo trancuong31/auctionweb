@@ -371,10 +371,10 @@ const OverViewAdmin = () => {
                 }`}
               >
                 {overViewData.total_user_change >= 0
-                  ? `+${overViewData.total_user_change}%`
-                  : `${overViewData.total_user_change}%`}
+                  ? `+${overViewData.total_user_change}% `
+                  : `${overViewData.total_user_change}% `}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-gray-500">{t("than_last_month")}</span>
             </div>
           </div>
 
@@ -403,10 +403,10 @@ const OverViewAdmin = () => {
                 }`}
               >
                 {overViewData.total_auction_change >= 0
-                  ? `+${overViewData.total_auction_change}%`
-                  : `${overViewData.total_auction_change}%`}
+                  ? `+${overViewData.total_auction_change}% `
+                  : `${overViewData.total_auction_change}% `}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-gray-500">{t("than_last_month")}</span>
             </div>
           </div>
 
@@ -437,10 +437,10 @@ const OverViewAdmin = () => {
                 }`}
               >
                 {overViewData.total_successful_auctions_change >= 0
-                  ? `+${overViewData.total_successful_auctions_change}%`
-                  : `${overViewData.total_successful_auctions_change}%`}
+                  ? `+${overViewData.total_successful_auctions_change}% `
+                  : `${overViewData.total_successful_auctions_change}% `}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-gray-500">{t("than_last_month")}</span>
             </div>
           </div>
 
@@ -471,10 +471,10 @@ const OverViewAdmin = () => {
                 }`}
               >
                 {overViewData.total_auction_in_progress_change >= 0
-                  ? `+${overViewData.total_auction_in_progress_change}%`
-                  : `${overViewData.total_auction_in_progress_change}%`}
+                  ? `+${overViewData.total_auction_in_progress_change}% `
+                  : `${overViewData.total_auction_in_progress_change}% `}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-gray-500">{t("than_last_month")}</span>
             </div>
           </div>
 
@@ -505,10 +505,10 @@ const OverViewAdmin = () => {
                 }`}
               >
                 {overViewData.total_upcoming_auctions_change >= 0
-                  ? `+${overViewData.total_upcoming_auctions_change}%`
-                  : `${overViewData.total_upcoming_auctions_change}%`}
+                  ? `+${overViewData.total_upcoming_auctions_change}% `
+                  : `${overViewData.total_upcoming_auctions_change}% `}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-gray-500">{t("than_last_month")}</span>
             </div>
           </div>
 
@@ -539,17 +539,17 @@ const OverViewAdmin = () => {
                 }`}
               >
                 {overViewData.total_unsuccessful_auctions_change >= 0
-                  ? `+${overViewData.total_unsuccessful_auctions_change}%`
-                  : `${overViewData.total_unsuccessful_auctions_change}%`}
+                  ? `+${overViewData.total_unsuccessful_auctions_change}% `
+                  : `${overViewData.total_unsuccessful_auctions_change}% `}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-gray-500">{t("than_last_month")}</span>
             </div>
           </div>
         </div>
 
         {/* <!-- MANAGER USERS --> */}
 
-        <div className="bg-gray-100 p-4 rounded shadow mb-6">
+        <div className="bg-gray-100 p-4 rounded shadow  mb-6">
           <div className="flex justify-between mb-3 items-center max-sm:flex-col max-sm:gap-3">
             <p className="text-lg font-bold">{t("manager_user")}</p>
             <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end max-sm:gap-3">
@@ -907,7 +907,10 @@ const OverViewAdmin = () => {
                         {statusText}
                       </td>
                       <td
-                        onClick={() => openDetailBid(auction.id)}
+                        onClick={(e) => {
+                          e.stopPropagation(); 
+                          openDetailBid(auction.id);
+                        }}
                         className="border px-2 py-1 max-w-96 text-blue-500 underline cursor-pointer break-words"
                       >
                         {t("view")}
