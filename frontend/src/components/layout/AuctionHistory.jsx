@@ -1,14 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  Gavel,
-  X,
-  Clock,
-  User,
-  DollarSign,
-  MapPin,
-  Trophy,
-  FileText,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Clock, DollarSign, MapPin, Trophy, FileText } from "lucide-react";
 import axiosClient from "../../services/axiosClient";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -27,7 +18,6 @@ const AuctionHistory = ({ isOpen, onClose }) => {
   }, [i18n]);
 
   useEffect(() => {
-    if (!isOpen) return;
     setLoading(true);
     setError(null);
     setDisplayedItems(5);
@@ -163,25 +153,27 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                             </div>
                           </div>
 
-                          <div className="flex items-start gap-3">
-                            <Clock
-                              className="text-blue-500 mt-1"
-                              size={18}
-                            />
-                            <div>
-                              <p className="text-sm text-gray-500">
-                                {t("submitted_at")}
-                              </p>
-                              <p className="font-medium text-gray-900">
-                                {formatDateTime(bid.created_at)}
-                              </p>
-                            </div>
-                          </div>
+                              <div className="flex items-start gap-3">
+                                <Clock
+                                  className="text-blue-500 mt-1"
+                                  size={18}
+                                />
+                                <div>
+                                  <p className="text-sm text-gray-500">
+                                    {t("submitted_at")}
+                                  </p>
+                                  <p className="font-medium text-gray-900">
+                                    {formatDateTime(bid.created_at)}
+                                  </p>
+                                </div>
+                              </div>
 
-                          <div className="flex items-start gap-3">
+                            <div className="flex items-start gap-3">
                             <DollarSign className="text-purple-500 mt-1" size={18} />
                             <div>
-                              <p className="text-sm text-gray-500">{t("starting_price")}</p>
+                              <p className="text-sm text-gray-500">
+                                {t("starting_price")}
+                              </p>
                               <p className="text-lg font-bold text-gray-700">
                                 {formatCurrency(bid.auction_starting_price)}
                               </p>
@@ -189,20 +181,20 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                           </div>
                         </div>
 
-                        {/* Right Column */}
-                        <div className="space-y-4">
-                          <div className="flex items-start gap-3">
-                            <MapPin
-                              className="text-red-500 mt-1"
-                              size={18}
-                            />
-                            <div>
-                              <p className="text-sm text-gray-500">
-                                {t("address")}
-                              </p>
-                              <p className="text-gray-900">{bid.address}</p>
-                            </div>
-                          </div>
+                            {/* Right Column */}
+                            <div className="space-y-4">
+                              <div className="flex items-start gap-3">
+                                <MapPin
+                                  className="text-red-500 mt-1"
+                                  size={18}
+                                />
+                                <div>
+                                  <p className="text-sm text-gray-500">
+                                    {t("address")}
+                                  </p>
+                                  <p className="text-gray-900">{bid.address}</p>
+                                </div>
+                              </div>
 
                           {bid.note && (
                             <div className="flex items-start gap-3">
@@ -219,77 +211,80 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                             </div>
                           )}
 
-                          <div className="bg-gray-200 rounded-lg p-3">
-                            <p className="text-xs text-gray-500 mb-1">{t("title")}</p>
-                            <p className="font-mono text-xs text-gray-600">
-                              {truncateId(bid.auction_title)}
-                            </p>
+                            <div className="bg-gray-200 rounded-lg p-3">
+                              <p className="text-xs text-gray-500 mb-1">{t("title")}</p>
+                              <p className="font-mono text-xs text-gray-600">
+                                {truncateId(bid.auction_title)}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
+                    ))}
+                  </div>
+                  {/* Load More Button */}
+                  {hasMoreItems && (
+                    <div className="mt-6 text-center">
+                      <button
+                        onClick={handleLoadMore}
+                        className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                      >
+                        {t("load_more")} (
+                        {auctionHistory.length - displayedItems})
+                      </button>
                     </div>
-                  ))}
-              </div>
-              {/* Load More Button */}
-              {hasMoreItems && (
-                <div className="mt-6 text-center">
-                  <button
-                    onClick={handleLoadMore}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                  >
-                    {t("load_more")} ({auctionHistory.length - displayedItems})
-                  </button>
-                </div>
+                  )}
+                </>
               )}
-            </>
-          )}
 
-          <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
-              <div className="text-blue-600 text-sm font-medium">
-                {t("total_bids")}
-              </div>
-              <div className="text-2xl font-bold text-blue-700">
-                {auctionHistory.length}
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4">
-              <div className="text-green-600 text-sm font-medium">
-                {t("winning_bids")}
-              </div>
-              <div className="text-2xl font-bold text-green-700">
-                {auctionHistory.filter((bid) => bid.is_winner).length}
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4">
-              <div className="text-orange-600 text-sm font-medium">
-                {t("highest_value")}
-              </div>
-              <div className="text-lg font-bold text-orange-700">
-                {formatCurrency(
-                  Math.max(...auctionHistory.map((bid) => bid.bid_amount))
-                )}
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
-              <div className="text-purple-600 text-sm font-medium">
-                {t("success_rate")}
-              </div>
-              <div className="text-2xl font-bold text-purple-700">
-                {auctionHistory.length > 0
-                  ? Math.round(
-                      (auctionHistory.filter((bid) => bid.is_winner)
-                        .length /
-                        auctionHistory.length) *
-                        100
-                    )
-                  : 0}
-                %
+              <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
+                  <div className="text-blue-600 text-sm font-medium">
+                    {t("total_bids")}
+                  </div>
+                  <div className="text-2xl font-bold text-blue-700">
+                    {auctionHistory.length}
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4">
+                  <div className="text-green-600 text-sm font-medium">
+                    {t("winning_bids")}
+                  </div>
+                  <div className="text-2xl font-bold text-green-700">
+                    {auctionHistory.filter((bid) => bid.is_winner).length}
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4">
+                  <div className="text-orange-600 text-sm font-medium">
+                    {t("highest_value")}
+                  </div>
+                  <div className="text-lg font-bold text-orange-700">
+                    {formatCurrency(
+                      Math.max(...auctionHistory.map((bid) => bid.bid_amount))
+                    )}
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
+                  <div className="text-purple-600 text-sm font-medium">
+                    {t("success_rate")}
+                  </div>
+                  <div className="text-2xl font-bold text-purple-700">
+                    {auctionHistory.length > 0
+                      ? Math.round(
+                          (auctionHistory.filter((bid) => bid.is_winner)
+                            .length /
+                            auctionHistory.length) *
+                            100
+                        )
+                      : 0}
+                    %
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

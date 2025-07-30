@@ -101,17 +101,33 @@ body {
   position: static !important;
 }
 
-.overlay-fade-in {
-  animation: overlayFadeIn 0.3s forwards;
+
+/* counter number css */
+.animated-counter {
+  display: flex;
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+  font-size: 1.5rem;
+  overflow: hidden;
+  line-height: 1;
+  color: #1f2937;
+  justify-content: center; 
 }
-.overlay-fade-out {
-  animation: overlayFadeOut 0.3s forwards;
+
+.digit-container {
+  width: 1ch;
+  overflow: hidden;
+  position: relative;
 }
-@keyframes overlayFadeIn {
-  from { background-color: rgba(0,0,0,0); }
-  to   { background-color: rgba(0,0,0,0.5); }
+
+.digit-strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.5s ease-in-out;
 }
-@keyframes overlayFadeOut {
-  from { background-color: rgba(0,0,0,0.5); }
-  to   { background-color: rgba(0,0,0,0); }
+
+.digit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
