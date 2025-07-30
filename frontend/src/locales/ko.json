@@ -265,7 +265,7 @@
   "load_more": "더보기",
   "bid_count": "참가한 입찰 횟수",
   "user_name": "사용자 이름",
-    "winning_bids": " 낙찰 횟수",
+  "winning_bids": " 낙찰 횟수",
   "highest_value": "최고가",
   "success_rate": "성공률"
 }
