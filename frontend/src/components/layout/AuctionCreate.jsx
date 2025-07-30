@@ -9,7 +9,7 @@ import z from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState, useImperativeHandle, forwardRef } from "react";
+import { useEffect, useState } from "react";
 
 const CreateAuctionForm = forwardRef((props, ref) => {
   const { isOpen, onClickClose, mode = "create", auction } = props;
@@ -91,21 +91,6 @@ const CreateAuctionForm = forwardRef((props, ref) => {
     }
   }, [mode, auction, reset]);
 
-  useImperativeHandle(ref, () => ({
-    resetForm: () => {
-      reset({
-        title: "",
-        starting_price: 0,
-        step_price: 0,
-        start_time: "",
-        end_time: "",
-        description: "",
-        file_exel: null,
-        image_url: [],
-      });
-    },
-  }));
-
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
@@ -120,7 +105,8 @@ const CreateAuctionForm = forwardRef((props, ref) => {
       const data = {
         ...formData,
         image_url: arrLinkImg,
-        file_exel: linkExcel,
+        file_exel:
+          linkExcel || (mode === "edit" ? auction?.file_exel || null : null),
       };
       const language = sessionStorage.getItem("lang") || "en";
       if (mode === "create") {
@@ -498,26 +484,47 @@ const CreateAuctionForm = forwardRef((props, ref) => {
               render={({
                 field: { onChange, value, ...field },
                 fieldState,
-              }) => (
-                <>
-                  <input
-                    {...field}
-                    type="file"
-                    accept=".xlsx,.xls"
-                    className="w-full p-2 rounded shadow bg-white"
-                    // defaultValue={auction.file_exel || ""}
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      onChange(file || null);
-                    }}
-                  />
-                  {fieldState.error && (
-                    <p className="text-red-500 absolute right-1 text-xs">
-                      {fieldState.error.message}
-                    </p>
-                  )}
-                </>
-              )}
+              }) => {
+                const fileName =
+                  value instanceof File
+                    ? value.name
+                    : auction?.file_exel?.split("/").pop() || "";
+
+                return (
+                  <div className="relative space-y-2">
+                    {/* Ô input chỉ hiển thị tên file */}
+                    <input
+                      type="text"
+                      readOnly
+                      value={fileName}
+                      className="w-full p-2 rounded shadow bg-white text-gray-700 cursor-pointer"
+                      onClick={() =>
+                        document.getElementById("filePicker")?.click()
+                      }
+                    />
+
+                    {/* Input file ẩn */}
+                    <input
+                      {...field}
+                      id="filePicker"
+                      type="file"
+                      accept=".xlsx,.xls"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        onChange(file || null);
+                      }}
+                    />
+
+                    {/* Thông báo lỗi */}
+                    {fieldState.error && (
+                      <p className="text-red-500 absolute right-1 text-xs">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
+                );
+              }}
             />
           </div>
 
