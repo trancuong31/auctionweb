@@ -21,6 +21,7 @@ from pydantic import field_validator
 from zoneinfo import ZoneInfo
 from fastapi import APIRouter
 from app.i18n import _
+from datetime import datetime, timedelta
 
 router = APIRouter()
 class AuctionOut(BaseModel):
@@ -99,6 +100,13 @@ class OverviewStats(BaseModel):
     total_auction_in_progress: int
     total_unsuccessful_auctions: int
     total_upcoming_auctions: int
+    # data tổng các tháng trước
+    total_user_change: Optional[float] = None
+    total_auction_change: Optional[float] = None
+    total_successful_auctions_change: Optional[float] = None
+    total_auction_in_progress_change: Optional[float] = None
+    total_unsuccessful_auctions_change: Optional[float] = None
+    total_upcoming_auctions_change: Optional[float] = None
 
 class AuctionUpdate(BaseModel):
     title: Optional[str] = None
@@ -647,47 +655,127 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
     return auction_data
 
 
-@router.get("/overview", response_model=OverviewStats)
-def get_overview_stats(db: Session = Depends(get_db)):
-    now = datetime.now()
-
-    # Tổng số user
-    total_user = db.query(func.count(User.id)).scalar()
-
-    # Tổng số phiên đấu giá
-    total_auction = db.query(func.count(Auction.id)).scalar()
-
-    # Tổng số phiên đấu giá đang diễn ra
+def get_monthly_stats(db: Session, target_date: datetime):
+    """Tính toán thống kê cho từng tháng"""
+    # start_of_month = target_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if target_date.month == 12:
+        end_of_month = target_date.replace(year=target_date.year + 1, month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+    else:
+        end_of_month = target_date.replace(month=target_date.month + 1, day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    # Tổng số user đến cuối tháng đó
+    total_user_last_month = db.query(func.count(User.id)).filter(
+        User.created_at <= end_of_month
+    ).scalar()
+    
+    # Tổng số auction đến cuối tháng đó
+    total_auction_last_month = db.query(func.count(Auction.id)).filter(
+        Auction.created_at <= end_of_month
+    ).scalar()
+    
+    # Các thống kê tính tại thời điểm cuối tháng
     total_auction_in_progress = db.query(Auction).filter(
-        Auction.start_time <= now, Auction.end_time > now
+        Auction.start_time <= end_of_month, 
+        Auction.end_time > end_of_month
     ).count()
-
-    # Tổng số phiên đấu giá thành công
+    #Tổng số phiên thành công có time kết thúc nhoe hơn tháng hiện tại -1 && phải có người chiến thắng
     total_successful_auctions = db.query(Auction).filter(
-        Auction.end_time < now,
+        Auction.end_time <= end_of_month,
         db.query(Bid).filter(
             Bid.auction_id == Auction.id,
             Bid.is_winner == 1
         ).exists()
     ).count()
-    # Tổng phiên đấu giá chưa diễn ra
-    total_upcoming_auctions = db.query(Auction).filter(Auction.start_time > now).count()
-    # Tổng số phiên đấu giá thất bại
+    # tổng số phiên chưa diễn ra có time bắt đầu lớn hơn tháng hiện tại - 1
+    total_upcoming_auctions = db.query(Auction).filter(
+        Auction.start_time > end_of_month
+    ).count()
+    
     total_unsuccessful_auctions = db.query(Auction).filter(
-        Auction.end_time < now,
+        Auction.end_time <= end_of_month,
         ~db.query(Bid).filter(
             Bid.auction_id == Auction.id,
             Bid.is_winner == 1
         ).exists()
     ).count()
-
+    
     return {
-        "total_user": total_user,
-        "total_auction": total_auction,
+        "total_user": total_user_last_month,
+        "total_auction": total_auction_last_month,
         "total_successful_auctions": total_successful_auctions,
         "total_auction_in_progress": total_auction_in_progress,
         "total_unsuccessful_auctions": total_unsuccessful_auctions,
         "total_upcoming_auctions": total_upcoming_auctions
     }
+
+def calculate_percentage_change(current: int, previous: int) -> Optional[float]:
+    """Tính phần trăm thay đổi"""
+    if previous == 0:
+        return 100.0 if current > 0 else 0.0
+    return round(((current - previous) / previous) * 100, 2)
+
+@router.get("/overview", response_model=OverviewStats)
+def get_overview_stats(db: Session = Depends(get_db)):
+    now = datetime.now()
+    
+    # Thống kê hiện tại all timee
+    current_stats = {
+        "total_user": db.query(func.count(User.id)).scalar(),
+        "total_auction": db.query(func.count(Auction.id)).scalar(),
+        "total_auction_in_progress": db.query(Auction).filter(
+            Auction.start_time <= now, Auction.end_time > now
+        ).count(),
+        "total_successful_auctions": db.query(Auction).filter(
+            Auction.end_time < now,
+            db.query(Bid).filter(
+                Bid.auction_id == Auction.id,
+                Bid.is_winner == 1
+            ).exists()
+        ).count(),
+        "total_upcoming_auctions": db.query(Auction).filter(Auction.start_time > now).count(),
+        "total_unsuccessful_auctions": db.query(Auction).filter(
+            Auction.end_time < now,
+            ~db.query(Bid).filter(
+                Bid.auction_id == Auction.id,
+                Bid.is_winner == 1
+            ).exists()
+        ).count()
+    }
+    
+    # Thống kê tháng trước
+    last_month = now.replace(day=1) - timedelta(days=1)
+    last_month = last_month.replace(day=1)
+    previous_stats = get_monthly_stats(db, last_month)
+    
+    # Tính phần trăm thay đổi
+    result = current_stats.copy()
+    result.update({
+        "total_user_change": calculate_percentage_change(
+            current_stats["total_user"], 
+            previous_stats["total_user"]
+        ),
+        "total_auction_change": calculate_percentage_change(
+            current_stats["total_auction"], 
+            previous_stats["total_auction"]
+        ),
+        "total_successful_auctions_change": calculate_percentage_change(
+            current_stats["total_successful_auctions"], 
+            previous_stats["total_successful_auctions"]
+        ),
+        "total_auction_in_progress_change": calculate_percentage_change(
+            current_stats["total_auction_in_progress"], 
+            previous_stats["total_auction_in_progress"]
+        ),
+        "total_unsuccessful_auctions_change": calculate_percentage_change(
+            current_stats["total_unsuccessful_auctions"], 
+            previous_stats["total_unsuccessful_auctions"]
+        ),
+        "total_upcoming_auctions_change": calculate_percentage_change(
+            current_stats["total_upcoming_auctions"], 
+            previous_stats["total_upcoming_auctions"]
+        )
+    })
+    
+    return result
 
     

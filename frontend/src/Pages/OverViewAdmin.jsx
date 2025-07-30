@@ -784,10 +784,7 @@ const OverViewAdmin = () => {
                         {statusText}
                       </td>
                       <td
-                        onClick={(e) => {
-                          e.stopPropagation(); 
-                          openDetailBid(auction.id);
-                        }}
+                        onClick={() => openDetailBid(auction.id)}
                         className="border px-2 py-1 max-w-96 text-blue-500 underline cursor-pointer break-words"
                       >
                         {t("view")}

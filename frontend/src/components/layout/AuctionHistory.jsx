@@ -70,7 +70,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
         (isOpen ? "visible" : "invisible")
       }
       style={{ pointerEvents: isOpen ? "auto" : "none" }}
-      // onClick={handleClose} 
+      // onClick={handleClose}
     >
       <div
         className={
