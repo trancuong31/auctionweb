@@ -100,3 +100,34 @@ body {
   top: 0 !important;
   position: static !important;
 }
+
+
+/* counter number css */
+.animated-counter {
+  display: flex;
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+  font-size: 1.5rem;
+  overflow: hidden;
+  line-height: 1;
+  color: #1f2937;
+  justify-content: center; 
+}
+
+.digit-container {
+  width: 1ch;
+  overflow: hidden;
+  position: relative;
+}
+
+.digit-strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.5s ease-in-out;
+}
+
+.digit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

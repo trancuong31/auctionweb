@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useDebounceCallback } from "../hooks/useDebounceCallback";
 import AnimatedContent from "../components/ui/animatedContent";
 import { useTranslation } from "react-i18next";
+import AnimatedCounter from "../common/AnimatedNumber";
 import {
   faUsers,
   faGavel,
@@ -19,7 +20,7 @@ import {
   faSearch,
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 
 const OverViewAdmin = () => {
@@ -41,6 +42,7 @@ const OverViewAdmin = () => {
   const [auctionObject, setAuctionObject] = useState({});
   const [mode, setMode] = useState("create");
   const { t, i18n } = useTranslation();
+  const formRef = useRef();
   const [userParam, setUserParam] = useState({
     sort_by: "",
     sort_order: "",
@@ -83,14 +85,22 @@ const OverViewAdmin = () => {
       });
       setOverViewData(response.data);
     } catch (error) {
-      toast.error(t("error.error_get_data"));
+      const detail = error?.response?.data?.detail;
+      toast.error(t(detail || "error.error_get_data"));
       console.log(error);
+    }
+  };
+
+  const handleResetForm = () => {
+    if (formRef.current) {
+      formRef.current.resetForm();
     }
   };
 
   const setModeCreate = () => {
     setMode("create");
     setDisplayCreateForm(true);
+    handleResetForm();
   };
 
   const setModeEdit = (auction) => {
@@ -120,8 +130,8 @@ const OverViewAdmin = () => {
         )
       );
     } catch (error) {
-      // toast.error("Error while get User data");
-      toast.error(t("error.get_user"));
+      detail = error?.response?.data?.detail;
+      toast.error(t(detail || "error.get_user"));
       console.log(error);
     } finally {
       // setIsLoadingSearch(false);
@@ -313,8 +323,12 @@ const OverViewAdmin = () => {
         message={confirmConfig.message}
       />
       <CreateAuctionForm
+        ref={formRef}
         isOpen={displayCreateForm}
-        onClickClose={() => {
+        onClickClose={(isReloadData = false) => {
+          if (isReloadData) {
+            getPageAuction();
+          }
           setDisplayCreateForm(false);
         }}
         mode={mode}
@@ -333,8 +347,8 @@ const OverViewAdmin = () => {
             <p className="text-xs sm:text-sm font-semibold">
               {t("total_user")}
             </p>
-            <p className="text-2xl sm:text-2xl font-bold">
-              {overViewData.total_user}
+            <p className="text-xl sm:text-2xl font-bold">
+              <AnimatedCounter value={overViewData.total_user || 0} />
             </p>
             <p className="text-lg sm:text-xl">
               <FontAwesomeIcon icon={faUsers} />
@@ -346,7 +360,7 @@ const OverViewAdmin = () => {
               {t("total_auction")}
             </p>
             <p className="text-xl sm:text-2xl font-bold">
-              {overViewData.total_auction}
+              <AnimatedCounter value={overViewData.total_auction || 0} />
             </p>
             <p className="text-lg sm:text-xl">
               <FontAwesomeIcon icon={faCheck} />
@@ -358,7 +372,9 @@ const OverViewAdmin = () => {
               {t("total_successful_auctions")}
             </p>
             <p className="text-xl sm:text-2xl font-bold">
-              {overViewData.total_successful_auctions}
+              <AnimatedCounter
+                value={overViewData.total_successful_auctions || 0}
+              />
             </p>
             <p className="text-lg sm:text-xl">
               <FontAwesomeIcon icon={faGavel} />
@@ -370,7 +386,9 @@ const OverViewAdmin = () => {
               {t("total_auction_in_progress")}
             </p>
             <p className="text-xl sm:text-2xl font-bold">
-              {overViewData.total_auction_in_progress}
+              <AnimatedCounter
+                value={overViewData.total_auction_in_progress || 0}
+              />
             </p>
             <p className="text-lg sm:text-xl">
               <FontAwesomeIcon icon={faGear} />
@@ -382,7 +400,9 @@ const OverViewAdmin = () => {
               {t("total_upcoming_auctions")}
             </p>
             <p className="text-xl sm:text-2xl font-bold">
-              {overViewData.total_upcoming_auctions}
+              <AnimatedCounter
+                value={overViewData.total_upcoming_auctions || 0}
+              />
             </p>
             <p className="text-lg sm:text-xl">
               <FontAwesomeIcon icon={faClock} />
@@ -394,7 +414,9 @@ const OverViewAdmin = () => {
               {t("total_unsuccessful_auctions")}
             </p>
             <p className="text-xl sm:text-2xl font-bold">
-              {overViewData.total_unsuccessful_auctions}
+              <AnimatedCounter
+                value={overViewData.total_unsuccessful_auctions || 0}
+              />
             </p>
             <p className="text-lg sm:text-xl">
               <FontAwesomeIcon icon={faXmark} />
@@ -762,7 +784,10 @@ const OverViewAdmin = () => {
                         {statusText}
                       </td>
                       <td
-                        onClick={() => openDetailBid(auction.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openDetailBid(auction.id);
+                        }}
                         className="border px-2 py-1 max-w-96 text-blue-500 underline cursor-pointer break-words"
                       >
                         {t("view")}
