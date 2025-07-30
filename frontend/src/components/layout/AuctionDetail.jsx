@@ -2,7 +2,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ModalAuction from "./formAuction";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
-import AnimatedContent from "../ui/animatedContent";
 import {
   faTags,
   faMoneyBill,
@@ -36,7 +35,7 @@ const AuctionDetail = () => {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    i18n.changeLanguage(savedLang);
+      i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   function isTokenValid() {
@@ -200,8 +199,7 @@ const AuctionDetail = () => {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      const detail = error?.response?.data?.detail;
-      toast.error(detail || "Error download file:", error);
+      toast.error("Error download file:", error);
       console.error("Error download file:", error);
     }
   };
@@ -241,10 +239,10 @@ const AuctionDetail = () => {
   };
 
   if (loading) return <div className="loader"></div>;
-  if (!auction) return <p>{t("no_data")}</p>;
+  if (!auction) return <p>{t('no_data')}</p>;
 
   return (
-    <AnimatedContent>
+    <div className="">
       <h1 className="text-2xl font-bold text-left text-black-300 drop-shadow break-words w-1/2">
         {auction.title}
       </h1>
@@ -319,7 +317,7 @@ const AuctionDetail = () => {
             <FontAwesomeIcon icon={faTags} className="mr-4 text-blue-500" />
             {t("deadline")}:{" "}
             <span className="font-semibold">
-              {new Date(auction.end_time).toLocaleString("vi-VN")}
+              {new Date(auction.end_time).toLocaleString('vi-VN')}
             </span>
           </p>
           <p>
@@ -372,15 +370,13 @@ const AuctionDetail = () => {
                 onClick={() => handleDownload(auction.id)}
                 className="text-blue-600 hover:underline font-medium"
               >
-                <p>
-                  {auction.file_exel.split("/").pop().length > 30
-                    ? auction.file_exel.split("/").pop().slice(0, 30) +
-                      "...xlsx"
-                    : auction.file_exel.split("/").pop()}
+                <p>{auction.file_exel.split("/").pop().length > 30
+                ? auction.file_exel.split("/").pop().slice(0, 30) + "...xlsx"
+                : auction.file_exel.split("/").pop()}
                 </p>
               </button>
             ) : (
-              <span className="text-gray-400 italic">{t("no_file")}</span>
+              <span className="text-gray-400 italic">{t('no_file')}</span>
             )}
           </p>
           {(auction.status === 0 || auction.status === 2) &&
@@ -403,9 +399,7 @@ const AuctionDetail = () => {
                   {auction.bids.find((bid) => bid.is_winner).user_name}
                 </span>
               ) : (
-                <span className="text-red-500 font-semibold">
-                  {t("no_winner")}
-                </span>
+                <span className="text-red-500 font-semibold">{t("no_winner")}</span>
               )}
             </p>
           )}
@@ -420,9 +414,7 @@ const AuctionDetail = () => {
             {auction.description}
           </p>
         ) : (
-          <p className="text-gray-400 italic">
-            {t("no_description_available")}
-          </p>
+          <p className="text-gray-400 italic">{t("no_description_available")}</p>
         )}
       </div>
 
@@ -444,7 +436,7 @@ const AuctionDetail = () => {
         auctionId={auction.id}
         onClose={() => setIsOpen(false)}
       />
-    </AnimatedContent>
+    </div>
   );
 };
 
