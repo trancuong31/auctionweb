@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Gavel,
-  X,
-  Clock,
-  User,
-  DollarSign,
-  MapPin,
-  Trophy,
-  FileText,
-} from "lucide-react";
+import { X, Clock, DollarSign, MapPin, Trophy, FileText } from "lucide-react";
 import axiosClient from "../../services/axiosClient";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
