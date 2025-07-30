@@ -10,6 +10,7 @@ import { useDebounceCallback } from "../hooks/useDebounceCallback";
 import AnimatedContent from "../components/ui/animatedContent";
 import { useTranslation } from "react-i18next";
 import AnimatedCounter from "../common/AnimatedNumber";
+import { useNavigate } from "react-router-dom";
 import {
   faUsers,
   faGavel,
@@ -24,6 +25,7 @@ import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 
 const OverViewAdmin = () => {
+  const navigate = useNavigate();
   const [currentIndexPageUser, setCurrentIndexPageUser] = useState(0);
   const [currentIndexPageAuction, setCurrentIndexPageAuction] = useState(0);
   const [currentEditing, setCurrentEditing] = useState(null);
@@ -130,9 +132,10 @@ const OverViewAdmin = () => {
         )
       );
     } catch (error) {
-      detail = error?.response?.data?.detail;
-      toast.error(t(detail || "error.get_user"));
-      console.log(error);
+      const status = error?.response?.status;
+      if (status === 401) {
+        navigate("/login");
+      }
     } finally {
       // setIsLoadingSearch(false);
       setCurrentIndexPageUser(page - 1);
@@ -342,85 +345,205 @@ const OverViewAdmin = () => {
       <AnimatedContent>
         {/* <!-- OVERVIEW --> */}
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
-          <div className="bg-indigo-400 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
-            <p className="text-xs sm:text-sm font-semibold">
-              {t("total_user")}
-            </p>
-            <p className="text-xl sm:text-2xl font-bold">
-              <AnimatedCounter value={overViewData.total_user || 0} />
-            </p>
-            <p className="text-lg sm:text-xl">
-              <FontAwesomeIcon icon={faUsers} />
-            </p>
+        <div className="text-white grid sm:grid-cols-3 gap-6 mb-6">
+          {/* Total Users */}
+          <div className="flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow bg-white">
+            <div className="flex-1 pr-3 text-left">
+              <p className="text-lg text-gray-500 font-medium">
+                {t("total_user")}
+              </p>
+              <p className="text-sm font-semibold mt-1">
+                <AnimatedCounter value={overViewData.total_user || 0} />
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+              <span className="text-lg sm:text-xl flex justify-center">
+                <FontAwesomeIcon icon={faUsers} />
+              </span>
+            </div>
+            <span className="w-full border-t mt-2"></span>
+            <div className="mt-4">
+              <span
+                className={`pt-2 font-semibold ${
+                  overViewData.total_user_change >= 0
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {overViewData.total_user_change >= 0
+                  ? `+${overViewData.total_user_change}%`
+                  : `${overViewData.total_user_change}%`}
+              </span>
+              <span className="text-black">than last week</span>
+            </div>
           </div>
 
-          <div className="bg-yellow-200 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
-            <p className="text-xs sm:text-sm font-semibold">
-              {t("total_auction")}
-            </p>
-            <p className="text-xl sm:text-2xl font-bold">
-              <AnimatedCounter value={overViewData.total_auction || 0} />
-            </p>
-            <p className="text-lg sm:text-xl">
-              <FontAwesomeIcon icon={faCheck} />
-            </p>
+          {/* Total Auctions */}
+          <div className="flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow bg-white">
+            <div className="flex-1 pr-3 text-left">
+              <p className="text-lg text-gray-500 font-medium">
+                {t("total_auction")}
+              </p>
+              <p className="text-xl sm:text-2xl font-bold">
+                <AnimatedCounter value={overViewData.total_auction || 0} />
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+              <span className="text-lg sm:text-xl flex justify-center">
+                <FontAwesomeIcon icon={faCheck} />
+              </span>
+            </div>
+            <span className="w-full border-t mt-2"></span>
+            <div className="mt-4">
+              <span
+                className={`pt-2 font-semibold ${
+                  overViewData.total_auction_change >= 0
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {overViewData.total_auction_change >= 0
+                  ? `+${overViewData.total_auction_change}%`
+                  : `${overViewData.total_auction_change}%`}
+              </span>
+              <span className="text-black">than last week</span>
+            </div>
           </div>
 
-          <div className="bg-green-200 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
-            <p className="text-xs sm:text-sm font-semibold">
-              {t("total_successful_auctions")}
-            </p>
-            <p className="text-xl sm:text-2xl font-bold">
-              <AnimatedCounter
-                value={overViewData.total_successful_auctions || 0}
-              />
-            </p>
-            <p className="text-lg sm:text-xl">
-              <FontAwesomeIcon icon={faGavel} />
-            </p>
+          {/* Total Successful Auctions */}
+          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow bg-white">
+            <div className="flex-1 pr-3 text-left">
+              <p className="text-lg text-gray-500 font-medium">
+                {t("total_successful_auctions")}
+              </p>
+              <p className="text-xl sm:text-2xl font-bold">
+                <AnimatedCounter
+                  value={overViewData.total_successful_auctions || 0}
+                />
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+              <span className="text-lg sm:text-xl flex justify-center">
+                <FontAwesomeIcon icon={faGavel} />
+              </span>
+            </div>
+            <span className="w-full border-t mt-2"></span>
+            <div className="mt-4">
+              <span
+                className={`pt-2 font-semibold ${
+                  overViewData.total_successful_auctions_change >= 0
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {overViewData.total_successful_auctions_change >= 0
+                  ? `+${overViewData.total_successful_auctions_change}%`
+                  : `${overViewData.total_successful_auctions_change}%`}
+              </span>
+              <span className="text-black">than last week</span>
+            </div>
           </div>
 
-          <div className="bg-yellow-100 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
-            <p className="text-xs sm:text-sm font-semibold">
-              {t("total_auction_in_progress")}
-            </p>
-            <p className="text-xl sm:text-2xl font-bold">
-              <AnimatedCounter
-                value={overViewData.total_auction_in_progress || 0}
-              />
-            </p>
-            <p className="text-lg sm:text-xl">
-              <FontAwesomeIcon icon={faGear} />
-            </p>
+          {/* Total Auctions In Progress */}
+          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow bg-white">
+            <div className="flex-1 pr-3 text-left">
+              <p className="text-lg text-gray-500 font-medium">
+                {t("total_auction_in_progress")}
+              </p>
+              <p className="text-xl sm:text-2xl font-bold">
+                <AnimatedCounter
+                  value={overViewData.total_auction_in_progress || 0}
+                />
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+              <span className="text-lg sm:text-xl flex justify-center">
+                <FontAwesomeIcon icon={faGear} />
+              </span>
+            </div>
+            <span className="w-full border-t mt-2"></span>
+            <div className="mt-4">
+              <span
+                className={`pt-2 font-semibold ${
+                  overViewData.total_auction_in_progress_change >= 0
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {overViewData.total_auction_in_progress_change >= 0
+                  ? `+${overViewData.total_auction_in_progress_change}%`
+                  : `${overViewData.total_auction_in_progress_change}%`}
+              </span>
+              <span className="text-black">than last week</span>
+            </div>
           </div>
 
-          <div className="bg-cyan-100 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
-            <p className="text-xs sm:text-sm font-semibold">
-              {t("total_upcoming_auctions")}
-            </p>
-            <p className="text-xl sm:text-2xl font-bold">
-              <AnimatedCounter
-                value={overViewData.total_upcoming_auctions || 0}
-              />
-            </p>
-            <p className="text-lg sm:text-xl">
-              <FontAwesomeIcon icon={faClock} />
-            </p>
+          {/* Total Upcoming Auctions */}
+          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow bg-white">
+            <div className="flex-1 pr-3 text-left">
+              <p className="text-lg text-gray-500 font-medium">
+                {t("total_upcoming_auctions")}
+              </p>
+              <p className="text-xl sm:text-2xl font-bold">
+                <AnimatedCounter
+                  value={overViewData.total_upcoming_auctions || 0}
+                />
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+              <span className="text-lg sm:text-xl flex justify-center">
+                <FontAwesomeIcon icon={faClock} />
+              </span>
+            </div>
+            <span className="w-full border-t mt-2"></span>
+            <div className="mt-4">
+              <span
+                className={`pt-2 font-semibold ${
+                  overViewData.total_upcoming_auctions_change >= 0
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {overViewData.total_upcoming_auctions_change >= 0
+                  ? `+${overViewData.total_upcoming_auctions_change}%`
+                  : `${overViewData.total_upcoming_auctions_change}%`}
+              </span>
+              <span className="text-black">than last week</span>
+            </div>
           </div>
 
-          <div className="bg-red-300 p-3 sm:p-4 rounded shadow text-center aspect-[4/3] flex flex-col justify-between">
-            <p className="text-xs sm:text-sm font-semibold">
-              {t("total_unsuccessful_auctions")}
-            </p>
-            <p className="text-xl sm:text-2xl font-bold">
-              <AnimatedCounter
-                value={overViewData.total_unsuccessful_auctions || 0}
-              />
-            </p>
-            <p className="text-lg sm:text-xl">
-              <FontAwesomeIcon icon={faXmark} />
-            </p>
+          {/* Total Unsuccessful Auctions */}
+          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow bg-white">
+            <div className="flex-1 pr-3 text-left">
+              <p className="text-lg text-gray-500 font-medium">
+                {t("total_unsuccessful_auctions")}
+              </p>
+              <p className="text-xl sm:text-2xl font-bold">
+                <AnimatedCounter
+                  value={overViewData.total_unsuccessful_auctions || 0}
+                />
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+              <span className="text-lg sm:text-xl flex justify-center">
+                <FontAwesomeIcon icon={faXmark} />
+              </span>
+            </div>
+            <span className="w-full border-t mt-2"></span>
+            <div className="mt-4">
+              <span
+                className={`pt-2 font-semibold ${
+                  overViewData.total_unsuccessful_auctions_change >= 0
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {overViewData.total_unsuccessful_auctions_change >= 0
+                  ? `+${overViewData.total_unsuccessful_auctions_change}%`
+                  : `${overViewData.total_unsuccessful_auctions_change}%`}
+              </span>
+              <span className="text-black">than last week</span>
+            </div>
           </div>
         </div>
 
