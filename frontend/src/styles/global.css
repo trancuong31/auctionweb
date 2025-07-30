@@ -107,11 +107,10 @@ body {
   display: flex;
   font-variant-numeric: tabular-nums;
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   overflow: hidden;
   line-height: 1;
   color: #1f2937;
-  justify-content: center; 
 }
 
 .digit-container {

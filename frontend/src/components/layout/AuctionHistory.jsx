@@ -50,7 +50,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className={clsx("p-2 sm:p-4 md:p-8 bg-gray-50")}>
+    <>
       {/* Modal Overlay */}
       <div
         className={clsx(
@@ -273,7 +273,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

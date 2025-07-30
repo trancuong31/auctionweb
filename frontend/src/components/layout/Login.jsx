@@ -7,12 +7,12 @@ import {
   faEye,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-hot-toast";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 function Login() {
   const { login } = useAuth();
@@ -26,7 +26,7 @@ function Login() {
 
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
-    const savedLang = sessionStorage.getItem('lang');
+    const savedLang = sessionStorage.getItem("lang");
     if (savedLang && savedLang !== i18n.language) {
       i18n.changeLanguage(savedLang);
     }
@@ -48,7 +48,7 @@ function Login() {
       const data = await response.json();
       if (response.ok && data.role === "user") {
         login(data, remember);
-        toast.success(t('login_success', 'Login successfully!'), {
+        toast.success(t("login_success", "Login successfully!"), {
           style: {
             border: "1px solid #4ade80",
             padding: "12px 16px",
@@ -66,10 +66,13 @@ function Login() {
           },
         });
         navigate("/");
-      } else if (response.ok && (data.role === "admin" || data.role === "super_admin")) {
+      } else if (
+        response.ok &&
+        (data.role === "admin" || data.role === "super_admin")
+      ) {
         login(data, remember);
         navigate("/admin");
-        toast.success(t('login_success', 'Login successfully!'), {
+        toast.success(t("login_success", "Login successfully!"), {
           style: {
             border: "1px solid #4ade80",
             padding: "12px 16px",
@@ -87,7 +90,9 @@ function Login() {
           },
         });
       } else {
-        toast.error(data.detail || t('login_failed', 'Login failed. Please try again.'));
+        toast.error(
+          data.detail || t("login_failed", "Login failed. Please try again.")
+        );
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -107,7 +112,7 @@ function Login() {
           show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
-        <h1 className="login-title">{t('login', 'Login')}</h1>
+        <h1 className="login-title">{t("login", "Login")}</h1>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <span className="input-icon">
@@ -115,7 +120,7 @@ function Login() {
             </span>
             <input
               type="email"
-              placeholder={t('email', 'Email')}
+              placeholder={t("email", "Email")}
               required
               autoComplete="email"
               value={email}
@@ -128,7 +133,7 @@ function Login() {
             </span>
             <input
               type={showPassword ? "text" : "password"}
-              placeholder={t('password', 'Password')}
+              placeholder={t("password", "Password")}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -142,14 +147,25 @@ function Login() {
               <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
             </span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '8px 0 12px 0' }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              margin: "8px 0 12px 0",
+            }}
+          >
             <select
               value={i18n.language}
-              onChange={e => {
+              onChange={(e) => {
                 i18n.changeLanguage(e.target.value);
-                sessionStorage.setItem('lang', e.target.value);
+                sessionStorage.setItem("lang", e.target.value);
               }}
-              style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #ddd', fontSize: 12 }}
+              style={{
+                padding: "4px 8px",
+                borderRadius: 6,
+                border: "1px solid #ddd",
+                fontSize: 12,
+              }}
             >
               <option value="vi">Tiếng Việt</option>
               <option value="en">English</option>
@@ -163,32 +179,39 @@ function Login() {
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
               />{" "}
-              {t('remember_me', 'Remember me')}
+              {t("remember_me", "Remember me")}
             </label>
             <a
               href="#"
               className="login-link"
               onClick={(e) => {
                 e.preventDefault();
-                toast(t('contact_admin', 'Please contact admin to retrieve password!'), {
-                  style: {
-                    borderRadius: "10px",
-                    background: "#333",
-                    color: "#fff",
-                    textAlign: "center",
-                  },
-                });
+                toast(
+                  t(
+                    "contact_admin",
+                    "Please contact admin to retrieve password!"
+                  ),
+                  {
+                    style: {
+                      borderRadius: "10px",
+                      background: "#333",
+                      color: "#fff",
+                      textAlign: "center",
+                    },
+                  }
+                );
               }}
             >
-              {t('forget_password', 'Forget password')}
+              {t("forget_password", "Forget password")}
             </a>
           </div>
           <button type="submit" className="login-btn">
-            {t('sign_in', 'Sign in')}
+            {t("sign_in", "Sign in")}
           </button>
-          <div className="login-or">{t('or', 'or')}</div>
+          <div className="login-or">{t("or", "or")}</div>
           <div className="login-signup">
-            {t('no_account', "Don't have an account?")} <Link to="/register">{t('sign_up', 'Sign up')}</Link>
+            {t("no_account", "Don't have an account?")}{" "}
+            <Link to="/register">{t("sign_up", "Sign up")}</Link>
           </div>
         </form>
       </div>

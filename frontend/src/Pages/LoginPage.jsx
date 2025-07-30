@@ -1,6 +1,4 @@
-import { Routes, Route } from "react-router-dom";
-import Login from './components/layout/Login';
-import Pattern from './Background'; 
+import Login from "./components/layout/Login";
 
 function App() {
   return (
