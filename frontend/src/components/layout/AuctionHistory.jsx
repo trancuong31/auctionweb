@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Gavel,
-  X,
-  Clock,
-  User,
-  DollarSign,
-  MapPin,
-  Trophy,
-  FileText,
-} from "lucide-react";
+import { X, Clock, DollarSign, MapPin, Trophy, FileText } from "lucide-react";
 import axiosClient from "../../services/axiosClient";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -64,8 +55,14 @@ const AuctionHistory = ({ isOpen, onClose }) => {
   const handleClose = () => onClose();
 
   return (
-    <>
-      {/* Modal Overlay */}
+    <div
+      className={
+        "fixed inset-0 flex items-center justify-center z-50 max-sm:pt-[60px] bg-black bg-opacity-50 " +
+        (isOpen ? "visible" : "invisible")
+      }
+      style={{ pointerEvents: isOpen ? "auto" : "none" }}
+      // onClick={handleClose}
+    >
       <div
         className={
           "mt-[220px] sm:mt-[60px] md:mt-[55px] bg-white rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up " +
@@ -280,7 +277,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

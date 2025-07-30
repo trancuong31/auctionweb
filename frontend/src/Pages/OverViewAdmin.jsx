@@ -93,16 +93,10 @@ const OverViewAdmin = () => {
     }
   };
 
-  const handleResetForm = () => {
-    if (formRef.current) {
-      formRef.current.resetForm();
-    }
-  };
-
   const setModeCreate = () => {
     setMode("create");
     setDisplayCreateForm(true);
-    handleResetForm();
+    setAuctionObject({});
   };
 
   const setModeEdit = (auction) => {
@@ -352,9 +346,9 @@ const OverViewAdmin = () => {
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_user")}
               </p>
-              <p className="text-sm font-semibold mt-1">
+              <div className="text-sm font-semibold mt-1">
                 <AnimatedCounter value={overViewData.total_user || 0} />
-              </p>
+              </div>
             </div>
             <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
               <span className="text-lg sm:text-xl flex justify-center">
@@ -374,7 +368,7 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_user_change}%`
                   : `${overViewData.total_user_change}%`}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-black"> than last month</span>
             </div>
           </div>
 
@@ -384,9 +378,9 @@ const OverViewAdmin = () => {
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_auction")}
               </p>
-              <p className="text-xl sm:text-2xl font-bold">
+              <div className="text-xl sm:text-2xl font-bold">
                 <AnimatedCounter value={overViewData.total_auction || 0} />
-              </p>
+              </div>
             </div>
             <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
               <span className="text-lg sm:text-xl flex justify-center">
@@ -406,7 +400,7 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_auction_change}%`
                   : `${overViewData.total_auction_change}%`}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-black"> than last month</span>
             </div>
           </div>
 
@@ -416,11 +410,11 @@ const OverViewAdmin = () => {
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_successful_auctions")}
               </p>
-              <p className="text-xl sm:text-2xl font-bold">
+              <div className="text-xl sm:text-2xl font-bold">
                 <AnimatedCounter
                   value={overViewData.total_successful_auctions || 0}
                 />
-              </p>
+              </div>
             </div>
             <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
               <span className="text-lg sm:text-xl flex justify-center">
@@ -440,7 +434,7 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_successful_auctions_change}%`
                   : `${overViewData.total_successful_auctions_change}%`}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-black"> than last month</span>
             </div>
           </div>
 
@@ -450,11 +444,11 @@ const OverViewAdmin = () => {
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_auction_in_progress")}
               </p>
-              <p className="text-xl sm:text-2xl font-bold">
+              <div className="text-xl sm:text-2xl font-bold">
                 <AnimatedCounter
                   value={overViewData.total_auction_in_progress || 0}
                 />
-              </p>
+              </div>
             </div>
             <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
               <span className="text-lg sm:text-xl flex justify-center">
@@ -474,7 +468,7 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_auction_in_progress_change}%`
                   : `${overViewData.total_auction_in_progress_change}%`}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-black"> than last month</span>
             </div>
           </div>
 
@@ -484,11 +478,11 @@ const OverViewAdmin = () => {
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_upcoming_auctions")}
               </p>
-              <p className="text-xl sm:text-2xl font-bold">
+              <div className="text-xl sm:text-2xl font-bold">
                 <AnimatedCounter
                   value={overViewData.total_upcoming_auctions || 0}
                 />
-              </p>
+              </div>
             </div>
             <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
               <span className="text-lg sm:text-xl flex justify-center">
@@ -508,7 +502,7 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_upcoming_auctions_change}%`
                   : `${overViewData.total_upcoming_auctions_change}%`}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-black"> than last month</span>
             </div>
           </div>
 
@@ -518,11 +512,11 @@ const OverViewAdmin = () => {
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_unsuccessful_auctions")}
               </p>
-              <p className="text-xl sm:text-2xl font-bold">
+              <div className="text-xl sm:text-2xl font-bold">
                 <AnimatedCounter
                   value={overViewData.total_unsuccessful_auctions || 0}
                 />
-              </p>
+              </div>
             </div>
             <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
               <span className="text-lg sm:text-xl flex justify-center">
@@ -542,7 +536,7 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_unsuccessful_auctions_change}%`
                   : `${overViewData.total_unsuccessful_auctions_change}%`}
               </span>
-              <span className="text-black">than last week</span>
+              <span className="text-black"> than last month</span>
             </div>
           </div>
         </div>
@@ -748,7 +742,7 @@ const OverViewAdmin = () => {
               <h2 className="text-lg font-bold"> {t("manager_auctions")}</h2>
               <button
                 onClick={() => setModeCreate()}
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-3 py-2 rounded max-sm:w-full"
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold text-base px-4 py-3 rounded-lg max-sm:w-full"
               >
                 {t("create_auction_btn")}
               </button>
@@ -907,7 +901,10 @@ const OverViewAdmin = () => {
                         {statusText}
                       </td>
                       <td
-                        onClick={() => openDetailBid(auction.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openDetailBid(auction.id);
+                        }}
                         className="border px-2 py-1 max-w-96 text-blue-500 underline cursor-pointer break-words"
                       >
                         {t("view")}
