@@ -1,26 +1,50 @@
-version: "3"
 services:
   backend:
     build:
       context: ./backend
-    container_name: backend
+      dockerfile: Dockerfile
+    container_name: auction-backend
     ports:
       - "8000:8000"
     networks:
       - appnet
     volumes:
-      - ./backend/uploads:/app/uploads # Giữ file upload ra ngoài container
+      - ./backend/uploads:/app/uploads
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - DB_HOST=host.docker.internal
+      - DB_USER=root
+      - DB_PASSWORD=123
+      - DB_NAME=auction
+      - DB_PORT=3306
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   frontend:
     build:
       context: ./frontend
-    container_name: frontend
+      dockerfile: Dockerfile
+    container_name: auction-frontend
     ports:
-      - "8080:80" # Map cổng 8080 trên host đến 80 trong container
-    depends_on:
-      - backend
+      - "8080:80"
+    # depends_on:
+    #   backend:
+    #     condition: service_healthy
     networks:
       - appnet
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 networks:
   appnet:

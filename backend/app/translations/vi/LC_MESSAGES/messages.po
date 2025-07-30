@@ -158,7 +158,10 @@ msgid "Admin cannot modify Super Admin information"
 msgstr "Admin không có quyền chỉnh sửa thông tin của supper Admin và Admin"
 
 msgid "Admin cannot delete Super Admin information"
-msgstr "Admin không có quyền xóa tài khoản supper Admin và Admin"
+msgstr "Admin không có quyền xóa tài khoản Supper Admin và Admin"
 
 msgid "Super Admin cannot delete Super Admin information"
 msgstr "Super Admin không thể xóa được tài khoản Super Admin"
+
+msgid "Admin cannot modify Super Admin, Admin information"
+msgstr "Admin không có quyền thay đổi thông tin của tài khoản Super Admin và Admin"
