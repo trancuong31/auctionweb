@@ -267,5 +267,6 @@
   "user_name": "사용자 이름",
   "winning_bids": " 낙찰 횟수",
   "highest_value": "최고가",
-  "success_rate": "성공률"
+  "success_rate": "성공률",
+  "than_last_month": "that last month"
 }
