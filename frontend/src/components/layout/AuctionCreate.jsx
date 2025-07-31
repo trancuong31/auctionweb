@@ -11,8 +11,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 
-const CreateAuctionForm = forwardRef((props, ref) => {
-  const { isOpen, onClickClose, mode = "create", auction } = props;
+const CreateAuctionForm = ({
+  isOpen,
+  onClickClose,
+  mode = "create",
+  auction,
+}) => {
   const [isDragging, setIsDragging] = useState(false);
   const { t, i18n } = useTranslation();
   const auctionSchema = z.object({
@@ -661,6 +665,6 @@ const CreateAuctionForm = forwardRef((props, ref) => {
       </div>
     </div>
   );
-});
+};
 
 export default CreateAuctionForm;
