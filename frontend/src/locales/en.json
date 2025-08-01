@@ -289,5 +289,7 @@
   "winning_bids": "Winning Bids",
   "highest_value": "Highest Value",
   "success_rate": "Success Rate",
-  "than_last_month": "that last month"
+  "than_last_month": "that last month",
+  "phone_require": "Phone number requires 10 characters",
+  "phone_regex": "Phone number requires number"
 }

@@ -17,6 +17,7 @@ router = APIRouter()
 class UserOut(BaseModel):
     id: str
     username: Optional[str]
+    phone_number: Optional[str]
     email: Optional[str]
     role: str
     created_at: datetime
@@ -32,6 +33,7 @@ class UserStatusUpdate(BaseModel):
 
 class UserUpdate(BaseModel):
     username: Optional[str]
+    phone_number: Optional[str]
 
 class UsersListOut(BaseModel):
     users: list[UserOut]
@@ -98,6 +100,7 @@ def get_users(
             "id": user_obj.id,
             "username": user_obj.username,
             "email": user_obj.email,
+            "phone_number": user_obj.phone_number,
             "role": user_obj.role.value,
             "created_at": user_obj.created_at,
             "status": user_obj.status,
@@ -145,11 +148,16 @@ def update_user(
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail=_("User not found", request))
+        
     if current_user.role == UserRole.ADMIN and (user.role == UserRole.SUPER_ADMIN or user.role == UserRole.ADMIN):
         raise HTTPException(status_code=403, detail=_("Admin cannot modify Super Admin information", request))
     
+    if user.phone_number.length < 10 or user.phone_number.length > 10:
+        raise HTTPException(status_code=400, detail=_("Phone number must be 10 digits", request))
     if data.username is not None:
         user.username = data.username
+    if data.phone_number is not None:
+        user.phone_number = data.phone_number
     db.commit()
     return {"message": _("User updated successfully.", request)}
 

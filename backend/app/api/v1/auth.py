@@ -31,6 +31,7 @@ class RegisterRequest(BaseModel):
     email: str
     username: str
     password: str
+    phone_number: str
     role: UserRole = UserRole.USER  # Mặc định role là user
     status: int = 1 #mặc định là active
 
@@ -78,6 +79,7 @@ def register(request: Request, register_data: RegisterRequest, db: Session = Dep
     user = User(
         email=register_data.email,
         username = register_data.username,
+        phone_number=register_data.phone_number,
         created_at=datetime.now(),
         password=register_data.password,
         role=register_data.role.value
@@ -94,7 +96,8 @@ def register(request: Request, register_data: RegisterRequest, db: Session = Dep
         "token_type": "bearer",
         "role": UserRole(user.role).name.lower(),
         "username": user.username,
-        "email": user.email
+        "email": user.email,
+        "phone_number": user.phone_number
     }
 
 @router.post("/refresh-token")

@@ -7,6 +7,7 @@ import {
   faUser,
   faLock,
   faEye,
+  faPhone,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, Link } from "react-router-dom";
@@ -35,6 +36,14 @@ function Register() {
         /^[a-zA-Z]+$/,
         t('username_regex')
       ),
+    phone_number: z
+      .string()
+      .min(10, t('phone_require'))
+      .max(10, t('phone_require'))
+      .regex(
+        /^[0-9+\-\s()]+$/,
+        t('phone_regex', 'Invalid phone number format')
+      ),
     password: z
       .string()
       .min(8, t('password_min'))
@@ -54,6 +63,7 @@ function Register() {
     defaultValues: {
       username: "",
       email: "",
+      phone: "",
       password: "",
     },
   });
@@ -90,7 +100,8 @@ function Register() {
         toast.error(data.detail || t('register_failed', 'Register failed!'));
       }
     } catch (error) {
-      console.error(error.detail);
+      console.error(error.detail || error.message || error);
+      toast.error(t('register_failed', 'Register failed!'));
     }
   };
 
@@ -133,6 +144,22 @@ function Register() {
             {errors.username && (
               <p className="text-red-500 text-[8px] absolute left-0 ml-1">
                 {errors.username.message}
+              </p>
+            )}
+          </div>
+          <div className="input-group">
+            <span className="input-icon">
+              <FontAwesomeIcon icon={faPhone} />
+            </span>
+            <input
+              {...register("phone_number")}
+              type="tel"
+              placeholder={t('phone', 'Phone Number*')}
+              autoComplete="tel"
+            />
+            {errors.phone_number && (
+              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+                {errors.phone_number.message}
               </p>
             )}
           </div>

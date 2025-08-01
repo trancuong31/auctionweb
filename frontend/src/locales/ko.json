@@ -268,5 +268,7 @@
   "winning_bids": " 낙찰 횟수",
   "highest_value": "최고가",
   "success_rate": "성공률",
-  "than_last_month": "that last month"
+  "than_last_month": "그 지난달",
+  "phone_require": "전화번호는 10자 이상이어야 합니다",
+  "phone_regex": "숫자를 입력해야 합니다"
 }

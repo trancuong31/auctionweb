@@ -632,6 +632,7 @@ const OverViewAdmin = () => {
                   <th className="border px-2 py-1">#</th>
                   <th className="border px-2 py-1">{t("name")}</th>
                   <th className="border px-2 py-1">{t("email")}</th>
+                  <th className="border px-2 py-1">{t("contact_phone_label").split(":")}</th>
                   <th className="border px-2 py-1">{t("created_at")}</th>
                   <th className="border px-2 py-1">{t("role")}</th>
                   <th className="border px-2 py-1">{t("bid_count")}</th>
@@ -660,6 +661,7 @@ const OverViewAdmin = () => {
                       )}
                     </td>
                     <td className="border px-2 py-1">{user.email}</td>
+                    <td className="border px-2 py-1">{user.phone_number?user.phone_number: "N/A"}</td>
                     <td className="border px-2 py-1">
                       {dayjs(user.created_at).format("MM/DD/YYYY HH:mm")}
                     </td>
@@ -895,7 +897,7 @@ const OverViewAdmin = () => {
                         {auction.starting_price}
                       </td>
                       <td className="border px-2 py-1 max-w-96 break-words">
-                        {auction.highest_amount || "null"}
+                        {auction.highest_amount || "N/A"}
                       </td>
                       <td className="border px-2 py-1 max-w-96 break-words">
                         {statusText}

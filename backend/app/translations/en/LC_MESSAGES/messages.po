@@ -168,3 +168,6 @@ msgstr "Super Admin cannot delete Super Admin"
 
 msgid "Admin cannot modify Super Admin, Admin information"
 msgstr "Admin cannot modify Super Admin, Admin information"
+
+msgid "Phone number must be 10 digits"
+msgstr "Phone number must be 10 digits"
