@@ -9,6 +9,7 @@ class User(Base):
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     email = Column(String(255), unique=True, nullable=False)
     username = Column(String(50), nullable=False)
+    phone_number = Column(String(10), nullable=False)
     password = Column(String(255), nullable=False)
     role = Column(Enum(UserRole), nullable=False, default=UserRole.USER)
     created_at = Column(DateTime, nullable=False)

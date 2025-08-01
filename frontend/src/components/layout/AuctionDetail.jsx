@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ModalAuction from "./formAuction";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
+import AnimatedContent from "../ui/animatedContent";
 import {
   faTags,
   faMoneyBill,
@@ -35,7 +36,7 @@ const AuctionDetail = () => {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-      i18n.changeLanguage(savedLang);
+    i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   function isTokenValid() {
@@ -199,7 +200,8 @@ const AuctionDetail = () => {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      toast.error("Error download file:", error);
+      const detail = error?.response?.data?.detail;
+      toast.error(detail || "Error download file:", error);
       console.error("Error download file:", error);
     }
   };
@@ -239,195 +241,10 @@ const AuctionDetail = () => {
   };
 
   if (loading) return <div className="loader"></div>;
-  if (!auction) return <p>{t('no_data')}</p>;
+  if (!auction) return <p>{t("no_data")}</p>;
 
   return (
-    <div className="">
-      <h1 className="text-2xl font-bold text-left text-black-300 drop-shadow break-words w-1/2">
-        {auction.title}
-      </h1>
-
-      <div className="flex flex-col lg:flex-row items-start gap-10">
-        {/* Slider Image */}
-        <div className="flex-1 overflow-hidden relative rounded-lg shadow-lg border border-gray-300">
-          {/* Prev Button */}
-          <button
-            onClick={clickPreButton}
-            className="absolute left-0 top-1/2 -translate-y-1/2 px-4 py-2 text-white text-3xl rounded-r hover:bg-black/70 z-10"
-          >
-            &#10094;
-          </button>
-          {/* Next Button */}
-          <button
-            onClick={clickNextButton}
-            className="absolute right-0 top-1/2 -translate-y-1/2 px-4 py-2  text-white text-3xl rounded-l hover:bg-black/70 z-10"
-          >
-            &#10095;
-          </button>
-
-          <div
-            ref={sliderRef}
-            className="flex transition-transform duration-700 ease-in-out"
-          >
-            {auction.image_url.length > 1 ? (
-              clonedImages.map((imageUrl, index) => (
-                <img
-                  key={`${imageUrl}-${index}`}
-                  src={`${import.meta.env.VITE_BASE_URL}${imageUrl}`}
-                  alt={auction.title}
-                  className="min-w-full h-[400px] object-cover"
-                />
-              ))
-            ) : auction.image_url.length > 0 ? (
-              <img
-                src={`${import.meta.env.VITE_BASE_URL}${auction.image_url[0]}`}
-                alt={auction.title}
-                className="min-w-full h-[400px] object-cover"
-              />
-            ) : (
-              <img
-                src={imagedefault}
-                alt="default"
-                className="min-w-full h-[400px] object-cover"
-              />
-            )}
-          </div>
-
-          {/* Indicator dots nằm absolute bên trong ảnh */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-            {auction.image_url.length > 0 &&
-              auction.image_url.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleSelectImg(index + 1)}
-                  className={clsx(
-                    "w-4 h-4 rounded-full",
-                    getCurrentDotIndex() === index
-                      ? "bg-blue-700"
-                      : "bg-gray-300 hover:bg-blue-500"
-                  )}
-                />
-              ))}
-          </div>
-        </div>
-
-        {/* Auction Info */}
-        <div className="flex-1 text-xl font-medium space-y-6 text-gray-800">
-          <p>
-            <FontAwesomeIcon icon={faTags} className="mr-4 text-blue-500" />
-            {t("deadline")}:{" "}
-            <span className="font-semibold">
-              {new Date(auction.end_time).toLocaleString('vi-VN')}
-            </span>
-          </p>
-          <p>
-            <FontAwesomeIcon
-              icon={faMoneyBill}
-              className="mr-4 text-green-500"
-            />
-            {t("starting_price")}:{" "}
-            <span className="font-semibold text-green-700">
-              {auction.starting_price?.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
-            </span>
-          </p>
-          <p>
-            <FontAwesomeIcon
-              icon={faLayerGroup}
-              className="mr-4 text-yellow-500"
-            />
-            {t("step_price")}:{" "}
-            <span className="font-semibold text-yellow-700">
-              {auction.step_price?.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
-            </span>
-          </p>
-          <p>
-            <FontAwesomeIcon
-              icon={faSignal5}
-              className="mr-4 text-purple-500"
-            />
-            {t("status")}:{" "}
-            <span className="font-semibold">
-              {auction.status === 0
-                ? "Ongoing"
-                : auction.status === 1
-                ? "Upcoming"
-                : auction.status === 2
-                ? "Ended"
-                : auction.status}
-            </span>
-          </p>
-          <p>
-            <FontAwesomeIcon icon={faFileText} className="mr-4 text-cyan-500" />
-            {t("attached_file")}:{" "}
-            {auction.file_exel ? (
-              <button
-                onClick={() => handleDownload(auction.id)}
-                className="text-blue-600 hover:underline font-medium"
-              >
-                <p>{auction.file_exel.split("/").pop().length > 30
-                ? auction.file_exel.split("/").pop().slice(0, 30) + "...xlsx"
-                : auction.file_exel.split("/").pop()}
-                </p>
-              </button>
-            ) : (
-              <span className="text-gray-400 italic">{t('no_file')}</span>
-            )}
-          </p>
-          {(auction.status === 0 || auction.status === 2) &&
-            auction.count_users != null && (
-              <p>
-                <FontAwesomeIcon
-                  icon={faUsers}
-                  className="mr-4 text-black-500"
-                />
-                {t("number_of_bids")}: {auction.count_users}
-              </p>
-            )}
-          {auction.status === 2 && (
-            <p>
-              <FontAwesomeIcon icon={faUser} className="mr-4 text-black-500" />
-              Winner:{" "}
-              {Array.isArray(auction.bids) &&
-              auction.bids.find((bid) => bid.is_winner) ? (
-                <span className="font-semibold text-green-700">
-                  {auction.bids.find((bid) => bid.is_winner).user_name}
-                </span>
-              ) : (
-                <span className="text-red-500 font-semibold">{t("no_winner")}</span>
-              )}
-            </p>
-          )}
-        </div>
-      </div>
-      <div className="w-full max-h-[300px] overflow-y-auto p-6 mt-12 bg-gray-100 rounded-lg text-base leading-relaxed shadow-inner text-gray-700">
-        {auction.description ? (
-          <p className="whitespace-pre-wrap break-words">
-            <span className="font-semibold text-gray-800">
-              {t("description")}:
-            </span>{" "}
-            {auction.description}
-          </p>
-        ) : (
-          <p className="text-gray-400 italic">{t("no_description_available")}</p>
-        )}
-      </div>
-
-      {/* Nút đấu giá */}
-      <div className="flex justify-center mt-12">
-        <button
-          onClick={openAuctionForm}
-          className="uppercase px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out "
-        >
-          {t("auction")}
-        </button>
-      </div>
-
+    <>
       {/* Modal đấu giá */}
       <ModalAuction
         isOpen={isOpen}
@@ -436,7 +253,207 @@ const AuctionDetail = () => {
         auctionId={auction.id}
         onClose={() => setIsOpen(false)}
       />
-    </div>
+      <AnimatedContent>
+        <h1 className="text-2xl font-bold text-left text-black-300 drop-shadow break-words w-1/2">
+          {auction.title}
+        </h1>
+
+        <div className="flex flex-col lg:flex-row items-start gap-10">
+          {/* Slider Image */}
+          <div className="flex-1 overflow-hidden relative rounded-lg shadow-lg border border-gray-300">
+            {/* Prev Button */}
+            <button
+              onClick={clickPreButton}
+              className="absolute left-0 top-1/2 -translate-y-1/2 px-4 py-2 text-white text-3xl rounded-r hover:bg-black/70 z-10"
+            >
+              &#10094;
+            </button>
+            {/* Next Button */}
+            <button
+              onClick={clickNextButton}
+              className="absolute right-0 top-1/2 -translate-y-1/2 px-4 py-2  text-white text-3xl rounded-l hover:bg-black/70 z-10"
+            >
+              &#10095;
+            </button>
+
+            <div
+              ref={sliderRef}
+              className="flex transition-transform duration-700 ease-in-out"
+            >
+              {auction.image_url.length > 1 ? (
+                clonedImages.map((imageUrl, index) => (
+                  <img
+                    key={`${imageUrl}-${index}`}
+                    src={`${import.meta.env.VITE_BASE_URL}${imageUrl}`}
+                    alt={auction.title}
+                    className="min-w-full h-[400px] object-cover"
+                  />
+                ))
+              ) : auction.image_url.length > 0 ? (
+                <img
+                  src={`${import.meta.env.VITE_BASE_URL}${
+                    auction.image_url[0]
+                  }`}
+                  alt={auction.title}
+                  className="min-w-full h-[400px] object-cover"
+                />
+              ) : (
+                <img
+                  src={imagedefault}
+                  alt="default"
+                  className="min-w-full h-[400px] object-cover"
+                />
+              )}
+            </div>
+
+            {/* Indicator dots nằm absolute bên trong ảnh */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+              {auction.image_url.length > 0 &&
+                auction.image_url.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSelectImg(index + 1)}
+                    className={clsx(
+                      "w-4 h-4 rounded-full",
+                      getCurrentDotIndex() === index
+                        ? "bg-blue-700"
+                        : "bg-gray-300 hover:bg-blue-500"
+                    )}
+                  />
+                ))}
+            </div>
+          </div>
+
+          {/* Auction Info */}
+          <div className="flex-1 text-xl font-medium space-y-6 text-gray-800">
+            <p>
+              <FontAwesomeIcon icon={faTags} className="mr-4 text-blue-500" />
+              {t("deadline")}:{" "}
+              <span className="font-semibold">
+                {new Date(auction.end_time).toLocaleString("vi-VN")}
+              </span>
+            </p>
+            <p>
+              <FontAwesomeIcon
+                icon={faMoneyBill}
+                className="mr-4 text-green-500"
+              />
+              {t("starting_price")}:{" "}
+              <span className="font-semibold text-green-700">
+                {auction.starting_price?.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                })}
+              </span>
+            </p>
+            <p>
+              <FontAwesomeIcon
+                icon={faLayerGroup}
+                className="mr-4 text-yellow-500"
+              />
+              {t("step_price")}:{" "}
+              <span className="font-semibold text-yellow-700">
+                {auction.step_price?.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                })}
+              </span>
+            </p>
+            <p>
+              <FontAwesomeIcon
+                icon={faSignal5}
+                className="mr-4 text-purple-500"
+              />
+              {t("status")}:{" "}
+              <span className="font-semibold">
+                {auction.status === 0
+                  ? "Ongoing"
+                  : auction.status === 1
+                  ? "Upcoming"
+                  : auction.status === 2
+                  ? "Ended"
+                  : auction.status}
+              </span>
+            </p>
+            <p>
+              <FontAwesomeIcon
+                icon={faFileText}
+                className="mr-4 text-cyan-500"
+              />
+              {t("attached_file")}:{" "}
+              {auction.file_exel ? (
+                <button
+                  onClick={() => handleDownload(auction.id)}
+                  className="text-blue-600 hover:underline font-medium"
+                >
+                  <p>
+                    {auction.file_exel.split("/").pop().length > 30
+                      ? auction.file_exel.split("/").pop().slice(0, 30) +
+                        "...xlsx"
+                      : auction.file_exel.split("/").pop()}
+                  </p>
+                </button>
+              ) : (
+                <span className="text-gray-400 italic">{t("no_file")}</span>
+              )}
+            </p>
+            {(auction.status === 0 || auction.status === 2) &&
+              auction.count_users != null && (
+                <p>
+                  <FontAwesomeIcon
+                    icon={faUsers}
+                    className="mr-4 text-black-500"
+                  />
+                  {t("number_of_bids")}: {auction.count_users}
+                </p>
+              )}
+            {auction.status === 2 && (
+              <p>
+                <FontAwesomeIcon
+                  icon={faUser}
+                  className="mr-4 text-black-500"
+                />
+                Winner:{" "}
+                {Array.isArray(auction.bids) &&
+                auction.bids.find((bid) => bid.is_winner) ? (
+                  <span className="font-semibold text-green-700">
+                    {auction.bids.find((bid) => bid.is_winner).user_name}
+                  </span>
+                ) : (
+                  <span className="text-red-500 font-semibold">
+                    {t("no_winner")}
+                  </span>
+                )}
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="w-full max-h-[300px] overflow-y-auto p-6 mt-12 bg-gray-100 rounded-lg text-base leading-relaxed shadow-inner text-gray-700">
+          {auction.description ? (
+            <p className="whitespace-pre-wrap break-words">
+              <span className="font-semibold text-gray-800">
+                {t("description")}:
+              </span>{" "}
+              {auction.description}
+            </p>
+          ) : (
+            <p className="text-gray-400 italic">
+              {t("no_description_available")}
+            </p>
+          )}
+        </div>
+
+        {/* Nút đấu giá */}
+        <div className="flex justify-center mt-12">
+          <button
+            onClick={openAuctionForm}
+            className="uppercase px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out "
+          >
+            {t("auction")}
+          </button>
+        </div>
+      </AnimatedContent>
+    </>
   );
 };
 
