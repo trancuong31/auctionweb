@@ -18,6 +18,9 @@ const CreateAuctionForm = ({
   auction,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [inputKey, setInputKey] = useState(false);
+  const MAX_FILE_SIZE =
+    Number(import.meta.env.VITE_MAX_FILE_SIZE) || 10 * 1024 * 1024;
   const { t, i18n } = useTranslation();
   const auctionSchema = z.object({
     title: z
@@ -35,7 +38,18 @@ const CreateAuctionForm = ({
     image_url: z
       .array(z.union([z.instanceof(File), z.string()]))
       .min(1, t("validate_auction.image_url_min")),
-    file_exel: z.any().optional(),
+    file_exel: z
+      .any()
+      .optional()
+      .refine(
+        (file) => {
+          if (!file || !(file instanceof File)) return true;
+          return file.size <= MAX_FILE_SIZE;
+        },
+        {
+          message: t("validate_auction.file_max_size"),
+        }
+      ),
     end_time: z.string().min(1, t("validate_auction.end_time_required")),
     start_time: z.any(),
   });
@@ -92,6 +106,7 @@ const CreateAuctionForm = ({
         file_exel: null,
         image_url: auction.image_url || [],
       });
+      setInputKey((prev) => !prev);
     }
   }, [mode, auction, reset]);
 
@@ -502,9 +517,11 @@ const CreateAuctionForm = ({
                       readOnly
                       value={fileName}
                       className="w-full p-2 rounded shadow bg-white text-gray-700 cursor-pointer"
-                      onClick={() =>
-                        document.getElementById("filePicker")?.click()
-                      }
+                      onClick={() => {
+                        document.getElementById("filePicker")?.click();
+                        console.log(value);
+                        console.log(watchedFile);
+                      }}
                     />
 
                     {/* Input file ẩn */}
@@ -514,6 +531,7 @@ const CreateAuctionForm = ({
                       type="file"
                       accept=".xlsx,.xls"
                       className="hidden"
+                      key={inputKey}
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         onChange(file || null);

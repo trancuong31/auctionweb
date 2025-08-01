@@ -262,7 +262,8 @@
     "step_price_min": "Price step must be ≥ 1$",
     "image_url_min": "Must select at least one file",
     "file_exel_instance": "Must select Excel file",
-    "end_time_required": "Time is required"
+    "end_time_required": "Time is required",
+    "file_max_size": "File size must not exceed 10MB"
   },
   "validate_bid": {
     "address_required": "Address is required",

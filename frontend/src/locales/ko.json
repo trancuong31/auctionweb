@@ -244,7 +244,8 @@
     "step_price_min": "가격 단위는 1달러 이상이어야 합니다",
     "image_url_min": "하나의 이상 파일을 선택해야 합니다",
     "file_exel_instance": "엑셀 파일을 선택해야 합니다",
-    "end_time_required": "시간이 필요합니다"
+    "end_time_required": "시간이 필요합니다",
+    "file_max_size": "파일 크기는 10MB를 초과할 수 없습니다"
   },
   "validate_bid": {
     "address_required": "주소는 필수 항목입니다",
