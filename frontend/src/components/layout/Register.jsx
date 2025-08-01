@@ -15,7 +15,7 @@ import { toast } from "react-hot-toast";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,32 +26,31 @@ function Register() {
   const { t, i18n } = useTranslation();
   const schema = z.object({
     email: z
-      .string()
-      .max(100, t('email_max')),
+      .string({ required_error: t("email_required") })
+      .email(t("email_invalid"))
+      .max(100, t("email_max")),
     username: z
       .string()
-      .min(3, t('username_min'))
-      .max(50, t('username_max'))
-      .regex(
-        /^[a-zA-Z]+$/,
-        t('username_regex')
-      ),
+      .min(3, t("username_min"))
+      .max(50, t("username_max"))
+      .regex(/^[\p{L}\s]+$/u, t("username_regex")),
     phone_number: z
       .string()
-      .min(10, t('phone_require'))
-      .max(10, t('phone_require'))
+      .min(10, t("phone_require"))
+      .max(10, t("phone_require"))
       .regex(
         /^[0-9+\-\s()]+$/,
-        t('phone_regex', 'Invalid phone number format')
+        t("phone_regex", "Invalid phone number format")
       ),
     password: z
       .string()
-      .min(8, t('password_min'))
-      .max(30, t('password_max'))
+      .min(8, t("password_min"))
+      .max(30, t("password_max"))
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-        t('password_regex')
+        t("password_regex")
       ),
+    passwordConfirm: z.string().min(8, t("password_min")),
   });
   const {
     handleSubmit,
@@ -75,7 +74,7 @@ function Register() {
 
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
-    const savedLang = sessionStorage.getItem('lang');
+    const savedLang = sessionStorage.getItem("lang");
     if (savedLang && savedLang !== i18n.language) {
       i18n.changeLanguage(savedLang);
     }
@@ -83,7 +82,7 @@ function Register() {
 
   const submitForm = async (formData) => {
     if (formData.password !== confirm) {
-      toast.error(t('password_not_match', 'Password does not match'));
+      toast.error(t("password_not_match", "Password does not match"));
       return;
     }
     try {
@@ -94,14 +93,14 @@ function Register() {
       });
       const data = await response.json();
       if (response.ok) {
-        toast.success(t('register_success', 'Register successful!'));
+        toast.success(t("register_success", "Register successful!"));
         navigate("/login");
       } else {
-        toast.error(data.detail || t('register_failed', 'Register failed!'));
+        toast.error(data.detail || t("register_failed", "Register failed!"));
       }
     } catch (error) {
       console.error(error.detail || error.message || error);
-      toast.error(t('register_failed', 'Register failed!'));
+      toast.error(t("register_failed", "Register failed!"));
     }
   };
 
@@ -113,7 +112,7 @@ function Register() {
           show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
-        <h1 className="login-title">{t('register', 'Register')}</h1>
+        <h1 className="login-title">{t("register", "Register")}</h1>
         <form onSubmit={handleSubmit(submitForm)}>
           <div className="input-group">
             <span className="input-icon">
@@ -122,7 +121,7 @@ function Register() {
             <input
               {...register("email")}
               type="email"
-              placeholder={t('email', 'Email*')}
+              placeholder={t("email", "Email*")}
               autoComplete="email"
             />
             {errors.email && (
@@ -138,7 +137,7 @@ function Register() {
             <input
               {...register("username")}
               type="text"
-              placeholder={t('username', 'Username*')}
+              placeholder={t("username", "Username*")}
               autoComplete="username"
             />
             {errors.username && (
@@ -154,7 +153,7 @@ function Register() {
             <input
               {...register("phone_number")}
               type="tel"
-              placeholder={t('phone', 'Phone Number*')}
+              placeholder={t("phone", "Phone Number*")}
               autoComplete="tel"
             />
             {errors.phone_number && (
@@ -170,7 +169,7 @@ function Register() {
             <input
               {...register("password")}
               type={showPassword ? "text" : "password"}
-              placeholder={t('password', 'Password*')}
+              placeholder={t("password", "Password*")}
               autoComplete="new-password"
             />
             {errors.password && (
@@ -191,13 +190,18 @@ function Register() {
               <FontAwesomeIcon icon={faLock} />
             </span>
             <input
+              {...register("passwordConfirm")}
               type="password"
-              placeholder={t('confirm_password', 'Confirm Password*')}
-              required
+              placeholder={t("confirm_password", "Confirm Password*")}
               autoComplete="new-password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
             />
+            {errors.password && (
+              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+                {errors.password.message}
+              </p>
+            )}
             {/* <span
               className="input-icon right"
               style={{ cursor: "pointer" }}
@@ -207,11 +211,12 @@ function Register() {
             </span> */}
           </div>
           <button type="submit" className="login-btn">
-            {t('register', 'Register')}
+            {t("register", "Register")}
           </button>
-          <div className="login-or">{t('or', 'or')}</div>
+          <div className="login-or">{t("or", "or")}</div>
           <div className="login-signup">
-            {t('already_account', 'You already have an account?')} <Link to="/login">{t('sign_in', 'Sign in')}</Link>
+            {t("already_account", "You already have an account?")}{" "}
+            <Link to="/login">{t("sign_in", "Sign in")}</Link>
           </div>
         </form>
       </div>

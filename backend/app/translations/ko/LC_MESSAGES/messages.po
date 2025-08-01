@@ -168,3 +168,9 @@ msgstr "관리자는 슈퍼 관리자, 관리자 정보를 수정할 수 없습�
 
 msgid "Phone number must be 10 digits"
 msgstr "전화번호는 10자리여야 합니다."
+
+msgid "Admin or Super Admin not allowed to bid"
+msgstr "관리자 또는 슈퍼 관리자는 입찰할 수 없습니다"
+
+msgid "Super Admin cannot modify Super Admin information"
+msgstr "슈퍼 관리자는 슈퍼 관리자 정보를 수정할 수 없습니다"

@@ -168,3 +168,9 @@ msgstr "Admin không có quyền thay đổi thông tin của tài khoản Super
 
 msgid "Phone number must be 10 digits"
 msgstr "Số điện thoại phải 10 kí tự"
+
+msgid "Admin or Super Admin not allowed to bid"
+msgstr "Admin và Super admin không được phép tham gia đấu giá"
+
+msgid "Super Admin cannot modify Super Admin information"
+msgstr "Super admin không thể chỉnh sửa thông tin của Supper admin"

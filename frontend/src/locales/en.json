@@ -292,5 +292,10 @@
   "success_rate": "Success Rate",
   "than_last_month": "that last month",
   "phone_require": "Phone number requires 10 characters",
-  "phone_regex": "Phone number requires number"
+  "phone_regex": "Phone number requires number",
+  "cancle":"Cancel",
+  "winner": "Winner",
+  "participated": "Participated",
+  "winning": "Winning",
+  "email_invalid": "Email is not valid"
 }

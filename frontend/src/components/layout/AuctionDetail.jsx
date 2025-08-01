@@ -413,7 +413,7 @@ const AuctionDetail = () => {
                   icon={faUser}
                   className="mr-4 text-black-500"
                 />
-                Winner:{" "}
+                {t("winner")}:{" "}
                 {Array.isArray(auction.bids) &&
                 auction.bids.find((bid) => bid.is_winner) ? (
                   <span className="font-semibold text-green-700">

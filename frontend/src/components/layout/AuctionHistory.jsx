@@ -131,7 +131,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                               : "bg-gray-100 text-gray-600"
                           }`}
                         >
-                          {bid.is_winner ? "Winning" : "Participated"}
+                          {bid.is_winner ? t("winning") : t("participated")}
                         </div>
                       </div>
 

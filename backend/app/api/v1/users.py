@@ -129,6 +129,10 @@ def set_user_status(
 
     if current_user.role == UserRole.ADMIN and (user.role == UserRole.SUPER_ADMIN or user.role == UserRole.ADMIN):
         raise HTTPException(status_code=403, detail=_("Admin cannot modify Super Admin, Admin information", request))
+    
+    if current_user.role == UserRole.SUPER_ADMIN and user.role == UserRole.SUPER_ADMIN:
+        raise HTTPException(status_code=403, detail=_("Super Admin cannot modify Super Admin information", request))
+    
     if not user:
         raise HTTPException(status_code=404, detail=_("User not found", request))
     if data.status not in (0, 1):
@@ -152,12 +156,12 @@ def update_user(
     if current_user.role == UserRole.ADMIN and (user.role == UserRole.SUPER_ADMIN or user.role == UserRole.ADMIN):
         raise HTTPException(status_code=403, detail=_("Admin cannot modify Super Admin information", request))
     
-    if user.phone_number.length < 10 or user.phone_number.length > 10:
-        raise HTTPException(status_code=400, detail=_("Phone number must be 10 digits", request))
+    # if user.phone_number.length < 10 or user.phone_number.length > 10:
+    #     raise HTTPException(status_code=400, detail=_("Phone number must be 10 digits", request))
     if data.username is not None:
         user.username = data.username
-    if data.phone_number is not None:
-        user.phone_number = data.phone_number
+    # if data.phone_number is not None:
+    #     user.phone_number = data.phone_number
     db.commit()
     return {"message": _("User updated successfully.", request)}
 

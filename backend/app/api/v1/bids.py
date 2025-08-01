@@ -11,7 +11,7 @@ from typing import Optional, List
 from app.core.auth import get_current_user_id_from_token
 from app.models.Notification import Notification
 from app.i18n import _
-
+from app.enums import UserRole
 
 router = APIRouter()
 
@@ -71,7 +71,9 @@ def create_bid(
     user = db.query(User).filter(User.id == user_id, User.status == 1).first()
     if not user:
         raise HTTPException(status_code=403, detail=_("User not allowed to bid", request))
-    
+        
+    if user.role == UserRole.SUPER_ADMIN or user.role == UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail=_("Admin or Super Admin not allowed to bid", request))
     if float(bid_in.bid_amount) < float(auction.starting_price):
         raise HTTPException(
             status_code=400,

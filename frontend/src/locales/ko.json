@@ -271,5 +271,11 @@
   "success_rate": "성공률",
   "than_last_month": "그 지난달",
   "phone_require": "전화번호는 10자 이상이어야 합니다",
-  "phone_regex": "숫자를 입력해야 합니다"
+  "phone_regex": "숫자를 입력해야 합니다",
+  "cancle":"취소",
+  "select_time": "시간 선택",
+  "winner": "우승자",
+  "participated": "가입하다",
+  "winning": "승리",
+  "email_invalid": "이메일 형식이 올바르지 않습니다"
 }

@@ -361,7 +361,7 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
                     status_code=400,
                     content={"detail": _("Invalid image file type: ", request) + file.filename}
                 )
-            contents = file.file.read()
+            contents = file.file.read() 
             if len(contents) > max_size:
                 return JSONResponse(
                     status_code=400,
