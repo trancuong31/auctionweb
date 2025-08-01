@@ -103,7 +103,7 @@ const AuctionDetail = () => {
       setAuction(response.data);
       setLoading(false);
     } catch (error) {
-      alert("Error get auction");
+      toast.error(t("error.error_get_data"));
       console.log(error);
     }
   };
