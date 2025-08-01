@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Pagination from "../ui/Pagination";
 import AnimatedContent from "../ui/animatedContent";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 
 const AuctionSearch = () => {
   const [searchText, setSearchText] = useState("");
@@ -39,7 +40,8 @@ const AuctionSearch = () => {
         Math.ceil(response.data.total / Number(import.meta.env.VITE_PAGE_SIZE))
       );
     } catch (err) {
-      alert(err);
+      const detail = err.response?.data?.detail || t("error.error_get_data");
+      toast.error(detail);
     } finally {
       setIsLoading(false);
       setCurrentIndexPage(page - 1);
@@ -67,10 +69,10 @@ const AuctionSearch = () => {
     navigate(`/auctions/${id}`);
   };
 
-// Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
+  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-      i18n.changeLanguage(savedLang);
+    i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   useEffect(() => {
