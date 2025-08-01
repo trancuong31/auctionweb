@@ -257,7 +257,8 @@
     "step_price_min": "Bước giá phải ≥ 1$",
     "image_url_min": "Phải chọn ít nhất một tệp",
     "file_exel_instance": "Phải chọn tệp Excel",
-    "end_time_required": "Thời gian là bắt buộc"
+    "end_time_required": "Thời gian là bắt buộc",
+    "file_max_size": "File không được vượt quá 10MB"
   },
   "validate_bid": {
     "address_required": "Địa chỉ là bắt buộc",

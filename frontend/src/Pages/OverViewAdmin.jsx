@@ -320,13 +320,13 @@ const OverViewAdmin = () => {
         message={confirmConfig.message}
       />
       <CreateAuctionForm
-        ref={formRef}
         isOpen={displayCreateForm}
         onClickClose={(isReloadData = false) => {
           if (isReloadData) {
             getPageAuction();
           }
           setDisplayCreateForm(false);
+          setAuctionObject({});
         }}
         mode={mode}
         auction={auctionObject}
