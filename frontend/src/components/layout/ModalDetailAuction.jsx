@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 import imagedefault from "../../assets/images/imagedefault.png";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   const [bids, setBids] = useState([]);
   const [auction, setAuction] = useState({});
@@ -49,8 +50,8 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
             : 0;
         setHighestBid(maxBid);
       } catch (error) {
-        console.log(error);
-        alert("Có lỗi khi lấy auctions");
+        const detail = error.response?.data?.detail;
+        toast.error(detail || t("error.fetch_bids", "Failed to fetch bids"));
       } finally {
         setIsLoading(false);
       }

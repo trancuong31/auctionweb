@@ -22,6 +22,7 @@
   "register_failed": "Register failed!",
   "password_not_match": "Password does not match",
   "email_max": "Email must not exceed 100 characters",
+  "email_invalid": "Email is not valid",
   "username_min": "Username must be at least 3 characters",
   "username_max": "Username cannot exceed 50 characters",
   "username_regex": "Usernames must contain only letters",
@@ -245,7 +246,8 @@
     "error_get_data": "Error while get data",
     "get_user": "Error while get User data",
     "delete_fail": "Delete user fail!",
-    "update_status": "update status user fail!"
+    "update_status": "update status user fail!",
+    "fetch_bids": "Error while fetching bids"
   },
   "no_data": "No data available",
   "no_file": "No file",

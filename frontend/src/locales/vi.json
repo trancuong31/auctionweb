@@ -19,6 +19,7 @@
   "register_failed": "Đăng ký thất bại!",
   "password_not_match": "Mật khẩu không khớp",
   "email_max": "Email không được vượt quá 100 ký tự",
+  "email_invalid": "Email không hơp lệ",
   "username_min": "Tên đăng nhập phải có ít nhất 3 ký tự",
   "username_max": "Tên đăng nhập không được vượt quá 50 ký tự",
   "username_regex": "Tên đăng nhập chỉ được chứa chữ cái",
@@ -240,7 +241,8 @@
     "auction_not_start": "Phiên đấu giá này chưa bắt đầu!",
     "error_get_data": "Lỗi lấy dữ liệu",
     "delete_fail": "Xóa người dùng thất bại!",
-    "update_status": "Cập nhật trạng thái thất bại!"
+    "update_status": "Cập nhật trạng thái thất bại!",
+     "fetch_bids": "Lỗi khi lấy dữ liệu đấu giá"
   },
   "no_data": "Không có dữ liệu",
   "no_file": "Không có file",
