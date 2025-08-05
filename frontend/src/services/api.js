@@ -54,3 +54,18 @@ export const deleteOne = async (resource, id, isAuth) => {
         return await axiosDefault.delete(`/${resource}/${id}`);
     }
 };
+
+export const forgotPassword = async (email) => {
+    return await axiosDefault.post('/forgot-password', { email });
+};
+
+export const resetPassword = async (token, newPassword) => {
+    return await axiosDefault.post('/reset-password', { 
+        token, 
+        new_password: newPassword 
+    });
+};
+
+export const verifyResetToken = async (token) => {
+    return await axiosDefault.post('/verify-reset-token', { token });
+};

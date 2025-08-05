@@ -212,7 +212,7 @@ const OverViewAdmin = () => {
     if (userName.length < 3) return toast.error(t("user_not_valid"));
     const newUser = {
       ...user,
-      username: userName,
+      username: userName
     };
 
     try {

@@ -26,6 +26,10 @@ const AuctionSection = ({ titleKey, type }) => {
     navigate(`/auctions/${id}`);
   };
 
+  const handleSeeAll = () => {
+    navigate(`/auctions/search?status=${statusMap[type]}`);
+  };
+
 // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
@@ -83,9 +87,13 @@ const AuctionSection = ({ titleKey, type }) => {
               numberCol={4}
               clickCard={handleClick}
             />
-            <a href="/auctions/search" className="see-all">
+            <span 
+              onClick={handleSeeAll} 
+              className="see-all"
+              style={{ cursor: 'pointer' }}
+            >
               {t("see_all")}
-            </a>
+            </span>
           </>
         )}
       </div>

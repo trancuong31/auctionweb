@@ -688,7 +688,8 @@ def get_monthly_stats(db: Session, target_date: datetime):
     ).count()
     # tổng số phiên chưa diễn ra có time bắt đầu lớn hơn tháng hiện tại - 1
     total_upcoming_auctions = db.query(Auction).filter(
-        Auction.start_time > end_of_month
+        Auction.start_time > end_of_month,
+        Auction.created_at <= end_of_month
     ).count()
     
     total_unsuccessful_auctions = db.query(Auction).filter(

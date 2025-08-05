@@ -75,9 +75,7 @@ function Register() {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    if (savedLang && savedLang !== i18n.language) {
-      i18n.changeLanguage(savedLang);
-    }
+    i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   const submitForm = async (formData) => {
@@ -88,7 +86,7 @@ function Register() {
     try {
       const response = await fetch("/api/v1/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept-Language": sessionStorage.getItem("lang") || "en"},
         body: JSON.stringify(formData),
       });
       const data = await response.json();

@@ -4,7 +4,7 @@ import RangeCalender from "../ui/RangeCalender";
 import RenderCardAuction from "../ui/CardComponent";
 import { useEffect, useState } from "react";
 import { getAll } from "../../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../ui/Pagination";
 import AnimatedContent from "../ui/animatedContent";
 import { useTranslation } from "react-i18next";
@@ -17,6 +17,7 @@ const AuctionSearch = () => {
   const [sortOder, setSortOder] = useState("");
   const [dateRange, setDateRange] = useState([]);
   const { t, i18n } = useTranslation();
+  const [searchParams] = useSearchParams();
 
   const [searchParam, setSearchParam] = useState({});
 
@@ -65,8 +66,28 @@ const AuctionSearch = () => {
     }
   }, [searchParam]);
 
+  // Đọc status từ URL query parameter và tự động search
+  useEffect(() => {
+    const statusFromUrl = searchParams.get('status');
+    if (statusFromUrl !== null) {
+      setStatus(statusFromUrl);
+      setSearchParam({
+        status: statusFromUrl,
+        title: "",
+        sort_by: "",
+        sort_order: "",
+        start_time: undefined,
+        end_time: undefined,
+      });
+    }
+  }, [searchParams]);
+
   const handleClick = (id) => {
     navigate(`/auctions/${id}`);
+  };
+
+  const handleSeeAll = () => {
+    navigate(`/auctions/search?status=${status}`);
   };
 
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
@@ -75,8 +96,12 @@ const AuctionSearch = () => {
     i18n.changeLanguage(savedLang);
   }, [i18n]);
 
+  // Chỉ search khi không có status từ URL
   useEffect(() => {
-    searchData();
+    const statusFromUrl = searchParams.get('status');
+    if (!statusFromUrl) {
+      searchData();
+    }
   }, []);
 
   return (

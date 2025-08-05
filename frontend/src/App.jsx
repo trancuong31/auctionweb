@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import HomePage from "./Pages/HomePage";
 import Login from "./components/layout/Login";
 import Register from "./components/layout/Register";
+import ForgotPassword from "./components/layout/ForgotPassword.jsx";
 import AuctionDetail from "./components/layout/AuctionDetail";
 import CreateAuctionForm from "./components/layout/AuctionCreate.jsx";
 import AuctionSearch from "./components/layout/AuctionSearch.jsx";
@@ -14,6 +15,7 @@ import History from "./components/layout/History.jsx";
 import Information from "./components/layout/Information.jsx";
 import PrivateRoute from "./components/layout/PrivateRoute.jsx";
 import { Toaster } from "react-hot-toast";
+import ResetPassword from "./components/layout/ResetPassword.jsx";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 function App() {
@@ -47,6 +49,8 @@ function App() {
         {/* Not use layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
       
     </>

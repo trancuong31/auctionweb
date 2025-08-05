@@ -27,9 +27,7 @@ function Login() {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    if (savedLang && savedLang !== i18n.language) {
-      i18n.changeLanguage(savedLang);
-    }
+    i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   useEffect(() => {
@@ -40,9 +38,10 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      let lang = sessionStorage.getItem("lang");
       const response = await fetch("/api/v1/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept-Language": sessionStorage.getItem("lang") || "en",  },
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
@@ -181,29 +180,12 @@ function Login() {
               />{" "}
               {t("remember_me", "Remember me")}
             </label>
-            <a
-              href="#"
+            <Link
+              to="/forgot-password"
               className="login-link"
-              onClick={(e) => {
-                e.preventDefault();
-                toast(
-                  t(
-                    "contact_admin",
-                    "Please contact admin to retrieve password!"
-                  ),
-                  {
-                    style: {
-                      borderRadius: "10px",
-                      background: "#333",
-                      color: "#fff",
-                      textAlign: "center",
-                    },
-                  }
-                );
-              }}
             >
               {t("forget_password", "Forget password")}
-            </a>
+            </Link>
           </div>
           <button type="submit" className="login-btn">
             {t("sign_in", "Sign in")}
