@@ -190,7 +190,7 @@ def send_reset_email_task(email: str, reset_token: str, username: str = None):
     except Exception as e:
         print(f"Error in background email task: {e}")
 
-# Thêm endpoint reset mật khẩu
+# reset mật khẩu
 @router.post("/reset-password", response_model=ResetPasswordResponse)
 def reset_password(request: Request, reset_data: ResetPasswordRequest, db: Session = Depends(get_db)):
     """

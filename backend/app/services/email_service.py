@@ -48,14 +48,16 @@ class EmailService:
             
             {reset_link}
             
-            This link will expire in 1 hour for security reasons.            
+            This link will expire in 1 hour for security reasons.
+
             If you didn't request this password reset, please ignore this email.
+
             Your password will remain unchanged.
             
             If you have any questions, please contact our support team.
-            Auction System Team
+            IT Team
             
-            ---
+            -----------------------------------------------
             This is an automated email, please do not reply.
             """
             
@@ -69,7 +71,7 @@ class EmailService:
                 text = msg.as_string()
                 server.sendmail(self.sender_email, email, text)
                 server.quit()
-                print(f"Reset password email sent to {email}")
+                print(f"Email reset password đã được gửi đến: {email}")
                 return True
                 
         except Exception as e:
