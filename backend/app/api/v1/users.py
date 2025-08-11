@@ -22,7 +22,21 @@ class UserOut(BaseModel):
     role: str
     created_at: datetime
     status: int
-    bid_count: int  # Thêm trường đếm số bid
+    bid_count: int 
+    
+    class Config:
+        # orm_mode = True
+        from_attributes = True
+class UserOutInfo(BaseModel):
+    id: str
+    username: Optional[str]
+    phone_number: Optional[str]
+    email: Optional[str]
+    password: Optional[str]
+    role: str
+    created_at: datetime
+    status: int
+    bid_count: int 
     
     class Config:
         # orm_mode = True
@@ -32,8 +46,9 @@ class UserStatusUpdate(BaseModel):
     status: int
 
 class UserUpdate(BaseModel):
-    username: Optional[str]
-    phone_number: Optional[str]
+    username: Optional[str] = None
+    phone_number: Optional[str] = None
+    password : Optional[str] = None
 
 class UsersListOut(BaseModel):
     users: list[UserOut]
@@ -110,10 +125,33 @@ def get_users(
     
     return {"users": users, "total_users": total_users}
 
-@router.get("/users/{user_id}", response_model=UserOut)
-def get_user(request: Request, db: Session = Depends(get_db)):
-    users = db.query(User).first()
-    return users
+@router.get("/users/{user_id}", response_model=UserOutInfo)
+def get_user(
+    request: Request, 
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Check if user exists
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail=_("User not found", request))
+    
+    # Get bid count for the user
+    bid_count = db.query(Bid).filter(Bid.user_id == user_id).count()
+    
+    # Return user with bid count
+    return {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "password": user.password,
+        "phone_number": user.phone_number,
+        "role": user.role.value,
+        "created_at": user.created_at,
+        "status": user.status,
+        "bid_count": bid_count
+    }
 
 @router.patch("/users/{user_id}/status")
 def set_user_status(
@@ -152,17 +190,29 @@ def update_user(
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail=_("User not found", request))
-        
-    if current_user.role == UserRole.ADMIN and (user.role == UserRole.SUPER_ADMIN or user.role == UserRole.ADMIN):
+
+    # Nếu là user thường -> chỉ được sửa thông tin của chính mình
+    if current_user.role == UserRole.USER and current_user.id != user.id:
+        raise HTTPException(status_code=403, detail=_("You can only modify your own information", request))
+
+    # Nếu là admin -> cấm sửa thông tin SUPER_ADMIN
+    if current_user.role == UserRole.ADMIN and user.role == UserRole.SUPER_ADMIN:
         raise HTTPException(status_code=403, detail=_("Admin cannot modify Super Admin information", request))
-    
-    # if user.phone_number.length < 10 or user.phone_number.length > 10:
-    #     raise HTTPException(status_code=400, detail=_("Phone number must be 10 digits", request))
+
+
+    # Update các trường cho phép
     if data.username is not None:
-        user.username = data.username
-    # if data.phone_number is not None:
-    #     user.phone_number = data.phone_number
+        user.username = data.username.strip()
+
+    if data.phone_number is not None:
+        user.phone_number = data.phone_number.strip()
+
+    if data.password is not None:
+        user.password = data.password.strip()
+
     db.commit()
+    db.refresh(user)
+
     return {"message": _("User updated successfully.", request)}
 
 

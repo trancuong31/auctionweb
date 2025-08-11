@@ -7,6 +7,7 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { resetPassword, verifyResetToken } from "../../services/api";
+import z from "zod";
 
 function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -34,7 +35,6 @@ function ResetPassword() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Verify token when component mounts
   useEffect(() => {
     const verifyToken = async () => {
       if (!token) {
@@ -61,21 +61,37 @@ function ResetPassword() {
     verifyToken();
   }, [token]);
 
+  const passwordSchema = z.object({
+    newPassword: z
+      .string()
+      .min(8, t("password_min", "Password must be at least 8 characters"))
+      .max(30, t("password_max", "Password must be at most 30 characters"))
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+        t("password_regex", "Password must contain uppercase, lowercase, number, and special character")
+      ),
+    confirmPassword: z.string().min(8, t("password_min", "Password must be at least 8 characters")),
+  }).refine((data) => data.newPassword === data.confirmPassword, {
+    message: t("password_not_match", "Passwords do not match"),
+    path: ["confirmPassword"],
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (newPassword !== confirmPassword) {
-      toast.error(t("password_mismatch", "Passwords do not match."));
-      return;
-    }
 
-    if (newPassword.length < 8) {
-      toast.error(t("password_min", "Password must be at least 8 characters"));
+    // Validate the passwords
+    try {
+      passwordSchema.parse({ newPassword, confirmPassword });
+    } catch (err) {
+      if (err.errors && err.errors.length > 0) {
+        toast.error(err.errors[0].message);
+      } else {
+        toast.error(t("password_reset_failed", "Password reset failed. Please try again."));
+      }
       return;
     }
 
     setIsLoading(true);
-    
     try {
       const response = await resetPassword(token, newPassword);
       
@@ -98,7 +114,7 @@ function ResetPassword() {
           },
         });
         
-        // Redirect to login after successful reset
+        // Chuyển hướng đến trnag login sau khi reset thành công
         setTimeout(() => {
           navigate("/login");
         }, 2000);
@@ -242,4 +258,4 @@ function ResetPassword() {
   );
 }
 
-export default ResetPassword; 
+export default ResetPassword;

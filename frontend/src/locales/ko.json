@@ -295,5 +295,7 @@
   "select_time": "시간 선택",
   "winner": "우승자",
   "participated": "가입하다",
-  "winning": "승리"
+  "winning": "승리",
+  "update": "업데이트",
+  "update_user_success": "사용자 업데이트 성공"
 }

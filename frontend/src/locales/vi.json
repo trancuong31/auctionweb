@@ -314,6 +314,8 @@
   "cancle":"Hủy bỏ",
   "winner": "Người thắng",
   "participated": "Tham gia",
-  "winning": "Chiến thắng"
+  "winning": "Chiến thắng",
+  "update": "Cập nhật",
+  "update_user_success": "Cập nhật thông tin thành công"
   
 }

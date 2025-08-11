@@ -212,7 +212,8 @@ const OverViewAdmin = () => {
     if (userName.length < 3) return toast.error(t("user_not_valid"));
     const newUser = {
       ...user,
-      username: userName
+      username: userName,
+      phone_number: user.phone_number || ""
     };
 
     try {
@@ -223,8 +224,6 @@ const OverViewAdmin = () => {
       setCurrentEditing(null);
       await getPageUser();
     } catch (error) {
-      // toast.error(t("update_user_fai"));
-      console.log(error);
       const detail = error?.response?.data?.detail;
       toast.error(detail || t("update_user_fai"));
     }

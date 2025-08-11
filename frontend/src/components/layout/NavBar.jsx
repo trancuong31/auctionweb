@@ -8,7 +8,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import NotificationDropdown from "./NotificationDropdown";
 import AuctionHistory from "./AuctionHistory";
 import { useTranslation } from "react-i18next";
-// import AccountInfo from "./AccountInfo";
+import AccountInfo from "./AccountInfo";
 dayjs.extend(relativeTime);
 
 function NavBar() {
@@ -95,20 +95,19 @@ function NavBar() {
           {user ? (
             <>
               <NotificationDropdown triggerRef={bellRef} />
-              {/* <span
+              <span
                 className="user-greeting nav-link"
-                onClick={() => setShowAccountInfo(false)}
+                onClick={() => setShowAccountInfo(true)}
                 style={{ cursor: "pointer" }}
-                // tabIndex={0}
                 onKeyDown={(e) =>
                   (e.key === "Enter" || e.key === " ") &&
-                  setShowAccountInfo(false)
+                  setShowAccountInfo(true)
                 }
                 aria-label={t("account_info")}
                 role="button"
               >
                 {t("account_info")}
-              </span> */}
+              </span>
 
               <span
                 className="nav-link"
@@ -141,19 +140,10 @@ function NavBar() {
           )}
         </div>
       </nav>
-      {showAccountInfo && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
-          onClick={() => setShowAccountInfo(true)}
-          aria-modal="true"
-          role="dialog"
-        >
-          <div onClick={(e) => e.stopPropagation()}>
-            <AccountInfo onClose={() => setShowAccountInfo(false)} />
-          </div>
-        </div>
-      )}
-
+      <AccountInfo
+        isOpen={showAccountInfo}
+        onClose={() => setShowAccountInfo(false)}
+      />
       <AuctionHistory
         isOpen={showAuctionHistory}
         onClose={() => setShowAuctionHistory(false)}

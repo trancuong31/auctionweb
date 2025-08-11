@@ -23,6 +23,7 @@ class Token(BaseModel):
     role: str
     username: str
     email: str
+    user_id: str
 
 class LoginRequest(BaseModel):
     email: str
@@ -93,7 +94,8 @@ def login(request: Request, login_data: LoginRequest, db: Session = Depends(get_
     role = UserRole(user.role).name.lower()
     username= user.username
     email= user.email
-    return {"access_token": access_token,"refresh_token": refresh_token, "token_type": "bearer", "role":role, "username":username, "email": email}
+    user_id = user.id
+    return {"access_token": access_token,"refresh_token": refresh_token, "token_type": "bearer", "role":role, "username":username, "email": email, "user_id": user_id }
 
 @router.post("/register", response_model=Token)
 def register(request: Request, register_data: RegisterRequest, db: Session = Depends(get_db)):
@@ -115,14 +117,19 @@ def register(request: Request, register_data: RegisterRequest, db: Session = Dep
 
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id})
     refresh_token = create_refresh_token(data={"sub": user.email, "user_id": user.id})
+    role = UserRole(user.role).name.lower()
+    username = user.username
+    email = user.email
+    user_id = user.id  # Thêm user_id
+    
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "bearer",
-        "role": UserRole(user.role).name.lower(),
-        "username": user.username,
-        "email": user.email,
-        "phone_number": user.phone_number
+        "role": role,
+        "username": username,
+        "email": email,
+        "user_id": user_id  # Thêm user_id vào response
     }
 
 @router.post("/refresh-token")

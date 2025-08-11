@@ -43,7 +43,7 @@ function Register() {
         t("phone_regex", "Invalid phone number format")
       ),
     password: z
-      .string()
+      .string()   
       .min(8, t("password_min"))
       .max(30, t("password_max"))
       .regex(
