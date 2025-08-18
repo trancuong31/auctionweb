@@ -47,7 +47,7 @@ function Register() {
       .min(8, t("password_min"))
       .max(30, t("password_max"))
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@#$!%*?&]+$/,
         t("password_regex")
       ),
     passwordConfirm: z.string().min(8, t("password_min")),

@@ -130,7 +130,7 @@
   "enter_auction_details": "아래에 입찰 정보를 입력하세요",
   "supplier_email": "공급업체 이메일",
   "address": "주소",
-  "bid_amount_usd": "입찰 금액 (USD)",
+  "bid_amount_usd": "입찰 금액",
   "additional_notes": "추가 메모",
   "enter_delivery_address": "배송 주소를 입력하세요",
   "add_special_requirement_or_comment": "특별 요청사항이나 메모가 있으면 입력하세요",

@@ -42,6 +42,7 @@ class BidWithAuctionOut(BaseModel):
     address: Optional[str] = None
     note: Optional[str] = None
     is_winner: bool = False
+    currency: Optional[str] = None
     # Auction information
     auction_title: str
     # auction_description: Optional[str] = None
@@ -155,6 +156,7 @@ def get_bids_by_user(
             is_winner=bid.is_winner,
             auction_title=auction.title,
             auction_description=auction.description,
+            currency= auction.currency,
             auction_starting_price=float(auction.starting_price),
             auction_step_price=float(auction.step_price),
             auction_image_url=auction.image_url,

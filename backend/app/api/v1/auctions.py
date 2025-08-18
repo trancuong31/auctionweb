@@ -1,3 +1,4 @@
+from locale import currency
 from fastapi import APIRouter, Depends, Query, HTTPException, File, UploadFile, status, Request, Path
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
@@ -32,6 +33,7 @@ class AuctionOut(BaseModel):
     step_price: float
     image_url: Optional[List[str]] = None
     file_exel: Optional[str]
+    currency: Optional[str]
     start_time: datetime
     end_time: datetime
     created_at: datetime
@@ -58,6 +60,7 @@ class AuctionDetailOut(BaseModel):
     description: Optional[str]
     starting_price: float
     step_price: float
+    currency: Optional[str]
     image_url: Optional[List[str]] = None
     file_exel: Optional[str]
     start_time: datetime
@@ -83,6 +86,7 @@ class AuctionCreate(BaseModel):
     description_ko: Optional[str] = None
     starting_price: float
     step_price: float
+    currency: Optional[str]
     image_url: Optional[List[str]] = None
     file_exel: Optional[str] = None
     start_time: datetime
@@ -117,6 +121,7 @@ class AuctionUpdate(BaseModel):
     description_ko: Optional[str] = None
     starting_price: Optional[float] = None
     step_price: Optional[float] = None
+    
     image_url: Optional[List[str]] = None
     file_exel: Optional[str] = None
     start_time: Optional[datetime] = None
@@ -274,6 +279,7 @@ def create_auction(
         description_ko=auction_in.description_ko,
         starting_price=auction_in.starting_price,
         step_price=auction_in.step_price,
+        currency=auction_in.currency,
         image_url = json.dumps(auction_in.image_url) if auction_in.image_url else None,
         file_exel=auction_in.file_exel,
         start_time=auction_in.start_time,
@@ -630,7 +636,7 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
     ).order_by(Bid.bid_amount.desc()).first()
     auction_data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
 
-    bids = db.query(Bid).filter(Bid.auction_id == auction_id).order_by(Bid.bid_amount.desc()).all()
+    bids = db.query(Bid).filter(Bid.auction_id == auction_id).order_by(Bid.bid_amount.desc(), Bid.created_at.asc()).all()
     bid_list = []
     for bid in bids:
         user = db.query(User).filter(User.id == bid.user_id).first()

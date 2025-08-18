@@ -4,6 +4,7 @@ import clsx from "clsx";
 import imagedefault from "../../assets/images/imagedefault.png";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
+import { X } from "lucide-react";
 const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   const [bids, setBids] = useState([]);
   const [auction, setAuction] = useState({});
@@ -29,9 +30,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    if (savedLang && savedLang !== i18n.language) {
-      i18n.changeLanguage(savedLang);
-    }
+    i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   useEffect(() => {
@@ -63,33 +62,35 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
 
   return (
     <div
-      className={clsx(
-        "fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50",
-        isOpen ? "visible" : "invisible"
-      )}
+      className={
+        "fixed inset-0 flex items-center justify-center z-50 max-sm:pt-[60px] bg-black bg-opacity-50 " +
+        (isOpen ? "visible" : "invisible")
+      }
+      style={{ pointerEvents: isOpen ? "auto" : "none" }}
       onClick={clickClose}
     >
       <div
-        className={clsx(
-          "bg-white shadow-lg w-[80%] max-w-6xl relative max-h-[80%] overflow-y-auto max-sm:max-h-[60%] max-sm:mt-32 max-lg:mt-10 scrollbar-hide fade-slide-up",
-          isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
-        )}
+        className={
+          "mt-[220px] sm:mt-[60px] md:mt-[55px] bg-white rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up " +
+          (isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden")
+        }
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 z-10 bg-white py-2">
-          <div className="flex items-center p-0 justify-center px-2 relative">
-            <h2 className="text-2xl font-semibold text-gray-800">
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-3 flex items-center justify-between relative">
+          <div className="flex-1 text-center">
+            <h2 className="text-xl font-bold uppercase">
               {t("auction_detail")}
             </h2>
-            <button
-              onClick={clickClose}
-              className="text-gray-500 hover:text-red-700 text-2xl absolute right-6 font-bold]"
-            >
-              ×
-            </button>
           </div>
+          <button
+            onClick={clickClose}
+            className="p-2 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-colors absolute right-4 sm:right-6"
+            style={{ top: "50%", transform: "translateY(-50%)" }}
+          >
+            <X size={20} />
+          </button>
         </div>
-        <div className="p-6">
+        <div className="flex-1 p-4 sm:p-6 overflow-y-auto max-h-[calc(95vh-120px)]">
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="lg:w-1/2 w-full">
               <img
@@ -145,10 +146,13 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     {t("starting_price")}
                   </p>
                   <p className="text-green-600 font-bold text-lg">
-                    {auction.starting_price?.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    }) || "$0"}
+                    {auction.starting_price?.toLocaleString(
+                      auction.currency === "VND" ? "vi-VN" : "en-US",
+                      {
+                        style: "currency",
+                        currency: auction.currency === "VND" ? "VND" : "USD",
+                      }
+                    )}
                   </p>
                 </div>
 
@@ -157,10 +161,13 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     {t("step_price")}
                   </p>
                   <p className="text-yellow-700 font-bold text-lg">
-                    {auction.step_price?.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    }) || "$0"}
+                    {auction.step_price?.toLocaleString(
+                      auction.currency === "VND" ? "vi-VN" : "en-US",
+                      {
+                        style: "currency",
+                        currency: auction.currency === "VND" ? "VND" : "USD",
+                      }
+                    )}
                   </p>
                 </div>
 
@@ -208,10 +215,13 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
             <div>
               <span className="font-medium text-purple-600">
                 {t("highest_bid")}:{" "}
-                {highestBid.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
+                {highestBid?.toLocaleString(
+                  auction.currency === "VND" ? "vi-VN" : "en-US",
+                  {
+                    style: "currency",
+                    currency: auction.currency === "VND" ? "VND" : "USD",
+                  }
+                )}
               </span>
             </div>
           </div>
@@ -254,10 +264,13 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                       <td className="px-4 py-2">{bid.user_name || "-"}</td>
                       <td className="px-4 text-green-500 py-2">
                         {bid.bid_amount != null
-                          ? bid.bid_amount.toLocaleString("en-US", {
-                              style: "currency",
-                              currency: "USD",
-                            })
+                          ? bid.bid_amount.toLocaleString(
+                              auction.currency === "VND" ? "vi-VN" : "en-US",
+                              {
+                                style: "currency",
+                                currency: auction.currency === "VND" ? "VND" : "USD",
+                              }
+                            )
                           : "-"}
                       </td>
                       <td className="px-4 py-2">

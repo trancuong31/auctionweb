@@ -23,7 +23,7 @@ class Auction(Base):
     created_at = Column(DateTime, default=datetime.now)
     status = Column(Integer, nullable=False)
     created_by = Column(String(36), ForeignKey("users.id"), nullable=False)
-
+    currency = Column(String)
     bids = relationship("Bid", back_populates="auction")
     notifications = relationship("Notification", back_populates="auction")
     orders = relationship("Order", back_populates="auction")

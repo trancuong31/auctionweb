@@ -897,10 +897,22 @@ const OverViewAdmin = () => {
                         {dayjs(auction.end_time).format("MM/DD/YYYY HH:mm")}
                       </td>
                       <td className="border px-2 py-1 max-w-96 break-words">
-                        {auction.starting_price}
+                        {auction.starting_price?.toLocaleString(
+                          auction.currency === "VND" ? "vi-VN" : "en-US",
+                          {
+                            style: "currency",
+                            currency: auction.currency === "VND" ? "VND" : "USD",
+                          }
+                        )}
                       </td>
                       <td className="border px-2 py-1 max-w-96 break-words">
-                        {auction.highest_amount || "N/A"}
+                        {auction.highest_amount?.toLocaleString(
+                          auction.currency === "VND" ? "vi-VN" : "en-US",
+                          {
+                            style: "currency",
+                            currency: auction.currency === "VND" ? "VND" : "USD",
+                          }
+                        ) || "N/A"}
                       </td>
                       <td className="border px-2 py-1 max-w-96 break-words">
                         {statusText}

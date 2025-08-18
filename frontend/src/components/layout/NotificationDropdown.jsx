@@ -109,7 +109,7 @@ const NotificationDropdown = ({ triggerRef }) => {
           className={`notification-dropdown ${closing ? 'fade-slide-out' : 'fade-slide-in'}`}
           ref={dropdownRef}
         >
-          <div className="notification-dropdown-header">
+          <div className="notification-dropdown-header ">
             <FontAwesomeIcon icon={faBell} style={{ marginRight: "8px" }} />
             {t("notification")}
           </div>
@@ -121,7 +121,7 @@ const NotificationDropdown = ({ triggerRef }) => {
                 <li
                   className={`notification-item${item.is_read ? "" : " unread"}`}
                   key={item.id}
-                  title={item.message}
+                  title={item.message}  
                 >
                   <span className="notification-avatar"><FontAwesomeIcon icon={faUser} /></span>
                   <span style={{ flex: 1, minWidth: 0, borderBottom: "1px solid" }}>

@@ -38,10 +38,10 @@ const AuctionHistory = ({ isOpen, onClose }) => {
 
   const hasMoreItems = displayedItems < auctionHistory.length;
 
-  const formatCurrency = (amount) =>
-    new Intl.NumberFormat("en-US", {
+  const formatCurrency = (amount, currency = "USD") =>
+    new Intl.NumberFormat(currency === "VND" ? "vi-VN" : "en-US", {
       style: "currency",
-      currency: "USD",
+      currency: currency === "VND" ? "VND" : "USD",
     }).format(amount);
 
   const formatDateTime = (dateTime) =>
@@ -82,6 +82,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
           >
             <X size={20} />
           </button>
+          
         </div>
         {/* Modal Content */}
         <div className="flex-1 p-4 sm:p-6 overflow-y-auto max-h-[calc(95vh-120px)]">
@@ -149,7 +150,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                                 {t("bid_amount_usd")}
                               </p>
                               <p className="text-lg font-bold text-green-600">
-                                {formatCurrency(bid.bid_amount)}
+                                {formatCurrency(bid.bid_amount, bid.currency)}
                               </p>
                             </div>
                           </div>
@@ -174,7 +175,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                             <div>
                               <p className="text-sm text-gray-500">{t("starting_price")}</p>
                               <p className="text-lg font-bold text-gray-700">
-                                {formatCurrency(bid.auction_starting_price)}
+                                {formatCurrency(bid.auction_starting_price, bid.currency)}
                               </p>
                             </div>
                           </div>

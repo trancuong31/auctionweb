@@ -340,10 +340,13 @@ const AuctionDetail = () => {
               />
               {t("starting_price")}:{" "}
               <span className="font-semibold text-green-700">
-                {auction.starting_price?.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
+                {auction.starting_price?.toLocaleString(
+                  auction.currency === "VND" ? "vi-VN" : "en-US",
+                  {
+                    style: "currency",
+                    currency: auction.currency === "VND" ? "VND" : "USD",
+                  }
+                )}
               </span>
             </p>
             <p>
@@ -353,10 +356,13 @@ const AuctionDetail = () => {
               />
               {t("step_price")}:{" "}
               <span className="font-semibold text-yellow-700">
-                {auction.step_price?.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
+                {auction.step_price?.toLocaleString(
+                  auction.currency === "VND" ? "vi-VN" : "en-US",
+                  {
+                    style: "currency",
+                    currency: auction.currency === "VND" ? "VND" : "USD",
+                  }
+                )}
               </span>
             </p>
             <p>

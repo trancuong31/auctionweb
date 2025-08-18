@@ -63,17 +63,23 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
               </p>
               <p className="flex justify-between">
                 <span className=" text-gray-500">{t("starting_price")}:</span>{" "}
-                {item.starting_price?.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
+                {item.starting_price?.toLocaleString(
+                  item.currency === "VND" ? "vi-VN" : "en-US",
+                  {
+                    style: "currency",
+                    currency: item.currency === "VND" ? "VND" : "USD",
+                  }
+                )}
               </p>
               <p className="flex justify-between">
                 <span className=" text-gray-500">{t("step_price")}:</span>{" "}
-                {item.step_price?.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
+                {item.step_price?.toLocaleString(
+                  item.currency === "VND" ? "vi-VN" : "en-US",
+                  {
+                    style: "currency",
+                    currency: item.currency === "VND" ? "VND" : "USD",
+                  }
+                )}
               </p>
               <p className="flex justify-between">
                 <span className=" text-gray-500">{t("start_time")}:</span>{" "}
