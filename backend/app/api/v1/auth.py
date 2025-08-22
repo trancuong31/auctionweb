@@ -34,6 +34,7 @@ class VerifyResetTokenRequest(BaseModel):
 class RegisterRequest(BaseModel):
     email: str
     username: str
+    company: str
     password: str
     phone_number: str
     role: UserRole = UserRole.USER  # Mặc định là user
@@ -92,8 +93,8 @@ def login(request: Request, login_data: LoginRequest, db: Session = Depends(get_
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id})
     refresh_token = create_refresh_token(data={"sub": user.email, "user_id": user.id})
     role = UserRole(user.role).name.lower()
-    username= user.username
-    email= user.email
+    username = user.username
+    email = user.email
     user_id = user.id
     return {"access_token": access_token,"refresh_token": refresh_token, "token_type": "bearer", "role":role, "username":username, "email": email, "user_id": user_id }
 
@@ -106,10 +107,11 @@ def register(request: Request, register_data: RegisterRequest, db: Session = Dep
     user = User(
         email=register_data.email,
         username = register_data.username,
-        phone_number=register_data.phone_number,
-        created_at=datetime.now(),
-        password=register_data.password,
-        role=register_data.role.value
+        phone_number = register_data.phone_number,
+        company = register_data.company,
+        created_at = datetime.now(),
+        password = register_data.password,
+        role = register_data.role.value
     )
     db.add(user)
     db.commit()

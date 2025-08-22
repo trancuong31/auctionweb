@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAll, update, deleteOne, updateSatus } from "../services/api";
 import CreateAuctionForm from "../components/layout/AuctionCreate";
+import CreateCategoryForm from "../components/layout/CategoryCreate";
 import ModalDetailAuction from "../components/layout/ModalDetailAuction";
 import Pagination from "../components/ui/Pagination";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
@@ -27,16 +28,23 @@ import clsx from "clsx";
 const OverViewAdmin = () => {
   const navigate = useNavigate();
   const [currentIndexPageUser, setCurrentIndexPageUser] = useState(0);
+  const [currentIndexPageCategory, setCurrentIndexPageCategory] = useState(0);
   const [currentIndexPageAuction, setCurrentIndexPageAuction] = useState(0);
   const [currentEditing, setCurrentEditing] = useState(null);
+  const [currentEditingCategory, setCurrentEditingCategory] = useState(null);
   const [overViewData, setOverViewData] = useState({});
   const [userData, setUserData] = useState([]);
+  const [categoryData, setCategoryData] = useState([]);
   const [auctionData, setAuctionData] = useState([]);
   const [userName, setUserName] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryDescription, setCategoryDescription] = useState("");
   const [displayCreateForm, setDisplayCreateForm] = useState(false);
+  const [displayCreateCategoryForm, setDisplayCreateCategoryForm] = useState(false);
   const [idAuction, setIdAuction] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [totalPageUser, setTotalPageUser] = useState(0);
+  const [totalPageCategory, setTotalPageCategory] = useState(0);
   const [totalPageAuction, setTotalPageAuction] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
@@ -52,6 +60,15 @@ const OverViewAdmin = () => {
   });
   const [userFilterInput, setUserFilterInput] = useState({
     sort_by: "",
+    sort_order: "",
+    search_text: "",
+  });
+  const [categoryParam, setCategoryParam] = useState({
+    sort_by: "",
+    sort_order: "",
+    search_text: "",
+  });
+  const [categoryFilterInput, setCategoryFilterInput] = useState({
     sort_order: "",
     search_text: "",
   });
@@ -100,6 +117,7 @@ const OverViewAdmin = () => {
   };
 
   const setModeEdit = (auction) => {
+    console.log("Editing auction:", auction); // Debug log
     setMode("edit");
     setDisplayCreateForm(true);
     setAuctionObject(auction);
@@ -109,6 +127,10 @@ const OverViewAdmin = () => {
     setIsOpenModal(false);
   };
 
+  const setModeCreateCategory = () => {
+    setDisplayCreateCategoryForm(true);
+    setAuctionObject({});
+  };
   const getPageUser = async (page = 1) => {
     const lang = sessionStorage.getItem("lang") || "en";
     const param = {
@@ -133,6 +155,33 @@ const OverViewAdmin = () => {
     } finally {
       // setIsLoadingSearch(false);
       setCurrentIndexPageUser(page - 1);
+    }
+  };
+
+  const getPageCategory = async (page = 1) => {
+    const lang = sessionStorage.getItem("lang") || "en";
+    const param = {
+      ...categoryParam,
+      page,
+      lang,
+    };
+    try {
+      // setIsLoadingSearch(true);
+      const response = await getAll("categories", true, param);
+      setCategoryData(response.data.Categories);
+      setTotalPageCategory(
+        Math.ceil(
+          response.data.total_categories / Number(import.meta.env.VITE_PAGE_SIZE)
+        )
+      );
+    } catch (error) {
+      const status = error?.response?.status;
+      if (status === 401) {
+        navigate("/login");
+      }
+    } finally {
+      // setIsLoadingSearch(false);
+      setCurrentIndexPageCategory(page - 1);
     }
   };
 
@@ -166,6 +215,7 @@ const OverViewAdmin = () => {
     getPageAuction,
     500
   );
+
 
   // Handler cho nút search
   const handleSearch = () => {
@@ -207,6 +257,27 @@ const OverViewAdmin = () => {
       cancelSearchUser();
     };
   }, [cancelSearchUser]);
+
+  const [debouncedSearchCategory, cancelSearchCategory] = useDebounceCallback(
+    getPageCategory,
+    500
+  );
+  const searchCategory = () => {
+    setCategoryParam({
+      ...categoryFilterInput,
+    });
+  };
+  useEffect(() => {
+    debouncedSearchCategory(1);
+  }, [categoryParam]);
+
+  useEffect(() => {
+    return () => {
+      cancelSearchCategory();
+    };
+  }, [cancelSearchCategory]);
+
+
 
   const handleEditUser = async (user) => {
     if (userName.length < 3) return toast.error(t("user_not_valid"));
@@ -285,6 +356,55 @@ const OverViewAdmin = () => {
     setConfirmOpen(true);
   };
 
+  const handleEditCategory = async (category) => {
+    if (categoryName.length < 3) return toast.error(t("category_not_valid"));
+    const newCategory = {
+      ...category,
+      category_name: categoryName,
+      description: categoryDescription,
+    };
+
+    try {
+      await update("categories", category.category_id, newCategory, true, {
+        lang: sessionStorage.getItem("lang") || "en",
+      });
+      toast.success(t("success.update_category"));
+      setCurrentEditingCategory(null);
+      await getPageCategory();
+    } catch (error) {
+      const detail = error?.response?.data?.detail;
+      toast.error(detail || t("error.update_category"));
+    }
+  };
+
+  const handleDeleteCategory = (id) => {
+    setConfirmConfig({
+      title: t("delete_category_title"),
+      message: t("delete_category_message"),
+      icon: (
+        <FontAwesomeIcon
+          className="text-red-500 h-6"
+          icon={faTriangleExclamation}
+        />
+      ),
+      onConfirm: async () => {
+        try {
+          await deleteOne("categories", id, true, {
+            lang: sessionStorage.getItem("lang") || "en",
+          });
+          toast.success(t("success.delete_success_category"));
+          getPageCategory();
+          getPageAuction();
+        } catch (error) {
+          const detail = error?.response?.data?.detail;
+          toast.error(detail || t("error.delete_fail_category"));
+          console.log(error);
+        }
+      },
+    });
+    setConfirmOpen(true);
+  };
+
   const openDetailBid = (id) => {
     setIdAuction(id);
     setIsOpenModal(true);
@@ -293,6 +413,12 @@ const OverViewAdmin = () => {
   const handelClickEdit = (user, idx) => {
     setCurrentEditing(idx);
     setUserName(user.username);
+  };
+
+  const handelClickEditCategory = (category, idx) => {
+    setCurrentEditingCategory(idx);
+    setCategoryName(category.category_name);
+    setCategoryDescription(category.description);
   };
 
   useEffect(() => {
@@ -330,6 +456,20 @@ const OverViewAdmin = () => {
         mode={mode}
         auction={auctionObject}
       />
+
+      <CreateCategoryForm
+        isOpen={displayCreateCategoryForm}
+        onClickClose={(isReloadData = false) => {
+          if (isReloadData) {
+            getPageCategory();
+          }
+          setDisplayCreateCategoryForm(false);
+          setCategoryName("");
+          setCategoryDescription("");
+          setCurrentEditingCategory(null);
+        }}
+      />
+
       <ModalDetailAuction
         isOpen={isOpenModal}
         clickClose={handleClickClose}
@@ -338,7 +478,7 @@ const OverViewAdmin = () => {
       <AnimatedContent>
         {/* <!-- OVERVIEW --> */}
 
-        <div className="text-white grid sm:grid-cols-3 gap-6 mb-6">
+        <div className="text-white shadow-[0_2px_8px_rgba(0,0,0,0.3)] rounded-lg grid sm:grid-cols-3 gap-6 mb-6">
           {/* Total Users */}
           <div className="flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow bg-white">
             <div className="flex-1 pr-3 text-left">
@@ -542,7 +682,7 @@ const OverViewAdmin = () => {
 
         {/* <!-- MANAGER USERS --> */}
 
-        <div className="bg-gray-100 p-4 rounded shadow  mb-6">
+        <div className=" shadow-[0_2px_8px_rgba(0,0,0,0.3)] p-4 rounded mb-6">
           <div className="flex justify-between mb-3 items-center max-sm:flex-col max-sm:gap-3">
             <p className="text-lg font-bold">{t("manager_user")}</p>
             <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end max-sm:gap-3">
@@ -609,12 +749,12 @@ const OverViewAdmin = () => {
               <button
                 onClick={searchUser}
                 className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-lg font-bold text-white text-base
-             border border-transparent
-             shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
-             transition-transform duration-300
-             bg-gradient-to-r from-blue-500 to-indigo-500
-             hover:border-gray-100 active:scale-95"
-              >
+                  border border-transparent
+                  shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
+                  transition-transform duration-300
+                  bg-gradient-to-r from-blue-500 to-indigo-500
+                  hover:border-gray-100 active:scale-95"
+                >
                 <FontAwesomeIcon icon={faSearch} />
                 <span>{t("search_btn")}</span>
               </button>
@@ -634,9 +774,10 @@ const OverViewAdmin = () => {
                   <th className="border px-2 py-1">
                     {t("contact_phone_label").split(":")}
                   </th>
-                  <th className="border px-2 py-1">{t("created_at")}</th>
+                  {/* <th className="border px-2 py-1">{t("created_at")}</th> */}
                   <th className="border px-2 py-1">{t("role")}</th>
                   <th className="border px-2 py-1">{t("bid_count")}</th>
+                  <th className="border px-2 py-1">{t("company")}</th>
                   <th className="border px-2 py-1">{t("status")}</th>
                   <th className="border px-2 py-1">{t("action")}</th>
                 </tr>
@@ -662,14 +803,15 @@ const OverViewAdmin = () => {
                       )}
                     </td>
                     <td className="border px-2 py-1">{user.email}</td>
-                    <td className="border px-2 py-1">
+                    <td className="border px-2 py-1 text-center">
                       {user.phone_number ? user.phone_number : "N/A"}
                     </td>
-                    <td className="border px-2 py-1">
+                    {/* <td className="border px-2 py-1">
                       {dayjs(user.created_at).format("MM/DD/YYYY HH:mm")}
-                    </td>
-                    <td className="border px-2 py-1">{user.role}</td>
-                    <td className="border px-2 py-1">{user.bid_count}</td>
+                    </td> */}
+                    <td className="border px-2 py-1 text-center">{user.role}</td>
+                    <td className="border px-2 py-1 text-center">{user.bid_count}</td>
+                    <td className="border px-2 py-1">{user.company}</td>
                     <td className="border px-2 py-1">
                       <div className="flex justify-center">
                         {user.status ? (
@@ -734,10 +876,174 @@ const OverViewAdmin = () => {
           onPageChange={getPageUser}
           className={"flex mt-0 justify-end mb-4"}
         />
+        {/* <!-- MANAGER CATEGORY --> */}
 
+        <div className="shadow-[0_2px_8px_rgba(0,0,0,0.3)] p-4 rounded mb-6">
+          <div className="flex justify-between mb-3 items-center max-sm:flex-col max-sm:gap-4">
+            <p className="text-lg font-bold">{t("manager_category")}</p>
+            <button
+                onClick={() => setModeCreateCategory()}
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white flex items-center justify-center font-bold text-base px-4 py-3 rounded-lg max-sm:w-full"
+              >
+                <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+              </button>
+            <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end max-sm:gap-3">    
+
+              {/* <!-- Search Input --> */}
+              <div className="w-[60%] max-sm:w-full">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder={t("category_name")}
+                    className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) =>
+                      setCategoryFilterInput((prev) => ({
+                        ...prev,
+                        search_text: e.target.value.trim(),
+                      }))
+                    }
+                  />
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <FontAwesomeIcon icon={faSearch} />
+                  </span>
+                </div>
+              </div>
+              {/* <!-- Category Select --> */}
+              <div className="w-[25%] pb-6 max-sm:w-full">
+                <label className="text-sm font-semibold block mb-1">
+                  {t("sort_by")}
+                </label>
+                {/* Sort select */}
+                <div className="">
+                  <select
+                    onChange={(e) => {
+                      const selectedOption = e.target.selectedOptions[0];
+                      setCategoryFilterInput((prev) => ({
+                        ...prev,
+                        sort_order: selectedOption.dataset.order,
+                      }));
+                    }}
+                    className="border border-gray-400 rounded-lg px-3 py-2 w-full"
+                  >
+                    <option value="category_name" data-order="asc">
+                      {t("sort_category_name_asc")}
+                    </option>
+                    <option value="category_name" data-order="desc">
+                      {t("sort_category_name_desc")}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              {/* <!-- Search Button --> */}
+              <button
+                onClick={searchCategory}
+                className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-lg font-bold text-white text-base
+             border border-transparent
+             shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
+             transition-transform duration-300
+             bg-gradient-to-r from-blue-500 to-indigo-500
+             hover:border-gray-100 active:scale-95"
+              >
+                <FontAwesomeIcon icon={faSearch} />
+                <span>{t("search_btn")}</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto border border-gray-300 rounded">
+            <div className="text-center ">
+              {isLoadingSearch && <div className="loader" />}
+            </div>
+            <table className="min-w-full border-collapse">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className="border px-2 py-1">#</th>                  
+                  <th className="border px-2 py-1">{t("category_name").split(0,4)}</th>
+                  <th className="border px-2 py-1">{t("description")}</th>
+                  <th className="border px-2 py-1">{t("action")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categoryData?.map((category, idx) => (
+                  <tr
+                    key={category.category_id || idx}
+                    className="odd:bg-white even:bg-gray-100 hover:bg-blue-400 hover:text-white transition"
+                  >
+                    <td className="border px-2 py-1 text-center">{idx + 1}</td>                    
+                    <td className="border px-2 py-1">{
+                    currentEditingCategory === idx ? (
+                        <input
+                          type="text"
+                          name="name"
+                          value={categoryName}
+                          onChange={(e) => setCategoryName(e.target.value)}
+                          className="border px-2 py-1 w-full rounded text-black"
+                        />
+                      ) : (
+                        category.category_name
+                      )}</td>                    
+                    <td className="border px-2 py-1">{currentEditingCategory === idx ? (
+                        <input
+                          type="text"
+                          name="description"
+                          value={categoryDescription}
+                          onChange={(e) => setCategoryDescription(e.target.value)}
+                          className="border px-2 py-1 w-full rounded text-black"
+                        />
+                      ) : (
+                        category.description
+                      )}</td>                    
+                    <td className="border px-2 py-1 space-x-1 text-center max-sm:flex">
+                      {currentEditingCategory === idx ? (
+                        <>
+                          <button
+                            onClick={() => handleEditCategory(category)}
+                            className="bg-teal-100 text-teal-600 text-xs font-semibold px-3 py-2 min-w-16 rounded-md border border-teal-200 hover:bg-teal-300 transition"
+                          >
+                            {t("save")}
+                          </button>
+                          <button
+                            onClick={() => setCurrentEditingCategory(null)}
+                            className="bg-orange-100 text-orange-600 font-semibold text-xs px-3 py-2 rounded-md min-w-[60px] border border-orange-200 hover:bg-orange-300 transition"
+                          >
+                            {t("cancle")}
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => handelClickEditCategory(category, idx)}
+                            className="bg-indigo-100 hover:bg-indigo-200 font-semibold text-indigo-700 text-xs px-3 py-2 rounded min-w-[60px] transition"
+                          >
+                            {t("edit")}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteCategory(category.category_id)}
+                            className="bg-red-100 text-red-600 text-xs font-semibold px-3 py-2 rounded-md border border-red-200 hover:bg-red-300 transition"
+                          >
+                            {t("delete")}
+                          </button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <Pagination
+          totalPage={totalPageCategory}
+          currentPage={currentIndexPageCategory}
+          onPageChange={getPageCategory}
+          className={"flex mt-0 justify-end mb-4"}
+        />
         {/* <!-- MANAGER AUCTIONS --> */}
 
-        <div className="bg-gray-100  p-4 rounded shadow">
+        <div className="shadow-[0_2px_8px_rgba(0,0,0,0.3)]  p-4 rounded">
           {/* <div className="flex justify-between items-center mb-4 max-sm:justify-center">
           
         </div> */}
@@ -834,11 +1140,11 @@ const OverViewAdmin = () => {
                 <button
                   onClick={handleSearch}
                   className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-lg font-bold text-white text-base
-             border border-transparent
-             shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
-             transition-transform duration-300
-             bg-gradient-to-r from-blue-500 to-indigo-500
-             hover:border-gray-100 active:scale-95"
+                    border border-transparent
+                    shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
+                    transition-transform duration-300
+                    bg-gradient-to-r from-blue-500 to-indigo-500
+                    hover:border-gray-100 active:scale-95"
                 >
                   <FontAwesomeIcon icon={faSearch} />
                   <span> {t("search_btn")}</span>
@@ -855,6 +1161,7 @@ const OverViewAdmin = () => {
                 <tr>
                   <th className="border px-2 py-1">#</th>
                   <th className="border px-2 py-1">{t("title")}</th>
+                  <th className="border px-2 py-1">{t("type")}</th>
                   <th className="border px-2 py-1">{t("start_time")}</th>
                   <th className="border px-2 py-1">{t("end_time")}</th>
                   <th className="border px-2 py-1">{t("starting_price")}</th>
@@ -891,12 +1198,15 @@ const OverViewAdmin = () => {
                         {auction.title}
                       </td>
                       <td className="border px-2 py-1 max-w-96 break-words">
+                        {auction.category.category_name || "N/A"}
+                      </td>
+                      <td className="border px-2 py-1 max-w-96 break-words text-center">
                         {dayjs(auction.start_time).format("MM/DD/YYYY HH:mm")}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words">
+                      <td className="border px-2 py-1 max-w-96 break-words text-center">
                         {dayjs(auction.end_time).format("MM/DD/YYYY HH:mm")}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words">
+                      <td className="border px-2 py-1 max-w-96 break-words text-center">
                         {auction.starting_price?.toLocaleString(
                           auction.currency === "VND" ? "vi-VN" : "en-US",
                           {
@@ -905,7 +1215,7 @@ const OverViewAdmin = () => {
                           }
                         )}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words">
+                      <td className="border px-2 py-1 max-w-96 break-words text-center">
                         {auction.highest_amount?.toLocaleString(
                           auction.currency === "VND" ? "vi-VN" : "en-US",
                           {
@@ -914,7 +1224,7 @@ const OverViewAdmin = () => {
                           }
                         ) || "N/A"}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words">
+                      <td className="border px-2 py-1 max-w-96 break-words text-center">
                         {statusText}
                       </td>
                       <td

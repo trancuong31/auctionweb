@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 
-function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
+function ModalAuction({ isOpen, onClose, email, username, auctionId, currency }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { t, i18n } = useTranslation();
   const schema = z.object({
@@ -278,7 +278,7 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId }) {
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
                 <span className="text-gray-500 font-medium text-sm sm:text-base">
-                  $
+                  {currency === "VND" ? "₫" : "$"}
                 </span>
               </div>
               <input

@@ -206,7 +206,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .header-container {
-    padding: 1.25rem 2rem;
+    padding: 1.25rem 1rem;
   }
   
   .header-logo {

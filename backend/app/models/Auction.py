@@ -8,6 +8,7 @@ class Auction(Base):
     __tablename__ = "auctions"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    category_id = Column(String(36), ForeignKey("categories.category_id", ondelete='CASCADE'), nullable=False)
     title = Column(String, nullable=False)
     title_vi = Column(String, nullable=False)
     title_ko = Column(String, nullable=False)
@@ -27,3 +28,4 @@ class Auction(Base):
     bids = relationship("Bid", back_populates="auction")
     notifications = relationship("Notification", back_populates="auction")
     orders = relationship("Order", back_populates="auction")
+    category = relationship("Category", back_populates="auctions")

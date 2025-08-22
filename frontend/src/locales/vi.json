@@ -42,6 +42,9 @@
   "email_invalid": "Email không hơp lệ",
   "username_min": "Tên đăng nhập phải có ít nhất 3 ký tự",
   "username_max": "Tên đăng nhập không được vượt quá 50 ký tự",
+  "company_min": "Tên công ty phải có ít nhất 2 ký tự",
+  "company_max": "Tên công ty không được vượt quá 100 ký tự",
+  "company_regex": "Tên công ty chỉ được chứa chữ cái",
   "username_regex": "Tên đăng nhập chỉ được chứa chữ cái",
   "password_min": "Mật khẩu phải có ít nhất 8 ký tự",
   "password_max": "Mật khẩu không được vượt quá 30 ký tự",
@@ -113,7 +116,9 @@
   "sort_email_asc": "Email từ A đến Z",
   "sort_email_desc": "Email từ Z đến A",
   "delete_user_title": "Xóa người dùng",
+  "delete_category_title": "Xóa danh mục",
   "delete_user_message": "Bạn có chắc chắn muốn xóa người dùng này không? Hành động này sẽ không thể hoàn tác.",
+  "delete_category_message": "Bạn có chắc chắn muốn xóa danh mục này không? Hành động này sẽ không thể hoàn tác.",
   "deactivate_user_title": "Vô hiệu hóa người dùng",
   "activate_user_title": "Kích hoạt người dùng",
   "deactivate_user_message": "Bạn có chắc chắn muốn vô hiệu hóa người dùng này không?",
@@ -248,8 +253,11 @@
     "add_new_auction": "Đã thêm phiên đấu giá thành công",
     "bid_submitted": "Gửi đấu giá thành công!",
     "delete_success": "Xóa người dùng thành công!",
+    "delete_success_category": "Xóa danh mục thành công!",
     "update_status": "Cập nhật trạng thái thành công!",
-    "update_auction": "Cập nhật phiên đấu giá thành công!"
+    "update_auction": "Cập nhật phiên đấu giá thành công!",
+    "update_category": "Cập nhật danh mục thành công!",
+    "create_category_success": "Tạo danh mục thành công!"
   },
   "error": {
     "add_new_auction": "Lỗi tạo phiên đấu giá mới!",
@@ -262,26 +270,35 @@
     "auction_not_start": "Phiên đấu giá này chưa bắt đầu!",
     "error_get_data": "Lỗi lấy dữ liệu",
     "delete_fail": "Xóa người dùng thất bại!",
+    "delete_fail_category": "Xóa danh mục thất bại!",
     "update_status": "Cập nhật trạng thái thất bại!",
-     "fetch_bids": "Lỗi khi lấy dữ liệu đấu giá"
+    "fetch_bids": "Lỗi khi lấy dữ liệu đấu giá",
+    "category_name_required": "Tên danh mục là bắt buộc",
+    "category_name_max_length": "Tên danh mục không được vượt quá 100 ký tự",
+    "description_required": "Mô tả là bắt buộc",
+    "description_max_length": "Mô tả không được vượt quá 500 ký tự",
+    "create_category_failed": "Tạo danh mục thất bại!"
   },
   "no_data": "Không có dữ liệu",
   "no_file": "Không có file",
   "no_announcements": "Không có thông báo",
+  "category_not_valid": "Danh mục không hợp lệ!",
   "user_not_valid": "Tên người dùng không hợp lệ!",
   "update_user": "Cập nhật user thành công!",
-  "update_user_fai": "Cập nhật user thất bại!",
+  "update_user_fai": "Cập nhật user thất bại!",  
+  "update_category_fai": "Cập nhật danh mục thất bại!",
   "validate_auction": {
     "title_required": "Tiêu đề là bắt buộc",
     "title_max": "Tiêu đề không được vượt quá 200 ký tự",
     "description_required": "Mô tả là bắt buộc",
     "description_max": "Mô tả không được vượt quá 2000 ký tự",
     "starting_price_min": "Giá khởi điểm phải lớn hơn 0",
-    "step_price_min": "Bước giá phải ≥ 1$",
+    "step_price_min": "Bước giá phải > 0",
     "image_url_min": "Phải chọn ít nhất một tệp",
     "file_exel_instance": "Phải chọn tệp Excel",
     "end_time_required": "Thời gian là bắt buộc",
-    "file_max_size": "File không được vượt quá 10MB"
+    "file_max_size": "File không được vượt quá 10MB",
+    "category_id_required": "Loại mặt hàng là bắt buộc"
   },
   "validate_bid": {
     "address_required": "Địa chỉ là bắt buộc",
@@ -316,6 +333,16 @@
   "participated": "Tham gia",
   "winning": "Chiến thắng",
   "update": "Cập nhật",
-  "update_user_success": "Cập nhật thông tin thành công"
-  
+  "update_user_success": "Cập nhật thông tin thành công",
+  "type": "Loại hàng",
+  "unknown": "Không xác định",
+  "company": "Công ty",
+  "select_group": "--Chọn nhóm--",
+  "see_file":"Xem file đính kèm",
+  "manager_category": "Quản lý danh mục",
+  "category_name":"Tên danh mục",
+  "sort_category_name_asc": "Sắp xếp tên danh mục từ A đến Z",
+  "sort_category_name_desc": "Sắp xếp tên danh mục từ Z đến A",
+  "create_category": "TẠO DANH MỤC"
+
 }

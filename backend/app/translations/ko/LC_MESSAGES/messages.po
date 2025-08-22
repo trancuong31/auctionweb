@@ -174,3 +174,9 @@ msgstr "관리자 또는 슈퍼 관리자는 입찰할 수 없습니다"
 
 msgid "Super Admin cannot modify Super Admin information"
 msgstr "슈퍼 관리자는 슈퍼 관리자 정보를 수정할 수 없습니다"
+
+msgid "You don't have permission to create category!"
+msgstr "You don't have permission to create category!"
+
+msgid "Category name already exists"
+msgstr "Category name already exists"

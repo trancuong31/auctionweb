@@ -104,7 +104,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               />
               <div className="mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl shadow flex items-center justify-between w-full">
                 <p className="text-sm font-semibold">{t("current_status")}</p>
-                <span className="text-sm font-medium bg-white text-purple-600 px-4 py-1 rounded-full shadow-sm">
+                <span className="text-sm font-medium bg-white text-gray-600 px-4 py-1 rounded-lg shadow-sm">
                   {auction.status === 0
                     ? t("ongoing_auctions")
                     : auction.status === 1
@@ -112,11 +112,17 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     : t("ended_auctions")}
                 </span>
               </div>
+              <div className="mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl shadow flex items-center justify-between w-full">
+                <p className="text-sm text-white-500 font-semibold">{t("type")}</p>
+                <span className="text-sm font-medium bg-white text-gray-600 px-4 py-1 rounded-lg shadow-sm">
+                  {auction.category?.category_name || "N/A"}
+                </span>
+              </div>
             </div>
 
             <div className="lg:w-1/2 w-full space-y-3">
               <div className="bg-gray-100 p-4 rounded-xl flex items-start rounded-r-3xl rounded-l-md border-l-4 border-purple-500 shadow-sm">
-                <p className="text-lg font-semibold text-indigo-700 text-left break-words w-full">
+                <p className="text-lg font-semibold text-black-700 text-left break-words w-full">
                   {auction.title || "No title"}
                 </p>
               </div>
@@ -145,7 +151,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                   <p className="text-sm font-medium text-gray-500">
                     {t("starting_price")}
                   </p>
-                  <p className="text-green-600 font-bold text-lg">
+                  <p className="text-black-600 font-bold text-lg">
                     {auction.starting_price?.toLocaleString(
                       auction.currency === "VND" ? "vi-VN" : "en-US",
                       {
@@ -160,7 +166,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                   <p className="text-sm font-medium text-gray-500">
                     {t("step_price")}
                   </p>
-                  <p className="text-yellow-700 font-bold text-lg">
+                  <p className="text-black-700 font-bold text-lg">
                     {auction.step_price?.toLocaleString(
                       auction.currency === "VND" ? "vi-VN" : "en-US",
                       {

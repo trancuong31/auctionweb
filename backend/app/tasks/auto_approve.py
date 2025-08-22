@@ -6,10 +6,12 @@ from datetime import datetime
 import logging
 from app.models.Notification import Notification
 from app.i18n import _
-import json
+import os
 import time
+import dotenv
+dotenv.load_dotenv()
 
-BATCH_SIZE = 100  # Số lượng auction xử lý mỗi lần
+BATCH_SIZE = int(os.getenv("BATCH_SIZE", 50))  # Số lượng auction xử lý mỗi lần
 
 logger = logging.getLogger(__name__)
 

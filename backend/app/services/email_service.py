@@ -78,5 +78,6 @@ class EmailService:
             print(f"Error sending reset password email: {e}")
             return False
     
+    
 # Tạo instance global
 email_service = EmailService() 

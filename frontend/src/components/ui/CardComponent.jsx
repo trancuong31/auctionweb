@@ -63,13 +63,15 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
               </p>
               <p className="flex justify-between">
                 <span className=" text-gray-500">{t("starting_price")}:</span>{" "}
-                {item.starting_price?.toLocaleString(
-                  item.currency === "VND" ? "vi-VN" : "en-US",
-                  {
-                    style: "currency",
-                    currency: item.currency === "VND" ? "VND" : "USD",
-                  }
-                )}
+                {item.starting_price
+                  ? item.starting_price.toLocaleString(
+                      item.currency === "VND" ? "vi-VN" : "en-US",
+                      {
+                        style: "currency",
+                        currency: item.currency === "VND" ? "VND" : "USD",
+                      }
+                    )
+                  : t("see_file")}
               </p>
               <p className="flex justify-between">
                 <span className=" text-gray-500">{t("step_price")}:</span>{" "}
@@ -107,6 +109,12 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                     second: "2-digit",
                     hour12: false,
                   })}
+                </span>
+              </p>
+                <p className="flex justify-between">
+                <span className=" text-gray-500">{t("type")}:</span>{" "}
+                <span className="font-[600] text-right">
+                  {item.category?.category_name || t("unknown")}
                 </span>
               </p>
 

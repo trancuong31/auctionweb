@@ -13,4 +13,9 @@ python-dotenv>=1.0.0
 Babel
 
 
+
 # python -m babel.messages.frontend compile -d app/translations
+#docker-compose up -d --build  # Build và chạy lại
+# docker-compose build       # Build lại image
+# docker-compose restart   # Khởi động lại container
+# docker-compose start      # Khởi động container

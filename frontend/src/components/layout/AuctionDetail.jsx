@@ -11,6 +11,7 @@ import {
   faUser,
   faUsers,
   faLayerGroup,
+  faBoxes,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
@@ -251,6 +252,7 @@ const AuctionDetail = () => {
         email={getUser()?.email}
         username={getUser()?.username}
         auctionId={auction.id}
+        currency={auction.currency || "USD"}
         onClose={() => setIsOpen(false)}
       />
       <AnimatedContent>
@@ -336,23 +338,25 @@ const AuctionDetail = () => {
             <p>
               <FontAwesomeIcon
                 icon={faMoneyBill}
-                className="mr-4 text-green-500"
+                className="mr-4 text-blue-500"
               />
               {t("starting_price")}:{" "}
               <span className="font-semibold text-green-700">
-                {auction.starting_price?.toLocaleString(
-                  auction.currency === "VND" ? "vi-VN" : "en-US",
-                  {
-                    style: "currency",
-                    currency: auction.currency === "VND" ? "VND" : "USD",
-                  }
-                )}
+                {auction.starting_price && auction.starting_price !== 0
+                  ? auction.starting_price.toLocaleString(
+                      auction.currency === "VND" ? "vi-VN" : "en-US",
+                      {
+                        style: "currency",
+                        currency: auction.currency === "VND" ? "VND" : "USD",
+                      }
+                    )
+                  : t("see_file")}
               </span>
             </p>
             <p>
               <FontAwesomeIcon
                 icon={faLayerGroup}
-                className="mr-4 text-yellow-500"
+                className="mr-4 text-blue-500"
               />
               {t("step_price")}:{" "}
               <span className="font-semibold text-yellow-700">
@@ -368,7 +372,7 @@ const AuctionDetail = () => {
             <p>
               <FontAwesomeIcon
                 icon={faSignal5}
-                className="mr-4 text-purple-500"
+                className="mr-4 text-blue-500"
               />
               {t("status")}:{" "}
               <span className="font-semibold">
@@ -383,8 +387,18 @@ const AuctionDetail = () => {
             </p>
             <p>
               <FontAwesomeIcon
+                icon={faBoxes}
+                className="mr-4 text-blue-500"
+              />
+              {t("type")}:{" "}
+              <span className="font-semibold">
+                {auction.category.category_name || t("unknown")}
+              </span>
+            </p>
+            <p>
+              <FontAwesomeIcon
                 icon={faFileText}
-                className="mr-4 text-cyan-500"
+                className="mr-4 text-blue-500"
               />
               {t("attached_file")}:{" "}
               {auction.file_exel ? (
@@ -408,7 +422,7 @@ const AuctionDetail = () => {
                 <p>
                   <FontAwesomeIcon
                     icon={faUsers}
-                    className="mr-4 text-black-500"
+                    className="mr-4 text-blue-500"
                   />
                   {t("number_of_bids")}: {auction.count_users}
                 </p>
@@ -417,7 +431,7 @@ const AuctionDetail = () => {
               <p>
                 <FontAwesomeIcon
                   icon={faUser}
-                  className="mr-4 text-black-500"
+                  className="mr-4 text-blue-500"
                 />
                 {t("winner")}:{" "}
                 {Array.isArray(auction.bids) &&

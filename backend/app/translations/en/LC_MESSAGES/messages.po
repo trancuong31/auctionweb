@@ -177,3 +177,9 @@ msgstr "Admin or Super Admin not allowed to bid"
 
 msgid "Super Admin cannot modify Super Admin information"
 msgstr "Super Admin cannot modify Super Admin information"
+
+msgid "You don't have permission to create category!"
+msgstr "You don't have permission to create category!"
+
+msgid "Category name already exists"
+msgstr "Category name already exists"

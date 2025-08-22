@@ -6,6 +6,7 @@ import {
   faEnvelope,
   faUser,
   faLock,
+  faBuilding,
   faEye,
   faPhone,
   faEyeSlash,
@@ -34,6 +35,11 @@ function Register() {
       .min(3, t("username_min"))
       .max(50, t("username_max"))
       .regex(/^[\p{L}\s]+$/u, t("username_regex")),
+    company: z
+      .string()
+      .min(2, t("company_min"))
+      .max(100, t("company_max"))
+      .regex(/^[\p{L}\s]+$/u, t("company_regex")),
     phone_number: z
       .string()
       .min(10, t("phone_require"))
@@ -62,7 +68,8 @@ function Register() {
     defaultValues: {
       username: "",
       email: "",
-      phone: "",
+      company: "",
+      phone_number: "",
       password: "",
     },
   });
@@ -141,6 +148,22 @@ function Register() {
             {errors.username && (
               <p className="text-red-500 text-[8px] absolute left-0 ml-1">
                 {errors.username.message}
+              </p>
+            )}
+          </div>
+          <div className="input-group">
+            <span className="input-icon">
+              <FontAwesomeIcon icon={faBuilding} />
+            </span>
+            <input
+              {...register("company")}
+              type="text"
+              placeholder={t("company", "Company")}
+              autoComplete="organization"
+            />
+            {errors.company && (
+              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+                {errors.company.message}
               </p>
             )}
           </div>

@@ -1,6 +1,6 @@
 from locale import currency
 from fastapi import APIRouter, Depends, Query, HTTPException, File, UploadFile, status, Request, Path
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from starlette.status import HTTP_400_BAD_REQUEST
 from app.core.database import get_db
 from app.models.Auction import Auction
@@ -23,8 +23,18 @@ from zoneinfo import ZoneInfo
 from fastapi import APIRouter
 from app.i18n import _
 from datetime import datetime, timedelta
+from app.models.Category import Category
+
 
 router = APIRouter()
+
+class CategoryOut(BaseModel):
+    category_id: str
+    category_name: str
+    description: Optional[str] = None
+    class Config:
+        from_attributes = True
+
 class AuctionOut(BaseModel):
     id: UUID
     title: str
@@ -40,6 +50,7 @@ class AuctionOut(BaseModel):
     status: int
     highest_amount: Optional[float] = None
     winner_info: Optional[dict] = None
+    category: Optional[CategoryOut] = None
     # bids: Optional[List] = None  
     @field_validator("image_url", mode="before")
     @classmethod
@@ -70,6 +81,7 @@ class AuctionDetailOut(BaseModel):
     count_users: Optional[int] = None
     highest_amount: Optional[float] = None
     bids : Optional[List]
+    category: Optional[CategoryOut] = None
 
 class AuctionsWithTotalOut(BaseModel):
     auctions: List[AuctionOut]
@@ -84,13 +96,14 @@ class AuctionCreate(BaseModel):
     description: Optional[str] = None
     description_vi: Optional[str] = None
     description_ko: Optional[str] = None
-    starting_price: float
-    step_price: float
+    starting_price: float = 0
+    step_price: float = 0
     currency: Optional[str]
     image_url: Optional[List[str]] = None
     file_exel: Optional[str] = None
     start_time: datetime
     end_time: datetime
+    category_id: str
     # status: int
 
 class AuctionSearchResponse(BaseModel):
@@ -121,7 +134,8 @@ class AuctionUpdate(BaseModel):
     description_ko: Optional[str] = None
     starting_price: Optional[float] = None
     step_price: Optional[float] = None
-    
+    currency: Optional[str] = None
+    category_id: Optional[str] = None
     image_url: Optional[List[str]] = None
     file_exel: Optional[str] = None
     start_time: Optional[datetime] = None
@@ -132,7 +146,10 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
 UPLOAD_IMAGE_DIR = os.path.join(BASE_DIR, 'uploads', 'images')
 UPLOAD_EXCEL_DIR = os.path.join(BASE_DIR, 'uploads', 'excels')
 
-def get_current_user(request: Request, db: Session = Depends(get_db), user_id: str = Depends(get_current_user_id_from_token)):
+def get_current_user(
+        request: Request, 
+        db: Session = Depends(get_db), 
+        user_id: str = Depends(get_current_user_id_from_token)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=401, detail=_("User not found", request))
@@ -147,7 +164,7 @@ def get_auctions_by_status(
 ):
     lang = request.state.locale
     now = datetime.now()
-    query = db.query(Auction)
+    query = db.query(Auction).options(joinedload(Auction.category))
     if status is not None and status not in [0, 1, 2]:
         raise HTTPException(status_code=400, detail=_("Invalid status value", request))
     # Filter theo trạng thái
@@ -272,6 +289,7 @@ def create_auction(
     
     auction = Auction(
         title=auction_in.title,
+        category_id=auction_in.category_id,
         title_vi=auction_in.title_vi,
         title_ko=auction_in.title_ko,
         description=auction_in.description,
@@ -286,14 +304,13 @@ def create_auction(
         end_time=auction_in.end_time,
         status=status,
         created_by=current_user.id
-        
     )
     db.add(auction)
     db.commit()
     db.refresh(auction)
     auction_data = auction.__dict__.copy()
     auction_data['image_url'] = json.loads(auction.image_url) if auction.image_url else []
-    return AuctionOut(**auction_data)
+    return AuctionOut.from_orm(auction)
 
 @router.put("/auctions/{auction_id}", response_model=AuctionOut)
 def update_auction(
@@ -341,8 +358,7 @@ def update_auction(
     db.refresh(auction)
     auction_data = auction.__dict__.copy()
     auction_data['image_url'] = json.loads(auction.image_url) if auction.image_url else []
-    return AuctionOut(**auction_data)
-
+    return AuctionOut.from_orm(auction)
 
 #admin upload ảnh khi thêm auction
 @router.post("/upload/image")
@@ -440,7 +456,7 @@ def download_excel_by_auction(request: Request, auction_id: str, db: Session = D
     # lấy filename = 'auction_xe_123.xlsx'
     filename = os.path.basename(auction.file_exel)
     # Tạo đường dẫn thực tới file
-    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
+    # BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
     file_path = os.path.join(BASE_DIR, 'uploads', 'excels', filename)
     if not os.path.isfile(file_path):
         raise HTTPException(status_code=404, detail=_("File not found on server", request))
@@ -454,6 +470,7 @@ def download_excel_by_auction(request: Request, auction_id: str, db: Session = D
 @router.get("/auctions/search", response_model=AuctionSearchResponse)
 def search_auctions(
     request: Request,
+    category_id: Optional[str] = Query(None, description="Lọc theo danh mục"),
     status: Optional[int] = Query(None, description="0: ongoing, 1: upcoming, 2: ended"),
     title: Optional[str] = Query(None, description="Tìm kiếm theo title auction"),
     sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: title, created_at, start_time, end_time"),
@@ -461,7 +478,7 @@ def search_auctions(
     page: int = Query(1, ge=1, description="Số trang"),
     page_size: int = Query(8, ge=1, le=100, description="Số item trên mỗi trang"),
     start_time: datetime = Query(None, description="Từ ngày"),
-    end_time: datetime = Query(None, description="Đến ngày"),    
+    end_time: datetime = Query(None, description="Đến ngày"),
     db: Session = Depends(get_db)
 ):
 
@@ -503,6 +520,9 @@ def search_auctions(
             Auction.end_time >= start_time,
             Auction.start_time <= end_time
         )
+    # Lọc theo danh mục
+    if category_id:
+        query = query.filter(Auction.category_id == category_id)
     # Sắp xếp
     if sort_by == "title":
         if sort_order.lower() == "asc":
@@ -660,7 +680,6 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
 
     return auction_data
 
-
 def get_monthly_stats(db: Session, target_date: datetime):
     """Tính toán thống kê cho từng tháng"""
     # start_of_month = target_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -785,4 +804,3 @@ def get_overview_stats(db: Session = Depends(get_db)):
     
     return result
 
-    

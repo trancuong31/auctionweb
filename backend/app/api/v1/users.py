@@ -19,6 +19,7 @@ class UserOut(BaseModel):
     username: Optional[str]
     phone_number: Optional[str]
     email: Optional[str]
+    company: Optional[str]
     role: str
     created_at: datetime
     status: int
@@ -31,6 +32,7 @@ class UserOutInfo(BaseModel):
     id: str
     username: Optional[str]
     phone_number: Optional[str]
+    company: Optional[str]
     email: Optional[str]
     password: Optional[str]
     role: str
@@ -49,6 +51,7 @@ class UserUpdate(BaseModel):
     username: Optional[str] = None
     phone_number: Optional[str] = None
     password : Optional[str] = None
+    company: Optional[str] = None
 
 class UsersListOut(BaseModel):
     users: list[UserOut]
@@ -116,6 +119,7 @@ def get_users(
             "username": user_obj.username,
             "email": user_obj.email,
             "phone_number": user_obj.phone_number,
+            "company": user_obj.company,
             "role": user_obj.role.value,
             "created_at": user_obj.created_at,
             "status": user_obj.status,
@@ -127,7 +131,7 @@ def get_users(
 
 @router.get("/users/{user_id}", response_model=UserOutInfo)
 def get_user(
-    request: Request, 
+    request: Request,
     user_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -147,6 +151,7 @@ def get_user(
         "email": user.email,
         "password": user.password,
         "phone_number": user.phone_number,
+        "company": user.company,
         "role": user.role.value,
         "created_at": user.created_at,
         "status": user.status,
@@ -199,13 +204,15 @@ def update_user(
     if current_user.role == UserRole.ADMIN and user.role == UserRole.SUPER_ADMIN:
         raise HTTPException(status_code=403, detail=_("Admin cannot modify Super Admin information", request))
 
-
     # Update các trường cho phép
     if data.username is not None:
         user.username = data.username.strip()
 
     if data.phone_number is not None:
         user.phone_number = data.phone_number.strip()
+    
+    if data.company is not None:
+        user.company = data.company.strip()
 
     if data.password is not None:
         user.password = data.password.strip()

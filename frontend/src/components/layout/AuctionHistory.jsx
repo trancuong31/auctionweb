@@ -257,10 +257,18 @@ const AuctionHistory = ({ isOpen, onClose }) => {
               <div className="text-orange-600 text-sm font-medium">
                 {t("highest_value")}
               </div>
-              <div className="text-lg font-bold text-orange-700">
-                {formatCurrency(
-                  Math.max(...auctionHistory.map((bid) => bid.bid_amount))
-                )}
+              <div className="text-base font-bold text-orange-700 space-y-1">
+                {/* Hiển thị max cho từng loại tiền */}
+                {['USD', 'VND'].map((currency) => {
+                  const bidsOfCurrency = auctionHistory.filter(bid => bid.currency === currency);
+                  if (bidsOfCurrency.length === 0) return null;
+                  const maxBid = Math.max(...bidsOfCurrency.map(bid => bid.bid_amount));
+                  return (
+                    <div key={currency}>
+                      <span className="font-bold">{currency}:</span> {formatCurrency(maxBid, currency)}
+                    </div>
+                  );
+                })}
               </div>
             </div>
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">

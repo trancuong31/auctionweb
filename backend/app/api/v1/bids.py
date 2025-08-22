@@ -18,6 +18,7 @@ router = APIRouter()
 class BidCreate(BaseModel):
     auction_id: str
     bid_amount: float
+    file: Optional[str] = None
     address: Optional[str] = None
     note: Optional[str] = None
 
@@ -26,6 +27,7 @@ class BidOut(BaseModel):
     auction_id: str
     user_id: str
     bid_amount: float
+    file: Optional[str] = None
     created_at: datetime
     address: Optional[str] = None
     note: Optional[str] = None
@@ -38,6 +40,7 @@ class BidWithAuctionOut(BaseModel):
     auction_id: str
     user_id: str
     bid_amount: float
+    file: Optional[str] = None
     created_at: datetime
     address: Optional[str] = None
     note: Optional[str] = None
@@ -96,6 +99,7 @@ def create_bid(
         auction_id=bid_in.auction_id,
         user_id=user_id,
         bid_amount=bid_in.bid_amount,
+        file=bid_in.file,
         created_at=datetime.now(),
         address=bid_in.address,
         note=bid_in.note
@@ -103,19 +107,33 @@ def create_bid(
     db.add(bid)
     db.commit()
     db.refresh(bid)
+    if auction.currency == "USD":
+        message = "You have successfully placed a bid of  {bid_in_bid_amount:,.0f}$ on auction {auction_title}.".format(
+            bid_in_bid_amount=bid_in.bid_amount,
+            auction_title=auction.title
+        )
+        message_vi = "Bạn đã đặt giá thầu thành công {bid_in_bid_amount:,.0f}$ của {auction_title}.".format(
+            bid_in_bid_amount=bid_in.bid_amount,
+            auction_title=auction.title
+        )
+        message_ko = "{auction_title} 경매에 {bid_in_bid_amount:,.0f}$의 입찰을 성공적으로 완료하였습니다.".format(
+            bid_in_bid_amount=bid_in.bid_amount,
+            auction_title=auction.title
+        )
+    elif auction.currency == "VND":
+        message = "You have successfully placed a bid of {bid_in_bid_amount:,.0f}₫ on auction {auction_title}.".format(
+            bid_in_bid_amount=bid_in.bid_amount,
+            auction_title=auction.title
+        )
+        message_vi = "Bạn đã đặt giá thầu thành công {bid_in_bid_amount:,.0f}₫ của {auction_title}.".format(
+            bid_in_bid_amount=bid_in.bid_amount,
+            auction_title=auction.title
+        )
+        message_ko = "{auction_title} 경매에 {bid_in_bid_amount:,.0f}₫의 입찰을 성공적으로 완료하였습니다.".format(
+            bid_in_bid_amount=bid_in.bid_amount,
+            auction_title=auction.title
+        )
 
-    message = "You have successfully placed a bid of  {bid_in_bid_amount:,.0f}$ on auction {auction_title}.".format(
-        bid_in_bid_amount=bid_in.bid_amount,
-        auction_title=auction.title
-    )
-    message_vi = "Bạn đã đặt giá thầu thành công {bid_in_bid_amount:,.0f}$ của {auction_title}.".format(
-        bid_in_bid_amount=bid_in.bid_amount,
-        auction_title=auction.title
-    )
-    message_ko = "{auction_title} 경매에 {bid_in_bid_amount:,.0f}$의 입찰을 성공적으로 완료하였습니다.".format(
-        bid_in_bid_amount=bid_in.bid_amount,
-        auction_title=auction.title
-    )
     notification = Notification(
         user_id=user_id,
         auction_id = bid_in.auction_id,
@@ -150,6 +168,7 @@ def get_bids_by_user(
             auction_id=bid.auction_id,
             user_id=bid.user_id,
             bid_amount=float(bid.bid_amount),
+            file=bid.file,
             created_at=bid.created_at,
             address=bid.address,
             note=bid.note,

@@ -1,5 +1,5 @@
 import RangeCalender from "../ui/RangeCalender";
-import { create, update } from "../../services/api";
+import { create, update, getAll } from "../../services/api";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -18,7 +18,8 @@ const CreateAuctionForm = ({
   auction,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [inputKey, setInputKey] = useState(false);
+  const [inputKey, setInputKey] = useState(false);  
+  const [categories, setCategories] = useState([]);
   const MAX_FILE_SIZE =
     Number(import.meta.env.VITE_MAX_FILE_SIZE) || 10 * 1024 * 1024;
   const { t, i18n } = useTranslation();
@@ -33,8 +34,8 @@ const CreateAuctionForm = ({
       .trim()
       .min(1, t("validate_auction.description_required"))
       .max(2000, t("validate_auction.description_max")),
-    starting_price: z.number().min(1, t("validate_auction.starting_price_min")),
-    step_price: z.number().min(1, t("validate_auction.step_price_min")),
+    starting_price: z.number().optional(),
+    step_price: z.number().optional(),
     image_url: z
       .array(z.union([z.instanceof(File), z.string()]))
       .min(1, t("validate_auction.image_url_min")),
@@ -50,8 +51,10 @@ const CreateAuctionForm = ({
           message: t("validate_auction.file_max_size"),
         }
       ),
+    currency: z.enum(["USD", "VND"]),
     end_time: z.string().min(1, t("validate_auction.end_time_required")),
     start_time: z.any(),
+    category_id: z.string().min(1, t("validate_auction.category_id_required")),
   });
 
   dayjs.extend(utc);
@@ -72,11 +75,13 @@ const CreateAuctionForm = ({
       title: "",
       starting_price: 0,
       step_price: 0,
+      currency: "USD",
       start_time: "",
       end_time: "",
       description: "",
       file_exel: null,
       image_url: [],
+      category_id: "",
     },
   });
 
@@ -91,9 +96,11 @@ const CreateAuctionForm = ({
         step_price: 0,
         start_time: "",
         end_time: "",
+        currency: "USD",
         description: "",
         file_exel: null,
         image_url: [],
+        category_id: "",
       });
     } else if (mode === "edit" && auction) {
       reset({
@@ -101,10 +108,12 @@ const CreateAuctionForm = ({
         starting_price: auction.starting_price || 0,
         step_price: auction.step_price || 0,
         start_time: auction.start_time || "",
+        currency: auction.currency || "USD",
         end_time: auction.end_time || "",
         description: auction.description || "",
         file_exel: null,
         image_url: auction.image_url || [],
+        category_id: auction.category?.category_id || "",
       });
       setInputKey((prev) => !prev);
     }
@@ -116,6 +125,25 @@ const CreateAuctionForm = ({
     i18n.changeLanguage(savedLang);
   }, [i18n]);
 
+  useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const dataGroup = await getAll("categories", false);
+          setCategories(Array.isArray(dataGroup) ? dataGroup : dataGroup.data?.Categories || []);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+          setCategories([]);
+        }
+      };
+      fetchCategories();
+    }, []);
+
+  // Effect riêng để set category_id khi edit mode và có auction data
+  useEffect(() => {
+    if (mode === "edit" && auction && auction.category_id && categories.length > 0) {
+      setValue("category_id", auction.category_id);
+    }
+  }, [mode, auction, categories, setValue]);
   const onSubmit = async (formData) => {
     const arrLinkImg = await handlerUploadImgs(formData.image_url);
     const linkExcel = await handleUpLoadExcel();
@@ -304,37 +332,107 @@ const CreateAuctionForm = ({
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-2 mt-[5%] max-sm:mt-[6%] min-[1500px]:mt-[10%]"
         >
-          <div className="relative">
-            <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-              <svg
-                className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          <div className="flex gap-4">
+            <div className="flex-1 relative">
+              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                <svg
+                  className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"
+                  />
+                </svg>
+                {t("title")}
+                <span className="text-red-500">*</span>
+              </label>
+              <input
+                {...register("title")}
+                type="text"
+                className="w-full p-2 rounded shadow"
+              />
+              {errors.title && (
+                <p className="text-red-500 absolute right-1 text-xs">
+                  {errors.title.message}
+                </p>
+              )}
+            </div>
+            
+            <div className="flex-1 relative">
+              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                <svg
+                  className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"
+                  />
+                </svg>
+                {t("type")}<span className="text-red-500">*</span>
+              </label>
+              <select
+                {...register("category_id")}
+                className="w-full p-2 rounded shadow bg-white"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"
-                />
-              </svg>
-              {t("title")}
-              <span className="text-red-500">*</span>
-            </label>
-            <input
-              {...register("title")}
-              type="text"
-              className="w-full p-2 rounded shadow"
-            />
-            {errors.title && (
-              <p className="text-red-500 absolute right-1 text-xs">
-                {errors.title.message}
-              </p>
-            )}
-          </div>
+                <option value="">{t("select_group")}</option>
+                {categories.map((cat) => (
+                  <option key={cat.category_id} value={cat.category_id}>
+                    {cat.category_name}
+                  </option>
+                ))}
+              </select>
+              {errors.category_id && (
+                <p className="text-red-500 absolute right-1 text-xs">
+                  {errors.category_id.message}
+                </p>
+              )}
+            </div>
+          </div>          
 
           <div className="flex gap-4">
+            <div className="flex-1 relative">
+                <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                  <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                  {t("currency")}
+                  <span className="text-red-500">*</span>
+                </label>
+                <div className="flex flex-row gap-6 mt-3">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      value="USD"
+                      {...register("currency")}
+                      className="w-4 h-4"
+                    />USD
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      value="VND"
+                      {...register("currency")}
+                      className="w-4 h-4"
+                    />
+                    VND
+                  </label>
+                </div>
+                {errors.currency && (
+                  <p className="text-red-500 absolute right-1 text-xs">
+                    {errors.currency.message}
+                  </p>
+                )}
+            </div>
             <div className="flex-1 relative">
               <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
                 <svg
@@ -351,7 +449,7 @@ const CreateAuctionForm = ({
                   />
                 </svg>
                 {t("starting_price")}
-                <span className="text-red-500">*</span>
+                {/* <span className="text-red-500">*</span> */}
               </label>
               <input
                 {...register("starting_price", { valueAsNumber: true })}
@@ -360,11 +458,11 @@ const CreateAuctionForm = ({
                 className="w-full p-2 rounded shadow"
                 onChange={(e) => setStartingPrice(e.target.value)}
               />
-              {errors.starting_price && (
+              {/* {errors.starting_price && (
                 <p className="text-red-500 absolute right-1 text-xs">
                   {errors.starting_price.message}
                 </p>
-              )}
+              )} */}
             </div>
 
             <div className="flex-1 relative">
@@ -383,7 +481,7 @@ const CreateAuctionForm = ({
                   />
                 </svg>
                 {t("step_price")}
-                <span className="text-red-500">*</span>
+                {/* <span className="text-red-500">*</span> */}
               </label>
               <input
                 {...register("step_price", { valueAsNumber: true })}
@@ -392,12 +490,13 @@ const CreateAuctionForm = ({
                 className="w-full p-2 rounded shadow"
                 onChange={(e) => setStepPrice(e.target.value)}
               />
-              {errors.step_price && (
+              {/* {errors.step_price && (
                 <p className="text-red-500 absolute right-1 text-xs">
                   {errors.step_price.message}
                 </p>
-              )}
-            </div>
+              )} */}
+            </div>            
+          
           </div>
           <div className="relative">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
@@ -567,6 +666,7 @@ const CreateAuctionForm = ({
                 <circle cx="12" cy="13" r="3" />
               </svg>
               {t("img")}
+              <span className="text-red-500">*</span>
             </label>
 
             <div className="flex w-full">

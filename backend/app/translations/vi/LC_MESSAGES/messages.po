@@ -174,3 +174,9 @@ msgstr "Admin và Super admin không được phép tham gia đấu giá"
 
 msgid "Super Admin cannot modify Super Admin information"
 msgstr "Super admin không thể chỉnh sửa thông tin của Supper admin"
+
+msgid "You don't have permission to create category!"
+msgstr "Bạn không có quyền tạo danh mục!"
+
+msgid "Category name already exists"
+msgstr "Danh mục đã tồn tại"

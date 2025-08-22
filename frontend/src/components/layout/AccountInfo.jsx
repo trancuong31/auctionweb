@@ -19,6 +19,11 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
         .min(3, t("username_min"))
         .max(50, t("username_max"))
         .regex(/^[\p{L}\s]+$/u, t("username_regex")),
+      company: z
+        .string()
+        .min(2, t("company_min"))
+        .max(100, t("company_max"))
+        .regex(/^[\p{L}\s]+$/u, t("company_regex")),
       phone_number: z
         .string()
         .min(10, t("phone_require"))
@@ -45,6 +50,7 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
     email: "",
     username: "",
     phone_number: "",
+    company: "",
     role: "",
     password: ""
   });
@@ -63,6 +69,7 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
           email: userData.email || "",
           username: userData.username || "",
           phone_number: userData.phone_number || "",
+          company: userData.company || "",
           role: userData.role || "",
           password: userData.password || ""
         });
@@ -219,6 +226,23 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
                 type="text"
                 value={formData.phone_number}
                 onChange={(e) => handleInputChange('phone_number', e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                disabled={loading}
+              />
+            </div>
+
+            {/* Công ty */}
+            <div>
+              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
+                <svg  fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                </svg>
+                {t("company")}
+                </label>
+              <input
+                type="text"
+                value={formData.company}
+                onChange={(e) => handleInputChange('company', e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
                 disabled={loading}
               />

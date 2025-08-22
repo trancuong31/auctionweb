@@ -12,15 +12,15 @@ import toast from "react-hot-toast";
 
 const AuctionSearch = () => {
   const [searchText, setSearchText] = useState("");
+  const [category_id, setCategory_id] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [status, setStatus] = useState(null);
   const [sortBy, setSortBy] = useState("");
   const [sortOder, setSortOder] = useState("");
   const [dateRange, setDateRange] = useState([]);
   const { t, i18n } = useTranslation();
   const [searchParams] = useSearchParams();
-
   const [searchParam, setSearchParam] = useState({});
-
   const [arrAuction, setArrAuction] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
   const [total, setTotal] = useState(0);
@@ -34,7 +34,8 @@ const AuctionSearch = () => {
       setIsLoading(true);
       const lang = sessionStorage.getItem("lang") || "en";
       const paramWithPage = { ...searchParam, page, lang };
-      const response = await getAll("auctions/search", false, paramWithPage);
+      const response = await getAll("auctions/search", false, paramWithPage); 
+      // Set the total number of auctions and the current page's auction data
       setTotal(response.data.total);
       setArrAuction(response.data.auctions);
       setTotalPage(
@@ -49,9 +50,19 @@ const AuctionSearch = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const dataGroup = await getAll("categories", false);
+      setCategories(Array.isArray(dataGroup) ? dataGroup : dataGroup.data.Categories || []);
+      };
+      fetchCategories();
+  }, []);
+
   const setDataForParam = () => {
     setSearchParam({
       title: searchText.trim(),
+      category_id: category_id || "",
+      type: "", 
       status: status,
       sort_by: sortBy,
       sort_order: sortOder,
@@ -73,7 +84,8 @@ const AuctionSearch = () => {
       setStatus(statusFromUrl);
       setSearchParam({
         status: statusFromUrl,
-        title: "",
+        category_id: "",
+        type: "",
         sort_by: "",
         sort_order: "",
         start_time: undefined,
@@ -107,9 +119,8 @@ const AuctionSearch = () => {
   return (
     <AnimatedContent>
       <div className="shadow-[0_4px_24px_rgba(0,0,0,0.10)] p-4 text-xs rounded-xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4 items-end">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-4 items-end">
           {/* Search input */}
-
           <div className="relative col-span-1">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
               <FontAwesomeIcon icon={faSearch} />
@@ -120,6 +131,27 @@ const AuctionSearch = () => {
               className="pl-10 border pr-4 py-2 w-full rounded border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               onChange={(e) => setSearchText(e.target.value)}
             />
+          </div>
+
+          {/* Group select */}
+          <div className="col-span-1">
+            <label className="text-sm text-gray-600 mb-1 mr-2 block">
+              {t("type")}
+            </label>
+            <select
+              onChange={(e) =>
+                setCategory_id(e.target.value === "" ? null : e.target.value)
+              }
+              className="border border-gray-400 rounded-lg px-3 py-2 w-full"
+              value={category_id || ""}
+            >
+              <option value="">{t("select_group")}</option>
+              {categories.map((cat) => (
+                <option key={cat.category_id} value={cat.category_id}>
+                  {cat.category_name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Status select */}
