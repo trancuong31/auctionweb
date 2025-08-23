@@ -341,7 +341,7 @@ const AuctionDetail = () => {
                 className="mr-4 text-blue-500"
               />
               {t("starting_price")}:{" "}
-              <span className="font-semibold text-green-700">
+              <span className="font-semibold text-black-700 text-[32px]">
                 {auction.starting_price && auction.starting_price !== 0
                   ? auction.starting_price.toLocaleString(
                       auction.currency === "VND" ? "vi-VN" : "en-US",
@@ -359,7 +359,7 @@ const AuctionDetail = () => {
                 className="mr-4 text-blue-500"
               />
               {t("step_price")}:{" "}
-              <span className="font-semibold text-yellow-700">
+              <span className="font-semibold text-black-700">
                 {auction.step_price?.toLocaleString(
                   auction.currency === "VND" ? "vi-VN" : "en-US",
                   {
@@ -375,7 +375,7 @@ const AuctionDetail = () => {
                 className="mr-4 text-blue-500"
               />
               {t("status")}:{" "}
-              <span className="font-semibold">
+              <span className="font-thin">
                 {auction.status === 0
                   ? "Ongoing"
                   : auction.status === 1
@@ -391,7 +391,7 @@ const AuctionDetail = () => {
                 className="mr-4 text-blue-500"
               />
               {t("type")}:{" "}
-              <span className="font-semibold">
+              <span className="font-thin">
                 {auction.category.category_name || t("unknown")}
               </span>
             </p>

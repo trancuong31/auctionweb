@@ -25,8 +25,6 @@ function NavBar() {
     logout();
     navigate("/login");
   };
-
-  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
     i18n.changeLanguage(savedLang);

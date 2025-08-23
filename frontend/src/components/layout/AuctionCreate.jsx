@@ -575,24 +575,8 @@ const CreateAuctionForm = ({
           </div>
           <div className="flex-1 relative">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-              <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4h16v16H4V4z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 9l6 6m0-6l-6 6"
-                />
+              <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
               </svg>
               {t("excel")}
             </label>
@@ -615,6 +599,7 @@ const CreateAuctionForm = ({
                       type="text"
                       readOnly
                       value={fileName}
+                      placeholder={t("select_excel_file")}
                       className="w-full p-2 rounded shadow bg-white text-gray-700 cursor-pointer"
                       onClick={() => {
                         document.getElementById("filePicker")?.click();
@@ -629,14 +614,13 @@ const CreateAuctionForm = ({
                       id="filePicker"
                       type="file"
                       accept=".xlsx,.xls"
-                      className="hidden"
+                      className="hidden"                      
                       key={inputKey}
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         onChange(file || null);
                       }}
                     />
-
                     {/* Thông báo lỗi */}
                     {fieldState.error && (
                       <p className="text-red-500 absolute right-1 text-xs">
@@ -651,19 +635,8 @@ const CreateAuctionForm = ({
 
           <div className="flex-1 relative">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-              <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 5a2 2 0 012-2h2l1-1h6l1 1h2a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"
-                />
-                <circle cx="12" cy="13" r="3" />
+              <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
               </svg>
               {t("img")}
               <span className="text-red-500">*</span>
@@ -725,7 +698,7 @@ const CreateAuctionForm = ({
                         <div key={key} className="relative">
                           <img
                             src={src}
-                            alt={`preview-${index}`}
+                            alt={`preview-${index}`}                            
                             className="object-cover rounded border"
                           />
                           <div
@@ -774,7 +747,7 @@ const CreateAuctionForm = ({
           <div className="flex justify-center pt-4">
             <button
               type="submit"
-              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded hover:bg-blue-600 transform transition-transform duration-300 hover:scale-105"
             >
               {mode == "create" ? t("create") : t("edit")}
             </button>

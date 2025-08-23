@@ -12,6 +12,8 @@ from app.core.auth import get_current_user_id_from_token
 from app.models.Notification import Notification
 from app.i18n import _
 from app.enums import UserRole
+from fastapi.responses import FileResponse
+import os
 
 router = APIRouter()
 
@@ -48,16 +50,18 @@ class BidWithAuctionOut(BaseModel):
     currency: Optional[str] = None
     # Auction information
     auction_title: str
-    # auction_description: Optional[str] = None
     auction_starting_price: float
     auction_step_price: float
-    # auction_image_url: Optional[str] = None
     auction_start_time: datetime
     auction_end_time: datetime
     # auction_status: int
     
     class Config:
         from_attributes = True
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
+UPLOAD_IMAGE_DIR = os.path.join(BASE_DIR, 'uploads', 'images')
+UPLOAD_EXCEL_DIR = os.path.join(BASE_DIR, 'uploads', 'excels')
 
 @router.post("/bids", response_model=BidOut)
 def create_bid(
@@ -186,3 +190,18 @@ def get_bids_by_user(
         result.append(bid_with_auction)
     
     return result
+
+@router.get("/download/excel/{id}")
+def download_excel_by_auction(request: Request, id: str, db: Session = Depends(get_db)):
+    bid = db.query(Bid).filter(Bid.id == id).first()
+    if not bid or not bid.file:
+        raise HTTPException(status_code=404, detail=_("Bid or file not found", request))
+    filename = os.path.basename(bid.file)
+    file_path = os.path.join(BASE_DIR, 'uploads', 'excels', filename)
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail=_("File not found on server", request))
+    return FileResponse(
+        path=file_path,
+        filename=filename,
+        media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )

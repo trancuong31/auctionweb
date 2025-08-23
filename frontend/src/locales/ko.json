@@ -324,6 +324,11 @@
   "category_name":"카테고리 이름 입력",
   "sort_category_name_asc": "카테고리 이름 A-Z 정렬",
   "sort_category_name_desc": "카테고리 이름 Z-A 정렬",
-  "create_category": "카테고리 생성"
+  "create_category": "카테고리 생성",
+  "select_excel_file": "엑셀 파일 선택",
+  "days": "일",
+  "hours": "시",
+  "minutes": "분",
+  "seconds": "초"
 
 }

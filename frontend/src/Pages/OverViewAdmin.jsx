@@ -24,6 +24,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
+import { set } from "zod/v4-mini";
 
 const OverViewAdmin = () => {
   const navigate = useNavigate();
@@ -37,6 +38,8 @@ const OverViewAdmin = () => {
   const [categoryData, setCategoryData] = useState([]);
   const [auctionData, setAuctionData] = useState([]);
   const [userName, setUserName] = useState("");
+  const [company, setCompanyName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
   const [displayCreateForm, setDisplayCreateForm] = useState(false);
@@ -284,7 +287,8 @@ const OverViewAdmin = () => {
     const newUser = {
       ...user,
       username: userName,
-      phone_number: user.phone_number || ""
+      phone_number: phoneNumber || "",
+      company: company || "",
     };
 
     try {
@@ -412,7 +416,9 @@ const OverViewAdmin = () => {
 
   const handelClickEdit = (user, idx) => {
     setCurrentEditing(idx);
-    setUserName(user.username);
+    setUserName(user.username || "");
+    setCompanyName(user.company || "");
+    setPhoneNumber(user.phone_number || "");
   };
 
   const handelClickEditCategory = (category, idx) => {
@@ -469,7 +475,6 @@ const OverViewAdmin = () => {
           setCurrentEditingCategory(null);
         }}
       />
-
       <ModalDetailAuction
         isOpen={isOpenModal}
         clickClose={handleClickClose}
@@ -478,9 +483,9 @@ const OverViewAdmin = () => {
       <AnimatedContent>
         {/* <!-- OVERVIEW --> */}
 
-        <div className="text-white shadow-[0_2px_8px_rgba(0,0,0,0.3)] rounded-lg grid sm:grid-cols-3 gap-6 mb-6">
+        <div className="text-white rounded-lg grid sm:grid-cols-3 gap-6 mb-6">
           {/* Total Users */}
-          <div className="flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow bg-white">
+          <div className="flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
             <div className="flex-1 pr-3 text-left">
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_user")}
@@ -512,7 +517,7 @@ const OverViewAdmin = () => {
           </div>
 
           {/* Total Auctions */}
-          <div className="flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow bg-white">
+          <div className="flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
             <div className="flex-1 pr-3 text-left">
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_auction")}
@@ -544,7 +549,7 @@ const OverViewAdmin = () => {
           </div>
 
           {/* Total Successful Auctions */}
-          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow bg-white">
+          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
             <div className="flex-1 pr-3 text-left">
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_successful_auctions")}
@@ -578,7 +583,7 @@ const OverViewAdmin = () => {
           </div>
 
           {/* Total Auctions In Progress */}
-          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow bg-white">
+          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
             <div className="flex-1 pr-3 text-left">
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_auction_in_progress")}
@@ -612,7 +617,7 @@ const OverViewAdmin = () => {
           </div>
 
           {/* Total Upcoming Auctions */}
-          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow bg-white">
+          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
             <div className="flex-1 pr-3 text-left">
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_upcoming_auctions")}
@@ -646,7 +651,7 @@ const OverViewAdmin = () => {
           </div>
 
           {/* Total Unsuccessful Auctions */}
-          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow bg-white">
+          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
             <div className="flex-1 pr-3 text-left">
               <p className="text-lg text-gray-500 font-medium">
                 {t("total_unsuccessful_auctions")}
@@ -682,7 +687,7 @@ const OverViewAdmin = () => {
 
         {/* <!-- MANAGER USERS --> */}
 
-        <div className=" shadow-[0_2px_8px_rgba(0,0,0,0.3)] p-4 rounded mb-6">
+        <div className=" shadow-[0_2px_8px_rgba(0,0,0,0.3)] p-4 rounded-lg mb-6">
           <div className="flex justify-between mb-3 items-center max-sm:flex-col max-sm:gap-3">
             <p className="text-lg font-bold">{t("manager_user")}</p>
             <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end max-sm:gap-3">
@@ -750,10 +755,8 @@ const OverViewAdmin = () => {
                 onClick={searchUser}
                 className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-lg font-bold text-white text-base
                   border border-transparent
-                  shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
-                  transition-transform duration-300
-                  bg-gradient-to-r from-blue-500 to-indigo-500
-                  hover:border-gray-100 active:scale-95"
+                  transform transition-transform duration-300 hover:scale-105
+                  bg-gradient-to-r from-blue-500 to-indigo-500"
                 >
                 <FontAwesomeIcon icon={faSearch} />
                 <span>{t("search_btn")}</span>
@@ -786,7 +789,7 @@ const OverViewAdmin = () => {
                 {userData?.map((user, idx) => (
                   <tr
                     key={user.id || idx}
-                    className="odd:bg-white even:bg-gray-100 hover:bg-blue-400 hover:text-white transition"
+                    className=" hover:bg-blue-400 hover:text-white transition"
                   >
                     <td className="border px-2 py-1 text-center">{idx + 1}</td>
                     <td className="border px-2 py-1">
@@ -804,27 +807,56 @@ const OverViewAdmin = () => {
                     </td>
                     <td className="border px-2 py-1">{user.email}</td>
                     <td className="border px-2 py-1 text-center">
-                      {user.phone_number ? user.phone_number : "N/A"}
+                      {currentEditing === idx ? (
+                        <input
+                          type="text"
+                          name="name"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          className="border px-2 py-1 w-full rounded text-black"
+                        />
+                      ) : (
+                        user.phone_number || "N/A"
+                      )}
                     </td>
-                    {/* <td className="border px-2 py-1">
-                      {dayjs(user.created_at).format("MM/DD/YYYY HH:mm")}
-                    </td> */}
-                    <td className="border px-2 py-1 text-center">{user.role}</td>
+                    <td
+                      className={`border px-2 py-1 text-center ${
+                        user.role === "ADMIN"
+                          ? " text-red-500"
+                          : user.role === "SUPER_ADMIN"
+                          ? " text-green-500"
+                          : ""
+                      }`}
+                    >
+                      {user.role}
+                    </td>
                     <td className="border px-2 py-1 text-center">{user.bid_count}</td>
-                    <td className="border px-2 py-1">{user.company}</td>
+                    <td className="border px-2 py-1">
+                      {currentEditing === idx ? (
+                        <input
+                          type="text"
+                          name="name"
+                          value={company}
+                          onChange={(e) => setCompanyName(e.target.value)}
+                          className="border px-2 py-1 w-full rounded text-black"
+                        />
+                      ) : (
+                        user.company || "N/A"
+                      )}
+                      </td>
                     <td className="border px-2 py-1">
                       <div className="flex justify-center">
                         {user.status ? (
                           <button
                             onClick={() => handleDeactiveUser(user)}
-                            className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded"
+                            className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded transform transition-transform duration-300 hover:scale-105"
                           >
                             {t("active")}
                           </button>
                         ) : (
                           <button
                             onClick={() => handleDeactiveUser(user)}
-                            className="bg-red-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded"
+                            className="bg-red-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded transform transition-transform duration-300 hover:scale-105"
                           >
                             {t("disactive")}
                           </button>
@@ -851,13 +883,13 @@ const OverViewAdmin = () => {
                         <>
                           <button
                             onClick={() => handelClickEdit(user, idx)}
-                            className="bg-indigo-100 hover:bg-indigo-200 font-semibold text-indigo-700 text-xs px-3 py-2 rounded min-w-[60px] transition"
+                            className="bg-indigo-100 hover:bg-indigo-200 transform duration-300 hover:scale-105 font-semibold text-indigo-700 text-xs px-3 py-2 rounded min-w-[60px] transition"
                           >
                             {t("edit")}
                           </button>
                           <button
                             onClick={() => handleDeleteUser(user.id)}
-                            className="bg-red-100 text-red-600 text-xs font-semibold px-3 py-2 rounded-md border border-red-200 hover:bg-red-300 transition"
+                            className="bg-red-100 text-red-600 transform duration-300 hover:scale-105 text-xs font-semibold px-3 py-2 rounded-md border border-red-200 hover:bg-red-300 transition"
                           >
                             {t("delete")}
                           </button>
@@ -878,21 +910,21 @@ const OverViewAdmin = () => {
         />
         {/* <!-- MANAGER CATEGORY --> */}
 
-        <div className="shadow-[0_2px_8px_rgba(0,0,0,0.3)] p-4 rounded mb-6">
+        <div className="shadow-[0_2px_8px_rgba(0,0,0,0.3)] p-4 rounded-lg mb-6">
           <div className="flex justify-between mb-3 items-center max-sm:flex-col max-sm:gap-4">
             <p className="text-lg font-bold">{t("manager_category")}</p>
             <button
                 onClick={() => setModeCreateCategory()}
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white flex items-center justify-center font-bold text-base px-4 py-3 rounded-lg max-sm:w-full"
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white flex items-center transform transition-transform duration-300 hover:scale-105 ml-2 justify-center font-bold text-base px-4 py-3 rounded-lg max-sm:w-full"
               >
-                <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
+                </svg> {t("create_category")}
               </button>
             <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end max-sm:gap-3">    
 
               {/* <!-- Search Input --> */}
-              <div className="w-[60%] max-sm:w-full">
+              <div className="w-[50%] max-sm:w-full">
                 <div className="relative">
                   <input
                     type="text"
@@ -911,7 +943,7 @@ const OverViewAdmin = () => {
                 </div>
               </div>
               {/* <!-- Category Select --> */}
-              <div className="w-[25%] pb-6 max-sm:w-full">
+              <div className="w-[30%] pb-6 max-sm:w-full">
                 <label className="text-sm font-semibold block mb-1">
                   {t("sort_by")}
                 </label>
@@ -942,10 +974,8 @@ const OverViewAdmin = () => {
                 onClick={searchCategory}
                 className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-lg font-bold text-white text-base
              border border-transparent
-             shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
-             transition-transform duration-300
-             bg-gradient-to-r from-blue-500 to-indigo-500
-             hover:border-gray-100 active:scale-95"
+             transform transition-transform duration-300 hover:scale-105
+             bg-gradient-to-r from-blue-500 to-indigo-500"
               >
                 <FontAwesomeIcon icon={faSearch} />
                 <span>{t("search_btn")}</span>
@@ -1016,13 +1046,13 @@ const OverViewAdmin = () => {
                         <>
                           <button
                             onClick={() => handelClickEditCategory(category, idx)}
-                            className="bg-indigo-100 hover:bg-indigo-200 font-semibold text-indigo-700 text-xs px-3 py-2 rounded min-w-[60px] transition"
+                            className="bg-indigo-100 hover:bg-indigo-200 font-semibold text-indigo-700 transform duration-300 hover:scale-105 text-xs px-3 py-2 rounded min-w-[60px] transition"
                           >
                             {t("edit")}
                           </button>
                           <button
                             onClick={() => handleDeleteCategory(category.category_id)}
-                            className="bg-red-100 text-red-600 text-xs font-semibold px-3 py-2 rounded-md border border-red-200 hover:bg-red-300 transition"
+                            className="bg-red-100 text-red-600 text-xs font-semibold px-3 py-2 rounded-md transform duration-300 hover:scale-105 border border-red-200 hover:bg-red-300 transition"
                           >
                             {t("delete")}
                           </button>
@@ -1043,7 +1073,7 @@ const OverViewAdmin = () => {
         />
         {/* <!-- MANAGER AUCTIONS --> */}
 
-        <div className="shadow-[0_2px_8px_rgba(0,0,0,0.3)]  p-4 rounded">
+        <div className="shadow-[0_2px_8px_rgba(0,0,0,0.3)]  p-4 rounded-lg">
           {/* <div className="flex justify-between items-center mb-4 max-sm:justify-center">
           
         </div> */}
@@ -1051,11 +1081,13 @@ const OverViewAdmin = () => {
           <div className="flex-1 flex flex-col md:flex-row justify-between items-center md:space-y-0 md:space-x-4 w-full">
             <div className="flex gap-10 w-full items-center max-sm:flex-col max-sm:gap-4 max-sm:mb-4">
               <h2 className="text-lg font-bold"> {t("manager_auctions")}</h2>
+              
               <button
                 onClick={() => setModeCreate()}
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold text-base px-4 py-3 rounded-lg max-sm:w-full"
-              >
-                {t("create_auction_btn")}
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white flex items-center justify-center transform transition-transform duration-300 hover:scale-105 font-bold text-base px-4 py-3 rounded-lg max-sm:w-full"
+              ><svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>{t("create_auction_btn")}
               </button>
               {/* <!-- Search Input --> */}
               <div className="flex-1 max-sm:w-full">
@@ -1076,7 +1108,7 @@ const OverViewAdmin = () => {
                   </span>
                 </div>
               </div>
-              <div className="w-[25%] pb-6 max-sm:w-full">
+              <div className="w-[20%] pb-6 max-sm:w-full">
                 {/* Sort select */}
                 <div className="col-span-1">
                   <label className="text-sm font-[700] mb-1 mr-2 block">
@@ -1141,10 +1173,8 @@ const OverViewAdmin = () => {
                   onClick={handleSearch}
                   className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-lg font-bold text-white text-base
                     border border-transparent
-                    shadow-[0_0.7em_1.5em_-0.5em_rgba(77,54,208,0.75)]
-                    transition-transform duration-300
-                    bg-gradient-to-r from-blue-500 to-indigo-500
-                    hover:border-gray-100 active:scale-95"
+                    transform transition-transform duration-300 hover:scale-105
+                    bg-gradient-to-r from-blue-500 to-indigo-500"
                 >
                   <FontAwesomeIcon icon={faSearch} />
                   <span> {t("search_btn")}</span>

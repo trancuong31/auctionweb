@@ -8,21 +8,22 @@ function Tutorial() {
   const { t, i18n } = useTranslation();
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
-    const savedLang = sessionStorage.getItem("lang") || "en";
-
-    i18n.changeLanguage(savedLang);
+    const savedLang = sessionStorage.getItem("lang");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
   }, [i18n]);
 
   return (
     <AnimatedContent>
-      <main className="tutorial-content">
+      <main className="tutorial-content ">
         <div
           style={{
             background: "#fff",
             borderRadius: "6px",
             padding: "32px",
             maxWidth: "1200px",
-            margin: "40px auto",
+            margin: "0px auto",
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
           }}
         >

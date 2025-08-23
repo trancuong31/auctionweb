@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
     fontFamily: {
-      sans: ['Maven Pro', 'Helvetica', 'sans-serif'],
+      sans: ['Open Sans', 'Helvetica', 'sans-serif'],
     },
   },
   },

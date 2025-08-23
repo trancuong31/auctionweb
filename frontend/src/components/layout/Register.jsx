@@ -39,7 +39,7 @@ function Register() {
       .string()
       .min(2, t("company_min"))
       .max(100, t("company_max"))
-      .regex(/^[\p{L}\s]+$/u, t("company_regex")),
+      .regex(/^[\p{L}\s\0-9]+$/u, t("company_regex")),
     phone_number: z
       .string()
       .min(10, t("phone_require"))
@@ -53,7 +53,7 @@ function Register() {
       .min(8, t("password_min"))
       .max(30, t("password_max"))
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@#$!%*?&]+$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&])[A-Za-z\d@#$!%*?&]+$/,
         t("password_regex")
       ),
     passwordConfirm: z.string().min(8, t("password_min")),

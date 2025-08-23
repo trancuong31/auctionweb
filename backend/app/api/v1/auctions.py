@@ -413,7 +413,7 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
     except Exception as e:
         return JSONResponse(status_code=500, content={"detail": _("Internal server error: ", request) + str(e)})
 
-#admin upload excel khi thêm auction
+#admin upload excel khi thêm auction và user đính kèm file
 @router.post("/upload/excel")
 def upload_excel(request: Request, file: UploadFile = File(...)):
     allowed_exts = {".xls", ".xlsx"}
@@ -666,6 +666,7 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
             "email": user.email,
             "user_name": user.username if user else "Unknown",
             "bid_amount": float(bid.bid_amount),
+            "file": bid.file,
             "created_at": bid.created_at,
             "note": bid.note,
             "address": bid.address,

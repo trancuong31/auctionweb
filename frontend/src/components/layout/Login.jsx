@@ -1,5 +1,6 @@
 import "./Login.css";
 import logo from "../../assets/images/logo.png";
+import flagVn from "../../assets/images/flag_vietnam.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,
@@ -172,8 +173,9 @@ function Login() {
             </select>
           </div>
           <div className="login-options">
-            <label>
+            <label  className="flex items-center gap-2 cursor-pointer">
               <input
+                class="ui-checkbox"
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}

@@ -339,10 +339,15 @@
   "company": "Công ty",
   "select_group": "--Chọn nhóm--",
   "see_file":"Xem file đính kèm",
-  "manager_category": "Quản lý danh mục",
+  "manager_category": "QUẢN LÝ DANH MỤC",
   "category_name":"Tên danh mục",
   "sort_category_name_asc": "Sắp xếp tên danh mục từ A đến Z",
   "sort_category_name_desc": "Sắp xếp tên danh mục từ Z đến A",
-  "create_category": "TẠO DANH MỤC"
+  "create_category": "Tạo danh mục",
+  "select_excel_file": "Chọn tệp Excel",
+  "days": "Ngày",
+  "hours": "Giờ",
+  "minutes": "Phút",
+  "seconds": "Giây"
 
 }

@@ -17,14 +17,14 @@ function History() {
   });
   return (
     <AnimatedContent>
-      <main className="history-content ">
+      <main className="history-content">
         <div
           style={{
             background: "#fff",
             borderRadius: "12px",
             padding: "40px",
             maxWidth: "1200px",
-            margin: "40px auto",
+            margin: "0px auto",
             boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
           }}
         >

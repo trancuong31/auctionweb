@@ -343,5 +343,10 @@
   "category_name":"Category name",
   "sort_category_name_asc": "Category Name from A to Z",
   "sort_category_name_desc": "Category Name from Z to A",
-  "create_category": "Create Category"
+  "create_category": "Create category",
+  "select_excel_file": "Select Excel file",
+  "days": "Days",
+  "hours": "Hours",
+  "minutes": "Minutes",
+  "seconds": "Seconds"
 }

@@ -31,14 +31,17 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
       ) : (
         arrAuction.map((item) => (
           <button
-            className="bg-[#18181c] max-w-[400px] rounded-[10px] overflow-hidden transition-transform duration-500 ease-in-out shadow-[0_4px_16px_rgba(0,0,0,0.40)] flex flex-col h-full hover:shadow-[0_8px_32px_rgba(76,81,255,0.35)] group"
+            className="bg-[#18181c] max-w-[400px] rounded-bl-[10px] rounded-br-[10px] overflow-hidden transition-transform duration-500 ease-in-out shadow-[0_4px_16px_rgba(0,0,0,0.20)] flex flex-col h-full hover:shadow-[0_8px_32px_rgba(29,180,255,0.4)] group"
             key={item.id}
             style={{ cursor: "pointer" }}
             onClick={() => clickCard(item.id)}
           >
+            
             <div className="bg-gray-300 h-[200px] flex items-center justify-center relative overflow-hidden">
               {item.status == 0 ? (
                 <CountdownTimer targetTime={item.end_time} />
+              ) : item.status == 1 ? (
+                <CountdownTimer targetTime={item.start_time} />
               ) : null}
               <img
                 src={
@@ -51,10 +54,10 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   (item.image_url && item.image_url.length > 0
                     ? "w-full h-full object-cover"
                     : "img-no") +
-                  " transition-transform duration-500 ease-in-out will-change-transform group-hover:scale-110"
+                  " transition-transform duration-500 ease-in-out border-4 border-blue-100 will-change-transform group-hover:scale-110"
                 }
               />
-            </div>
+            </div>            
             <div className="bg-white p-3 text-sm leading-[1.5] flex-grow">
               <p className="flex justify-between">
                 <span className="break-all w-0 flex-1 min-w-0 text-left font-[600]">
@@ -62,8 +65,9 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className=" text-gray-500">{t("starting_price")}:</span>{" "}
-                {item.starting_price
+                <span className=" text-gray-500 ">{t("starting_price")}:</span>{" "}
+                <span className="text-right font-[600] text-[16px]">
+                  {item.starting_price
                   ? item.starting_price.toLocaleString(
                       item.currency === "VND" ? "vi-VN" : "en-US",
                       {
@@ -72,6 +76,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                       }
                     )
                   : t("see_file")}
+                </span>
               </p>
               <p className="flex justify-between">
                 <span className=" text-gray-500">{t("step_price")}:</span>{" "}
@@ -113,7 +118,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
               </p>
                 <p className="flex justify-between">
                 <span className=" text-gray-500">{t("type")}:</span>{" "}
-                <span className="font-[600] text-right">
+                <span className="text-right">
                   {item.category?.category_name || t("unknown")}
                 </span>
               </p>

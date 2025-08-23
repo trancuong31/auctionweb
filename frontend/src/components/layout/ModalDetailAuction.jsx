@@ -27,6 +27,21 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
     }
   };
 
+  const handleDownloadFileUser = async (id) => {
+    try {
+      const res = await fetch(`/api/v1/download/excel/${id}`);
+      if (!res.ok) throw new Error("Dowload file fail!");
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `bid-${id}.xlsx`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error download file:", error);
+    }
+  };
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
@@ -102,9 +117,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 alt="Auction Image"
                 className="w-full h-64 object-cover hover:scale-105 transition ease-out duration-500 rounded-2xl"
               />
-              <div className="mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl shadow flex items-center justify-between w-full">
+              <div className="mt-4 px-6 py-3  text-lg font-semibold rounded-xl flex items-center border border-gray-400 justify-between w-full">
                 <p className="text-sm font-semibold">{t("current_status")}</p>
-                <span className="text-sm font-medium bg-white text-gray-600 px-4 py-1 rounded-lg shadow-sm">
+                <span className="text-sm font-medium text-black-600 px-4 py-1 rounded-lg">
                   {auction.status === 0
                     ? t("ongoing_auctions")
                     : auction.status === 1
@@ -112,16 +127,16 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     : t("ended_auctions")}
                 </span>
               </div>
-              <div className="mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl shadow flex items-center justify-between w-full">
+              <div className="mt-4 px-6 py-3  text-lg font-semibold rounded-xl flex items-center border border-gray-400 justify-between w-full">
                 <p className="text-sm text-white-500 font-semibold">{t("type")}</p>
-                <span className="text-sm font-medium bg-white text-gray-600 px-4 py-1 rounded-lg shadow-sm">
+                <span className="text-sm font-medium bg-white text-black-600 px-4 py-1 rounded-lg">
                   {auction.category?.category_name || "N/A"}
                 </span>
               </div>
             </div>
 
             <div className="lg:w-1/2 w-full space-y-3">
-              <div className="bg-gray-100 p-4 rounded-xl flex items-start rounded-r-3xl rounded-l-md border-l-4 border-purple-500 shadow-sm">
+              <div className=" shadow-[0_2px_8px_rgba(0,0,0,0.2)] p-4 flex items-start rounded-r-3xl rounded-l-md border-l-4 border-blue-600">
                 <p className="text-lg font-semibold text-black-700 text-left break-words w-full">
                   {auction.title || "No title"}
                 </p>
@@ -247,6 +262,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     {t("bid_amount_usd")}
                   </th>
                   <th className="px-4 py-2 font-semibold uppercase">
+                    {t("attached_file")}
+                  </th>
+                  <th className="px-4 py-2 font-semibold uppercase">
                     {t("submitted_at")}
                   </th>
                   <th className="px-4 py-2 font-semibold uppercase">
@@ -279,6 +297,27 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                             )
                           : "-"}
                       </td>
+                      <td className="px-4 text-green-500 py-2">
+                        <p className="text-red-600 font-bold text-lg">
+                          {bid.file ? (
+                            <button
+                              onClick={() => handleDownloadFileUser(bid.id)}
+                              className="text-blue-600 text-left hover:underline font-medium"
+                            >
+                              <p title={bid.file.split("/").pop()}>
+                                {bid.file.split("/").pop().length > 30
+                                  ? bid.file.split("/").pop().slice(0, 20) +
+                                    "..."
+                                  : bid.file.split("/").pop()}
+                              </p>
+                            </button>
+                          ) : (
+                            <span className="text-gray-400 italic">
+                              {t("no_file")}
+                            </span>
+                          )}
+                        </p>
+                      </td>
                       <td className="px-4 py-2">
                         {bid.created_at
                           ? new Date(bid.created_at).toLocaleString("en-US", {
@@ -292,8 +331,10 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                             })
                           : "-"}
                       </td>
-                      <td className="px-4 py-2 w-[200px] break-all whitespace-normal">
-                        {bid.note || "null"}
+                      <td className="px-4 py-2 w-[300px] align-top">
+                        <div className="max-h-[80px] overflow-y-auto break-words whitespace-normal pr-1">
+                          {bid.note || "null"}
+                        </div>
                       </td>
                     </tr>
                   ))

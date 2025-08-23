@@ -6,7 +6,6 @@
   align-items: center;
   justify-content: space-between;
   background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
-
   position: fixed;
   width: 100%;
 
@@ -206,7 +205,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .header-container {
-    padding: 1.25rem 1rem;
+    padding: 12px;
   }
   
   .header-logo {
@@ -228,15 +227,13 @@
 
 @media (max-width: 480px) {
   .header-container {
-    /* padding: 1rem 1rem; */
-    flex-direction: column;
-    /* gap: 1rem; */
+    flex-direction: row;
   }
   
   .header-left,
   .header-center,
   .header-right {
-    flex: none;
+    flex: row;
     width: 100%;
     justify-content: center;
   }
