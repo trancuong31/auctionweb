@@ -8,9 +8,12 @@ module.exports = {
     extend: {
     fontFamily: {
       sans: ['Open Sans', 'Helvetica', 'sans-serif'],
+      rele: ['DM Sans', 'sans-serif']
     },
   },
   },
+  
   plugins: [require('tailwind-scrollbar-hide')],
+  plugins: [require("@tailwindcss/typography")],
 }
 

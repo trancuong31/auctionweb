@@ -86,11 +86,12 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
     >
       <div
         className={
-          "mt-[220px] sm:mt-[60px] md:mt-[55px] bg-white rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up " +
+          "sm:mt-[60px] md:mt-[100px] lg:mt-[55px] bg-white rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up " +
           (isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden")
         }
         onClick={(e) => e.stopPropagation()}
       >
+        {/* header */}
         <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-3 flex items-center justify-between relative">
           <div className="flex-1 text-center">
             <h2 className="text-xl font-bold uppercase">
@@ -105,8 +106,10 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
             <X size={20} />
           </button>
         </div>
+        
         <div className="flex-1 p-4 sm:p-6 overflow-y-auto max-h-[calc(95vh-120px)]">
           <div className="flex flex-col lg:flex-row gap-6">
+            {/* image */}
             <div className="lg:w-1/2 w-full">
               <img
                 src={
@@ -117,31 +120,20 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 alt="Auction Image"
                 className="w-full h-64 object-cover hover:scale-105 transition ease-out duration-500 rounded-2xl"
               />
-              <div className="mt-4 px-6 py-3  text-lg font-semibold rounded-xl flex items-center border border-gray-400 justify-between w-full">
-                <p className="text-sm font-semibold">{t("current_status")}</p>
-                <span className="text-sm font-medium text-black-600 px-4 py-1 rounded-lg">
-                  {auction.status === 0
-                    ? t("ongoing_auctions")
-                    : auction.status === 1
-                    ? t("upcoming_auctions")
-                    : t("ended_auctions")}
-                </span>
-              </div>
-              <div className="mt-4 px-6 py-3  text-lg font-semibold rounded-xl flex items-center border border-gray-400 justify-between w-full">
-                <p className="text-sm text-white-500 font-semibold">{t("type")}</p>
-                <span className="text-sm font-medium bg-white text-black-600 px-4 py-1 rounded-lg">
-                  {auction.category?.category_name || "N/A"}
-                </span>
+              {/* List user được mời tham  tham gia */}
+              <div className="mt-4 px-6 py-3 h-[40%] justify-center  text-lg font-semibold rounded-xl flex items-center border border-gray-400  w-full">
+                Danh sách user được mời tham gia
               </div>
             </div>
-
+            {/* detail acution */}
             <div className="lg:w-1/2 w-full space-y-3">
+              {/* title */}
               <div className=" shadow-[0_2px_8px_rgba(0,0,0,0.2)] p-4 flex items-start rounded-r-3xl rounded-l-md border-l-4 border-blue-600">
                 <p className="text-lg font-semibold text-black-700 text-left break-words w-full">
                   {auction.title || "No title"}
                 </p>
               </div>
-
+              {/* deadline */}
               <div className="bg-white border border-gray-400 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
                   <p className="text-sm font-medium text-gray-500">
@@ -161,7 +153,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                       : "-"}
                   </p>
                 </div>
-
+                {/* starting price */}
                 <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
                   <p className="text-sm font-medium text-gray-500">
                     {t("starting_price")}
@@ -176,7 +168,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     )}
                   </p>
                 </div>
-
+                {/* step price */}
                 <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
                   <p className="text-sm font-medium text-gray-500">
                     {t("step_price")}
@@ -191,7 +183,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     )}
                   </p>
                 </div>
-
+                {/* attached file */}
                 <div className="bg-white border border-gray-300 rounded-xl p-4 space-y-2">
                   <p className="text-sm font-medium text-gray-500">
                     {t("attached_file")}
@@ -218,13 +210,39 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 </div>
               </div>
 
+              
+              <div className="mt-4 px-6 py-3  text-lg font-semibold rounded-xl flex items-center border border-gray-400 justify-between w-full">
+                <p className="text-sm font-semibold">{t("current_status")}</p>
+                <span className="text-sm font-medium text-black-600 px-4 py-1 rounded-lg">
+                  {auction.status === 0
+                    ? t("ongoing_auctions")
+                    : auction.status === 1
+                    ? t("upcoming_auctions")
+                    : t("ended_auctions")}
+                </span>
+              </div>
+              <div className="mt-4 px-6 py-3  text-lg font-semibold rounded-xl flex items-center border border-gray-400 justify-between w-full">
+                <p className="text-sm text-white-500 font-semibold">{t("type")}</p>
+                <span className="text-sm font-medium bg-white text-black-600 px-4 py-1 rounded-lg">
+                  {auction.category?.category_name || "N/A"}
+                </span>
+              </div>
+              {/* description */}
               <div className="bg-white border border-gray-300 rounded-xl p-4">
                 <p className="text-sm font-medium text-gray-500">
                   {t("description")}
                 </p>
-                <p className="text-gray-700 text-sm max-h-20 overflow-y-auto">
-                  {auction.description || t("no_description_available")}
-                </p>
+
+                {auction.description && auction.description.trim() !== "" ? (
+                  <div
+                    className="text-gray-700 text-sm max-h-20 overflow-y-auto prose prose-slate  max-w-none ck-content"
+                    dangerouslySetInnerHTML={{ __html: auction.description }}
+                  />
+                ) : (
+                  <p className="text-gray-400 italic text-sm">
+                    {t("no_description_available")}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -246,7 +264,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               </span>
             </div>
           </div>
-
+          {/* table list user tham gia */}
           <div className=" border rounded-xl max-h-60 overflow-y-auto">
             <table className="table-fixed min-w-full text-sm text-left">
               <thead className="bg-gray-200 text-gray-700 sticky top-0 z-10">

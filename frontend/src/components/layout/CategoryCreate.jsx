@@ -71,7 +71,7 @@ const CreateCategoryForm = ({
     >
       <div
         className={clsx(
-          "bg-gray-200 w-full max-w-2xl max-sm:w-[90%] max-h-[95%] p-8 rounded-2xl relative overflow-hidden fade-slide-up",
+          "bg-white w-full max-w-2xl max-sm:w-[90%] max-h-[95%] p-8 rounded-2xl relative overflow-hidden fade-slide-up",
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
         )}
         onClick={(e) => e.stopPropagation()}
@@ -116,7 +116,7 @@ const CreateCategoryForm = ({
             <input
               {...register("category_name")}
               type="text"
-              className="w-full p-2 rounded shadow"
+              className="w-full p-2 rounded-lg border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
             />
             {errors.category_name && (
               <p className="text-red-500 absolute right-1 text-xs">
@@ -136,7 +136,7 @@ const CreateCategoryForm = ({
             <input
               {...register("description")}
               type="text"
-              className="w-full p-2 rounded shadow"
+              className="w-full p-2 rounded-lg border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
             />
             {errors.description && (
               <p className="text-red-500 absolute right-1 text-xs">

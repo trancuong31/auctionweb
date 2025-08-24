@@ -54,7 +54,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   (item.image_url && item.image_url.length > 0
                     ? "w-full h-full object-cover"
                     : "img-no") +
-                  " transition-transform duration-500 ease-in-out border-4 border-blue-100 will-change-transform group-hover:scale-110"
+                  " transition-transform duration-500 ease-in-out border-4 border-white will-change-transform group-hover:scale-110"
                 }
               />
             </div>            

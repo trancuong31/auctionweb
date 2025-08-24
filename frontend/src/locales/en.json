@@ -123,7 +123,7 @@
   "activate_user_message": "Are you sure you want to activate this user?",
   "excute": "Excute",
   "select_time": "Select time",
-  "description": "Description",
+  "description": "Detail Info",
   "excel": "Excel file",
   "img": "Select Image",
   "click_to_select_image": "Click to select image",
@@ -290,10 +290,10 @@
     "title_required": "Title is required",
     "title_max": "Title must not exceed 200 characters",
     "description_required": "Description is required",
-    "description_max": "Description must not exceed 2000 characters",
+    "description_max": "Description must not exceed 3000 characters",
     "starting_price_min": "Starting price must be > 0",
     "step_price_min": "Price step must be > 0",
-    "image_url_min": "Must select at least one file",
+    "image_url_min": "Must select at least 2 files",
     "file_exel_instance": "Must select Excel file",
     "end_time_required": "Time is required",
     "file_max_size": "File size must not exceed 10MB",
@@ -348,5 +348,7 @@
   "days": "Days",
   "hours": "Hours",
   "minutes": "Minutes",
-  "seconds": "Seconds"
+  "seconds": "Seconds",
+  "other_auctions": "Related Products",
+  "describe_auction": "Describe Auction"
 }

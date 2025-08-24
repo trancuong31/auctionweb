@@ -3,6 +3,7 @@ import ModalAuction from "./formAuction";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import AnimatedContent from "../ui/animatedContent";
+import AuctionSection from "./Auctions";
 import {
   faTags,
   faMoneyBill,
@@ -32,7 +33,9 @@ const AuctionDetail = () => {
   useEffect(() => {
     getAuction();
   }, [id]);
-
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [id]);
   const { t, i18n } = useTranslation();
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
@@ -341,7 +344,7 @@ const AuctionDetail = () => {
                 className="mr-4 text-blue-500"
               />
               {t("starting_price")}:{" "}
-              <span className="font-semibold text-black-700 text-[32px]">
+              <span className="font-semibold text-black-700 text-[24px]">
                 {auction.starting_price && auction.starting_price !== 0
                   ? auction.starting_price.toLocaleString(
                       auction.currency === "VND" ? "vi-VN" : "en-US",
@@ -448,23 +451,27 @@ const AuctionDetail = () => {
             )}
           </div>
         </div>
-        <div className="w-full max-h-[300px] overflow-y-auto p-6 mt-12 bg-gray-100 rounded-lg text-base leading-relaxed shadow-inner text-gray-700">
-          {auction.description ? (
-            <p className="whitespace-pre-wrap break-words">
-              <span className="font-semibold text-gray-800">
+        {/* Mô tả */}
+        <div className="w-full p-6 rounded-lg text-base text-justify leading-relaxed text-gray-700">
+          <hr className=" border-gray-600" />
+          {auction.description && auction.description.trim() !== "" ? (
+            <div>
+              <span className="font-semibold text-xl text-gray-800">
                 {t("description")}:
-              </span>{" "}
-              {auction.description}
-            </p>
+              </span>
+              <div
+                className="mt-2 prose prose-slate max-w-none ck-content"
+                dangerouslySetInnerHTML={{ __html: auction.description }}
+              />
+            </div>
           ) : (
             <p className="text-gray-400 italic">
               {t("no_description_available")}
             </p>
           )}
         </div>
-
         {/* Nút đấu giá */}
-        <div className="flex justify-center mt-12">
+        <div className="flex justify-center">
           <button
             onClick={openAuctionForm}
             className="uppercase px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out "
@@ -473,6 +480,22 @@ const AuctionDetail = () => {
           </button>
         </div>
       </AnimatedContent>
+      {/* Các phiên đấu giá liên quan */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-1 text-gray-600 font-rele">
+          <u>{t("other_auctions").toUpperCase()}</u>
+        </h2>
+
+        {auction.status === 0 && (
+          <AuctionSection titleKey="ongoing_auctions" type="ongoing" limit={4} excludeId={auction?.id} />
+        )}
+        {auction.status === 1 && (
+          <AuctionSection titleKey="upcoming_auctions" type="upcoming" limit={4} excludeId={auction?.id} />
+        )}
+        {auction.status === 2 && (
+          <AuctionSection titleKey="ended_auctions" type="ended" limit={4} excludeId={auction?.id} />
+        )}
+      </div>
     </>
   );
 };

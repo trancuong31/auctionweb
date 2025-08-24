@@ -10,6 +10,8 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const CreateAuctionForm = ({
   isOpen,
@@ -33,12 +35,12 @@ const CreateAuctionForm = ({
       .string()
       .trim()
       .min(1, t("validate_auction.description_required"))
-      .max(2000, t("validate_auction.description_max")),
+      .max(3000, t("validate_auction.description_max")),
     starting_price: z.number().optional(),
     step_price: z.number().optional(),
     image_url: z
       .array(z.union([z.instanceof(File), z.string()]))
-      .min(1, t("validate_auction.image_url_min")),
+      .min(2, t("validate_auction.image_url_min")),
     file_exel: z
       .any()
       .optional()
@@ -67,6 +69,7 @@ const CreateAuctionForm = ({
     watch,
     register,
     reset,
+    trigger,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(auctionSchema),
@@ -138,12 +141,12 @@ const CreateAuctionForm = ({
       fetchCategories();
     }, []);
 
-  // Effect riêng để set category_id khi edit mode và có auction data
-  useEffect(() => {
-    if (mode === "edit" && auction && auction.category_id && categories.length > 0) {
-      setValue("category_id", auction.category_id);
-    }
-  }, [mode, auction, categories, setValue]);
+  //set category_id khi edit mode và có auction data
+  // useEffect(() => {
+  //   if (mode === "edit" && auction && auction.category_id && categories.length > 0) {
+  //     setValue("category_id", auction.category_id);
+  //   }
+  // }, [mode, auction, categories, setValue]);
   const onSubmit = async (formData) => {
     const arrLinkImg = await handlerUploadImgs(formData.image_url);
     const linkExcel = await handleUpLoadExcel();
@@ -289,17 +292,65 @@ const CreateAuctionForm = ({
     }
   };
 
+  // ==== Fake participants (UI only – giữ nguyên logic submit) ====
+const FAKE_PARTICIPANTS = [
+  { id: "u1", name: "Nguyễn Văn Tài",   email: "tainv@example.com" },
+  { id: "u2", name: "Lê Thị Hương",     email: "huonglt@example.com" },
+  { id: "u3", name: "Phạm Minh Tuấn",   email: "tuanpm@example.com" },
+  { id: "u4", name: "Trần Thị Nga",     email: "ngatt@example.com" },
+  { id: "u5", name: "Vũ Đức Anh",       email: "anhvd@example.com" },
+  { id: "u6", name: "Đỗ Quang Huy",     email: "huydq@example.com" },
+];
+
+const [selectedParticipantIds, setSelectedParticipantIds] = useState(
+  FAKE_PARTICIPANTS.map(u => u.id) // giống ảnh: mặc định tick hết
+);
+
+const allParticipantsChecked =
+  selectedParticipantIds.length === FAKE_PARTICIPANTS.length;
+
+const toggleAllParticipants = () => {
+  setSelectedParticipantIds(allParticipantsChecked ? [] : FAKE_PARTICIPANTS.map(u => u.id));
+};
+
+const toggleOneParticipant = (id) => {
+  setSelectedParticipantIds(prev =>
+    prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+  );
+};
+
+const initialsOf = (fullName) =>
+  fullName
+    .split(" ")
+    .filter(Boolean)
+    .slice(-2)
+    .map(w => w[0]?.toUpperCase())
+    .join("");
+// Tìm kiếm trong danh sách participants (UI only)
+const [participantQuery, setParticipantQuery] = useState("");
+
+const normalize = (s = "") =>
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+const filteredParticipants = FAKE_PARTICIPANTS.filter(u => {
+  const q = normalize(participantQuery);
+  return (
+    normalize(u.name).includes(q) ||
+    (u.email || "").toLowerCase().includes(q)
+  );
+});
+
   return (
     <div
       className={clsx(
-        "fixed inset-0 flex items-center pt-[50px] justify-center bg-black bg-opacity-50 z-50 max-sm:pt-[200px] ",
+        "fixed inset-0 flex items-center pt-[50px] justify-center bg-black bg-opacity-50 z-50 max-sm:pt-[100px] ",
         isOpen ? "visible" : "invisible"
       )}
       // onClick={onClickClose}
     >
       <div
         className={clsx(
-          "bg-gray-200 w-full max-w-2xl max-sm:w-[90%] max-h-[95%] p-8 rounded-2xl relative overflow-hidden fade-slide-up",
+          "bg-white w-full max-w-4xl max-sm:w-[90%] max-h-[95%] rounded-2xl relative overflow-hidden fade-slide-up",
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
         )}
         onClick={(e) => e.stopPropagation()}
@@ -327,432 +378,528 @@ const CreateAuctionForm = ({
             </svg>
           </button>
         </div>
-
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-2 mt-[5%] max-sm:mt-[6%] min-[1500px]:mt-[10%]"
-        >
-          <div className="flex gap-4">
-            <div className="flex-1 relative">
-              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-                <svg
-                  className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"
-                  />
-                </svg>
-                {t("title")}
-                <span className="text-red-500">*</span>
-              </label>
-              <input
-                {...register("title")}
-                type="text"
-                className="w-full p-2 rounded shadow"
-              />
-              {errors.title && (
-                <p className="text-red-500 absolute right-1 text-xs">
-                  {errors.title.message}
-                </p>
-              )}
-            </div>
-            
-            <div className="flex-1 relative">
-              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-                <svg
-                  className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"
-                  />
-                </svg>
-                {t("type")}<span className="text-red-500">*</span>
-              </label>
-              <select
-                {...register("category_id")}
-                className="w-full p-2 rounded shadow bg-white"
-              >
-                <option value="">{t("select_group")}</option>
-                {categories.map((cat) => (
-                  <option key={cat.category_id} value={cat.category_id}>
-                    {cat.category_name}
-                  </option>
-                ))}
-              </select>
-              {errors.category_id && (
-                <p className="text-red-500 absolute right-1 text-xs">
-                  {errors.category_id.message}
-                </p>
-              )}
-            </div>
-          </div>          
-
-          <div className="flex gap-4">
-            <div className="flex-1 relative">
+        <div className="mt-[7%] max-sm:mt-[10%] min-[1500px]:mt-[10%] overflow-y-auto scrollbar-thumb-gray-400 p-2 pt-0 max-h-[80vh] pr-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4 min-w-[300px] mt-[14px] max-w-[1500px]"
+          >
+            <div className="flex gap-4">
+              {/* title */}
+              <div className="flex-1 relative">                
                 <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-                  <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  <svg
+                    className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"
+                    />
                   </svg>
-                  {t("currency")}
+                  {t("title")}
                   <span className="text-red-500">*</span>
                 </label>
-                <div className="flex flex-row gap-6 mt-3">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="USD"
-                      {...register("currency")}
-                      className="w-4 h-4"
-                    />USD
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="VND"
-                      {...register("currency")}
-                      className="w-4 h-4"
-                    />
-                    VND
-                  </label>
-                </div>
-                {errors.currency && (
+                <input
+                  {...register("title")}
+                  type="text"
+                  className="w-full p-2 rounded-lg border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                />
+                {errors.title && (
                   <p className="text-red-500 absolute right-1 text-xs">
-                    {errors.currency.message}
+                    {errors.title.message}
                   </p>
                 )}
-            </div>
-            <div className="flex-1 relative">
-              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-                <svg
-                  className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 7h.01M3 7a4 4 0 014-4h6l8 8-6 6-8-8V7z"
-                  />
-                </svg>
-                {t("starting_price")}
-                {/* <span className="text-red-500">*</span> */}
-              </label>
-              <input
-                {...register("starting_price", { valueAsNumber: true })}
-                type="number"
-                min="0"
-                className="w-full p-2 rounded shadow"
-                onChange={(e) => setStartingPrice(e.target.value)}
-              />
-              {/* {errors.starting_price && (
-                <p className="text-red-500 absolute right-1 text-xs">
-                  {errors.starting_price.message}
-                </p>
-              )} */}
-            </div>
-
-            <div className="flex-1 relative">
-              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-                <svg
-                  className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 17l6-6 4 4 8-8M14 7h7v7"
-                  />
-                </svg>
-                {t("step_price")}
-                {/* <span className="text-red-500">*</span> */}
-              </label>
-              <input
-                {...register("step_price", { valueAsNumber: true })}
-                type="number"
-                min="0"
-                className="w-full p-2 rounded shadow"
-                onChange={(e) => setStepPrice(e.target.value)}
-              />
-              {/* {errors.step_price && (
-                <p className="text-red-500 absolute right-1 text-xs">
-                  {errors.step_price.message}
-                </p>
-              )} */}
-            </div>            
-          
-          </div>
-          <div className="relative">
-            <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-              <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              {t("select_time")}
-              <span className="text-red-500">*</span>
-            </label>
-            <RangeCalender
-              onChange={(dates) => {
-                if (dates.length === 2) {
-                  setValue(
-                    "start_time",
-                    dayjs(dates[0]).tz("Asia/Ho_Chi_Minh").format()
-                  );
-                  setValue(
-                    "end_time",
-                    dayjs(dates[1]).tz("Asia/Ho_Chi_Minh").format()
-                  );
-                }
-              }}
-              value={
-                startTime && endTime
-                  ? [dayjs(startTime).toDate(), dayjs(endTime).toDate()]
-                  : []
-              }
-              allowMinDate={false}
-            />
-            {errors.end_time && (
-              <p className="text-red-500 mt-1 absolute right-1 text-xs">
-                {errors.end_time.message}
-              </p>
-            )}
-          </div>
-
-          <div className="relative">
-            <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-              <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 16h8M8 12h8M9 4h6a2 2 0 012 2v14a2 2 0 01-2 2H9a2 2 0 01-2-2V6a2 2 0 012-2z"
-                />
-              </svg>
-              {t("description")}
-              <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              {...register("description")}
-              className="w-full p-2 rounded shadow h-24  max-[1500px]:max-h-14"
-              // defaultValue={auction.description || ""}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-            {errors.description && (
-              <p className="text-red-500 absolute right-1 text-xs">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
-          <div className="flex-1 relative">
-            <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-              <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-              </svg>
-              {t("excel")}
-            </label>
-            <Controller
-              name="file_exel"
-              control={control}
-              render={({
-                field: { onChange, value, ...field },
-                fieldState,
-              }) => {
-                const fileName =
-                  value instanceof File
-                    ? value.name
-                    : auction?.file_exel?.split("/").pop() || "";
-
-                return (
-                  <div className="relative space-y-2">
-                    {/* Ô input chỉ hiển thị tên file */}
-                    <input
-                      type="text"
-                      readOnly
-                      value={fileName}
-                      placeholder={t("select_excel_file")}
-                      className="w-full p-2 rounded shadow bg-white text-gray-700 cursor-pointer"
-                      onClick={() => {
-                        document.getElementById("filePicker")?.click();
-                        console.log(value);
-                        console.log(watchedFile);
-                      }}
+              </div>
+              {/* type product */}
+              <div className="flex-1 relative">
+                <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                  <svg
+                    className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"
                     />
+                  </svg>
+                  {t("type")}<span className="text-red-500">*</span>
+                </label>
+                <select
+                  {...register("category_id")}
+                  className="w-full p-[10px] rounded-lg flex items-center border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                >
+                  <option value="">{t("select_group")}</option>
+                  {categories.map((cat) => (
+                    <option key={cat.category_id} value={cat.category_id}>
+                      {cat.category_name}
+                    </option>
+                  ))}
+                </select>
+                {errors.category_id && (
+                  <p className="text-red-500 absolute right-1 text-xs">
+                    {errors.category_id.message}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex gap-4">
+              {/* currency */}
+              <div className="flex-1 relative">
+                  <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                    <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    {t("currency")}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex flex-row gap-6 mt-3 justify-center">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        value="USD"
+                        {...register("currency")}
+                        className="w-4 h-4"
+                      />USD
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        value="VND"
+                        {...register("currency")}
+                        className="w-4 h-4"
+                      />
+                      VND
+                    </label>
+                  </div>
+                  {errors.currency && (
+                    <p className="text-red-500 absolute right-1 text-xs">
+                      {errors.currency.message}
+                    </p>
+                  )}
+              </div>
+              {/* starting_price */}
+              <div className="flex-1 relative">
+                <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                  <svg
+                    className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 7h.01M3 7a4 4 0 014-4h6l8 8-6 6-8-8V7z"
+                    />
+                  </svg>
+                  {t("starting_price")}
+                  {/* <span className="text-red-500">*</span> */}
+                </label>
+                <input
+                  {...register("starting_price", { valueAsNumber: true })}
+                  type="number"
+                  min="0"
+                  className="w-full p-2 rounded-lg border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  onChange={(e) => setStartingPrice(e.target.value)}
+                />
+                {/* {errors.starting_price && (
+                  <p className="text-red-500 absolute right-1 text-xs">
+                    {errors.starting_price.message}
+                  </p>
+                )} */}
+              </div>
+              {/* step_price */}
+              <div className="flex-1 relative">
+                <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                  <svg
+                    className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 17l6-6 4 4 8-8M14 7h7v7"
+                    />
+                  </svg>
+                  {t("step_price")}
+                  {/* <span className="text-red-500">*</span> */}
+                </label>
+                <input
+                  {...register("step_price", { valueAsNumber: true })}
+                  type="number"
+                  min="0"
+                  className="w-full p-2 rounded-lg border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  onChange={(e) => setStepPrice(e.target.value)}
+                />
+                {/* {errors.step_price && (
+                  <p className="text-red-500 absolute right-1 text-xs">
+                    {errors.step_price.message}
+                  </p>
+                )} */}
+              </div>            
+            </div>
+            {/* time */}
+            <div className="relative">
+              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                <svg
+                  className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                {t("select_time")}
+                <span className="text-red-500">*</span>
+              </label>
+              <RangeCalender
+                onChange={(dates) => {
+                  if (dates.length === 2) {
+                    setValue(
+                      "start_time",
+                      dayjs(dates[0]).tz("Asia/Ho_Chi_Minh").format()
+                    );
+                    setValue(
+                      "end_time",
+                      dayjs(dates[1]).tz("Asia/Ho_Chi_Minh").format()
+                    );
+                  }
+                }}
+                value={
+                  startTime && endTime
+                    ? [dayjs(startTime).toDate(), dayjs(endTime).toDate()]
+                    : []
+                }
+                allowMinDate={false}
+              />
+              {errors.end_time && (
+                <p className="text-red-500 mt-1 absolute right-1 text-xs">
+                  {errors.end_time.message}
+                </p>
+              )}
+            </div>
+            {/* participants */}
+            <div className="relative">
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                    </svg>
+                    Người tham gia đấu giá<span className="text-red-500">*</span>
+                  </label>
 
-                    {/* Input file ẩn */}
+                  {/* Tất cả mọi người */}
+                  <label className="inline-flex items-center gap-2 text-indigo-600 font-medium cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 accent-blue-600 "
+                      checked={allParticipantsChecked}
+                      onChange={toggleAllParticipants}
+                    />
+                    Tất cả mọi người
+                  </label>
+                </div>
+                {/* Ô tìm kiếm user */}
+                  <div className="mb-3">
+                    <div className="relative">
+                      <input
+                        value={participantQuery}
+                        onChange={(e) => setParticipantQuery(e.target.value)}
+                        type="text"
+                        placeholder="Tìm theo tên hoặc email"
+                        className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                      />
+                      <svg
+                        className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M21 21l-4.35-4.35M10 18a8 8 0 110-16 8 8 0 010 16z" />
+                      </svg>
+                    </div>
+                  </div>
+                {/* Hộp danh sách người dùng */}
+                <div className="rounded-xl border border-gray-200 bg-white overflow-y-auto max-h-60 shadow-inner">
+                  <ul className="divide-y divide-gray-100">
+                    {FAKE_PARTICIPANTS.map(u => {
+                      const checked = selectedParticipantIds.includes(u.id);
+                      return (                        
+                        <li key={u.id} className="flex items-center gap-3 px-4 py-3">                          
+                          <input
+                            type="checkbox"
+                            className="w-4 h-4 accent-indigo-600"
+                            checked={checked}
+                            onChange={() => toggleOneParticipant(u.id)}
+                          />
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-800 leading-5">{u.name}</p>
+                            <p className="text-sm text-gray-500 leading-4">{u.email}</p>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </div>
+            </div>
+            {/* description */}
+            <div className="relative">
+              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+              </svg>
+                {t("description")}
+                <span className="text-red-500">*</span>
+              </label>
+              {/* CKEditor */}
+              <Controller
+                name="description"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <CKEditor
+                    editor={ClassicEditor}
+                    data={value || ""}
+                    onChange={(event, editor) => {
+                      const data = editor.getData();
+                      onChange(data);
+                    }}
+                    config={{
+                    toolbar: {
+                      items: [
+                        "heading",
+                        "|",
+                        "bold",
+                        "italic",
+                        "link",
+                        "bulletedList",
+                        "numberedList",
+                        "|",
+                        "outdent",
+                        "indent",
+                        "|",
+                        "insertTable",
+                        "blockQuote",
+                        "|",
+                        "undo",
+                        "redo",
+                      ],
+                    },
+                    table: {
+                      contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
+                    },
+                    placeholder: t("describe_auction"),
+                  }}
+                  />
+                )}
+              />
+
+              {errors.description && (
+                <p className="text-red-500 absolute right-1 text-xs">
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
+            {/* excel file */}
+            <div className="flex-1 relative">
+              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+                {t("excel")}
+              </label>
+              <Controller
+                name="file_exel"
+                control={control}
+                render={({
+                  field: { onChange, value, ...field },
+                  fieldState,
+                }) => {
+                  const fileName =
+                    value instanceof File
+                      ? value.name
+                      : auction?.file_exel?.split("/").pop() || "";
+
+                  return (
+                    <div className="relative space-y-2">
+                      {/* Ô input chỉ hiển thị tên file */}
+                      <input
+                        type="text"
+                        readOnly
+                        value={fileName}
+                        placeholder={t("select_excel_file")}
+                        className="w-full p-2 rounded-lg border border-gray-300 text-gray-700 cursor-pointer outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                        onClick={() => {
+                          document.getElementById("filePicker")?.click();
+                          console.log(value);
+                          console.log(watchedFile);
+                        }}
+                      />
+
+                      {/* Input file ẩn */}
+                      <input
+                        {...field}
+                        id="filePicker"
+                        type="file"
+                        accept=".xlsx,.xls"
+                        className="hidden"                      
+                        key={inputKey}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          onChange(file || null);
+                        }}
+                      />
+                      {/* Thông báo lỗi */}
+                      {fieldState.error && (
+                        <p className="text-red-500 absolute right-1 text-xs">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </div>
+                  );
+                }}
+              />
+            </div>
+            {/* image */}
+            <div className="flex-1 relative">
+              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                </svg>
+                {t("img")}
+                <span className="text-red-500">*</span>
+              </label>
+
+              <div className="flex w-full ">
+                {/* Drag & Drop Area */}
+                <div
+                  className={clsx(
+                    "min-[1500px]:p-6 border-2 border-dashed rounded-lg transition-colors cursor-pointer flex-1",
+                    isDragging
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-300 hover:border-gray-400"
+                  )}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={handleDragAreaClick}
+                >
+                  <div className="text-center h-28 max-[375px]:h-20 overflow-y-auto">
+                    <svg
+                      className="mx-auto h-12 w-12 text-gray-400"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 48 48"
+                    >
+                      <path
+                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium text-blue-600">
+                          {t("click_to_select_image")}
+                        </span>{" "}
+                        {t("or_drag_and_drop")}
+                      </p>
+                      <p className="text-sm text-red-500">{t("photo_limit")}</p>
+                    </div>
+                    {/* Image Preview Area */}
+                    <div
+                      className="grid grid-cols-6 gap-2 ml-1"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {[...(imgFiles || [])].map((item, index) => {
+                        const isFile = item instanceof File;
+                        const key = isFile
+                          ? `${item.name}-${item.size}-${item.lastModified}`
+                          : item;
+
+                        const src = isFile
+                          ? URL.createObjectURL(item)
+                          : `${import.meta.env.VITE_BASE_URL}${item}`;
+
+                        return (
+                          <div key={key} className="relative">
+                            <img
+                              src={src}
+                              alt={`preview-${index}`}                            
+                              className="object-cover rounded border"
+                            />
+                            <div
+                              onClick={() => removeFile(index)}
+                              className="absolute top-1 right-1 bg-gray-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
+                              title="Delete image"
+                            >
+                              ×
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Hidden Input */}
+              <Controller
+                name="image_url"
+                control={control}
+                render={({
+                  field: { onChange, value, ...field },
+                  fieldState,
+                }) => (
+                  <>
                     <input
                       {...field}
-                      id="filePicker"
+                      id="imageInput"
                       type="file"
-                      accept=".xlsx,.xls"
-                      className="hidden"                      
-                      key={inputKey}
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        onChange(file || null);
-                      }}
+                      accept="image/*"
+                      className="hidden"
+                      multiple
+                      onChange={handleFileChange}
                     />
-                    {/* Thông báo lỗi */}
+
                     {fieldState.error && (
                       <p className="text-red-500 absolute right-1 text-xs">
                         {fieldState.error.message}
                       </p>
                     )}
-                  </div>
-                );
-              }}
-            />
-          </div>
-
-          <div className="flex-1 relative">
-            <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-              <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-              </svg>
-              {t("img")}
-              <span className="text-red-500">*</span>
-            </label>
-
-            <div className="flex w-full">
-              {/* Drag & Drop Area */}
-              <div
-                className={clsx(
-                  "min-[1500px]:p-6 border-2 border-dashed rounded-lg transition-colors cursor-pointer flex-1",
-                  isDragging
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-300 hover:border-gray-400"
+                  </>
                 )}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={handleDragAreaClick}
-              >
-                <div className="text-center h-28 max-[375px]:h-20 overflow-y-auto">
-                  <svg
-                    className="mx-auto h-12 w-12 text-gray-400"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 48 48"
-                  >
-                    <path
-                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium text-blue-600">
-                        {t("click_to_select_image")}
-                      </span>{" "}
-                      {t("or_drag_and_drop")}
-                    </p>
-                    <p className="text-sm text-red-500">{t("photo_limit")}</p>
-                  </div>
-                  {/* Image Preview Area */}
-                  <div
-                    className="grid grid-cols-6 gap-2 ml-1"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {[...(imgFiles || [])].map((item, index) => {
-                      const isFile = item instanceof File;
-                      const key = isFile
-                        ? `${item.name}-${item.size}-${item.lastModified}`
-                        : item;
-
-                      const src = isFile
-                        ? URL.createObjectURL(item)
-                        : `${import.meta.env.VITE_BASE_URL}${item}`;
-
-                      return (
-                        <div key={key} className="relative">
-                          <img
-                            src={src}
-                            alt={`preview-${index}`}                            
-                            className="object-cover rounded border"
-                          />
-                          <div
-                            onClick={() => removeFile(index)}
-                            className="absolute top-1 right-1 bg-gray-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 hover:opacity-100"
-                            title="Delete image"
-                          >
-                            ×
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
+              />
             </div>
-            {/* Hidden Input */}
-            <Controller
-              name="image_url"
-              control={control}
-              render={({
-                field: { onChange, value, ...field },
-                fieldState,
-              }) => (
-                <>
-                  <input
-                    {...field}
-                    id="imageInput"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    multiple
-                    onChange={handleFileChange}
-                  />
-
-                  {fieldState.error && (
-                    <p className="text-red-500 absolute right-1 text-xs">
-                      {fieldState.error.message}
-                    </p>
-                  )}
-                </>
-              )}
-            />
-          </div>
-
-          <div className="flex justify-center pt-4">
-            <button
-              type="submit"
-              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded hover:bg-blue-600 transform transition-transform duration-300 hover:scale-105"
-            >
-              {mode == "create" ? t("create") : t("edit")}
-            </button>
-          </div>
-        </form>
+            {/* submit form */}
+            <div className="flex justify-center pt-4">
+              <button
+                type="submit"
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded hover:bg-blue-600 transform transition-transform duration-300 hover:scale-105"
+              >
+                {mode == "create" ? t("create") : t("edit")}
+              </button>
+            </div>
+          </form>
+        </div>
+      
       </div>
     </div>
   );

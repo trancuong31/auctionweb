@@ -121,7 +121,7 @@ const OverViewAdmin = () => {
 
   const setModeEdit = (auction) => {
     console.log("Editing auction:", auction); // Debug log
-    setMode("edit");
+    setMode("edit");    
     setDisplayCreateForm(true);
     setAuctionObject(auction);
   };
@@ -451,7 +451,7 @@ const OverViewAdmin = () => {
         message={confirmConfig.message}
       />
       <CreateAuctionForm
-        isOpen={displayCreateForm}
+        isOpen={displayCreateForm}        
         onClickClose={(isReloadData = false) => {
           if (isReloadData) {
             getPageAuction();
@@ -1000,7 +1000,7 @@ const OverViewAdmin = () => {
                 {categoryData?.map((category, idx) => (
                   <tr
                     key={category.category_id || idx}
-                    className="odd:bg-white even:bg-gray-100 hover:bg-blue-400 hover:text-white transition"
+                    className=" hover:bg-blue-400 hover:text-white transition"
                   >
                     <td className="border px-2 py-1 text-center">{idx + 1}</td>                    
                     <td className="border px-2 py-1">{
@@ -1210,7 +1210,7 @@ const OverViewAdmin = () => {
                     <tr
                       key={auction.id || idx}
                       className={clsx(
-                        "odd:bg-white even:bg-gray-100 hover:bg-blue-400 hover:text-white transition",
+                        " hover:bg-blue-400 hover:text-white transition",
                         {
                           "cursor-pointer": auction.status === 1,
                         }

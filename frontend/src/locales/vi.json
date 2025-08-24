@@ -125,7 +125,7 @@
   "activate_user_message": "Bạn có chắc chắn muốn kích hoạt người dùng này không?",
   "excute": "Thực thi",
   "select_time": "Chọn khoảng thời gian",
-  "description": "Mô tả",
+  "description": "Thông tin chi tiết",
   "excel": "Excel file",
   "img": "Chọn ảnh",
   "click_to_select_image": "Nhấn để chọn ảnh",
@@ -291,10 +291,10 @@
     "title_required": "Tiêu đề là bắt buộc",
     "title_max": "Tiêu đề không được vượt quá 200 ký tự",
     "description_required": "Mô tả là bắt buộc",
-    "description_max": "Mô tả không được vượt quá 2000 ký tự",
+    "description_max": "Mô tả không được vượt quá 3000 ký tự",
     "starting_price_min": "Giá khởi điểm phải lớn hơn 0",
     "step_price_min": "Bước giá phải > 0",
-    "image_url_min": "Phải chọn ít nhất một tệp",
+    "image_url_min": "Phải chọn ít nhất một 2 ảnh",
     "file_exel_instance": "Phải chọn tệp Excel",
     "end_time_required": "Thời gian là bắt buộc",
     "file_max_size": "File không được vượt quá 10MB",
@@ -334,6 +334,7 @@
   "winning": "Chiến thắng",
   "update": "Cập nhật",
   "update_user_success": "Cập nhật thông tin thành công",
+  "currency": "Tiền tệ",
   "type": "Loại hàng",
   "unknown": "Không xác định",
   "company": "Công ty",
@@ -348,6 +349,8 @@
   "days": "Ngày",
   "hours": "Giờ",
   "minutes": "Phút",
-  "seconds": "Giây"
+  "seconds": "Giây",
+  "other_auctions": "Sản phẩm liên quan",
+  "describe_auction": "Mô tả phiên đấu giá"
 
 }
