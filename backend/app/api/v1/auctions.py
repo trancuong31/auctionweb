@@ -1,7 +1,8 @@
 from locale import currency
-from fastapi import APIRouter, Depends, Query, HTTPException, File, UploadFile, status, Request, Path
+import uuid
+from fastapi import APIRouter, Depends, Query, HTTPException, File, UploadFile, status, Request, Path, BackgroundTasks
 from sqlalchemy.orm import Session, joinedload
-from starlette.status import HTTP_400_BAD_REQUEST
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN
 from app.core.database import get_db
 from app.models.Auction import Auction
 from typing import List, Dict, Any
@@ -13,6 +14,7 @@ from typing import Optional
 import os
 from sqlalchemy import func
 from fastapi.responses import JSONResponse
+from app.models.AuctionParticipant import AuctionParticipant
 from app.models.Bid import Bid
 import json
 from app.models.User import User
@@ -24,10 +26,14 @@ from fastapi import APIRouter
 from app.i18n import _
 from datetime import datetime, timedelta
 from app.models.Category import Category
-
+from app.services.email_service import email_service
 
 router = APIRouter()
+class AuctionParticipantOut(BaseModel):
+    user_id: str
 
+    class Config:
+        from_attributes = True
 class CategoryOut(BaseModel):
     category_id: str
     category_name: str
@@ -50,7 +56,8 @@ class AuctionOut(BaseModel):
     status: int
     highest_amount: Optional[float] = None
     winner_info: Optional[dict] = None
-    category: Optional[CategoryOut] = None
+    category: Optional[CategoryOut] = None  # thông tin chi tiết của danh mục
+    # participants: Optional[List[AuctionParticipantOut]] = None  #lấy ra list các user được tham gia đấu giá auction_id đó
     # bids: Optional[List] = None  
     @field_validator("image_url", mode="before")
     @classmethod
@@ -104,6 +111,7 @@ class AuctionCreate(BaseModel):
     start_time: datetime
     end_time: datetime
     category_id: str
+    participants: Optional[List[str]] = []
     # status: int
 
 class AuctionSearchResponse(BaseModel):
@@ -140,6 +148,7 @@ class AuctionUpdate(BaseModel):
     file_exel: Optional[str] = None
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None
+
 router = APIRouter()
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
@@ -258,13 +267,14 @@ def get_auctions_by_status(
 def create_auction(
     request: Request,
     auction_in: AuctionCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     # Chỉ admin hoặc super admin mới được tạo đấu giá
     if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST,
+            status_code=HTTP_403_FORBIDDEN,
             detail=_("You don't have permission to create auction!", request)
         )
     auction = db.query(Auction).filter(Auction.title == auction_in.title).first()
@@ -280,36 +290,67 @@ def create_auction(
     """
     now = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh"))
     status = 0
-    if now > auction_in.start_time and auction_in.end_time:
-        status =0
+    if auction_in.start_time <= now < auction_in.end_time:
+        status = 0
     elif now < auction_in.start_time:
         status = 1
     else:
         status = 2
-    
-    auction = Auction(
-        title=auction_in.title,
-        category_id=auction_in.category_id,
-        title_vi=auction_in.title_vi,
-        title_ko=auction_in.title_ko,
-        description=auction_in.description,
-        description_vi=auction_in.description_vi,
-        description_ko=auction_in.description_ko,
-        starting_price=auction_in.starting_price,
-        step_price=auction_in.step_price,
-        currency=auction_in.currency,
-        image_url = json.dumps(auction_in.image_url) if auction_in.image_url else None,
-        file_exel=auction_in.file_exel,
-        start_time=auction_in.start_time,
-        end_time=auction_in.end_time,
-        status=status,
-        created_by=current_user.id
-    )
-    db.add(auction)
-    db.commit()
-    db.refresh(auction)
-    auction_data = auction.__dict__.copy()
-    auction_data['image_url'] = json.loads(auction.image_url) if auction.image_url else []
+    try:
+        # 2. Thêm Auction vào bảng Auction
+        auction = Auction(
+            title=auction_in.title,
+            category_id=auction_in.category_id,
+            title_vi=auction_in.title_vi,
+            title_ko=auction_in.title_ko,
+            description=auction_in.description,
+            description_vi=auction_in.description_vi,
+            description_ko=auction_in.description_ko,
+            starting_price=auction_in.starting_price,
+            step_price=auction_in.step_price,
+            currency=auction_in.currency,
+            image_url = json.dumps(auction_in.image_url) if auction_in.image_url else None,
+            file_exel=auction_in.file_exel,
+            start_time=auction_in.start_time,
+            end_time=auction_in.end_time,
+            status=status,
+            created_by=current_user.id
+        )
+        db.add(auction)
+        db.flush()
+        # 2. Thêm participants vào bảng AuctionParticipant
+        participants = []
+        for user_id in auction_in.participants:
+            participant = AuctionParticipant(
+                id=str(uuid.uuid4()),
+                auction_id=auction.id,
+                user_id=user_id
+            )
+            db.add(participant)
+            participants.append(user_id)
+        db.commit()
+        emails = (
+            db.query(User.email)
+            .filter(User.id.in_(auction_in.participants))
+            .all()
+        )
+        emails = [e[0] for e in emails] 
+
+        background_tasks.add_task(
+            email_service.send_auction_invitation_email,
+            emails=emails,
+            auction_title=auction.title,
+            auction_id=auction.id,
+            auction_start_time=auction.start_time,
+            auction_end_time=auction.end_time
+        )
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Error while creating auction: " + str(e))
+
+    # auction_data = auction.__dict__.copy()
+    # auction_data['image_url'] = json.loads(auction.image_url) if auction.image_url else []
+    # auction_data['participants'] = participants
     return AuctionOut.from_orm(auction)
 
 @router.put("/auctions/{auction_id}", response_model=AuctionOut)

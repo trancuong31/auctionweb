@@ -84,18 +84,3 @@ MANIFEST
 Dockerfile
 docker-compose.yml
 *.dockerignore
-
-# -------------------------
-# Frontend (Nếu có React/Vue)
-# -------------------------
-node_modules/
-dist/
-*.local
-
-# -------------------------
-# Others
-# -------------------------
-*.DS_Store
-*.pkl
-*.h5
-*.ckpt

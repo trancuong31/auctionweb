@@ -29,3 +29,4 @@ class Auction(Base):
     notifications = relationship("Notification", back_populates="auction")
     orders = relationship("Order", back_populates="auction")
     category = relationship("Category", back_populates="auctions")
+    participants = relationship("AuctionParticipant", back_populates="auction", cascade="all, delete")

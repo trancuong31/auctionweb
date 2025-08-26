@@ -24,7 +24,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
-import { set } from "zod/v4-mini";
 
 const OverViewAdmin = () => {
   const navigate = useNavigate();
@@ -103,7 +102,7 @@ const OverViewAdmin = () => {
   const getOverView = async () => {
     try {
       const response = await getAll("overview", true, {
-        lang: sessionStorage.getItem("lang") || "en",
+        lang: sessionStorage.getItem("lang") || sessionStorage.setItem("lang", "en") || "en",
       });
       setOverViewData(response.data);
     } catch (error) {
@@ -120,7 +119,7 @@ const OverViewAdmin = () => {
   };
 
   const setModeEdit = (auction) => {
-    console.log("Editing auction:", auction); // Debug log
+    console.log("Editing auction:", auction);
     setMode("edit");    
     setDisplayCreateForm(true);
     setAuctionObject(auction);
@@ -1074,10 +1073,6 @@ const OverViewAdmin = () => {
         {/* <!-- MANAGER AUCTIONS --> */}
 
         <div className="shadow-[0_2px_8px_rgba(0,0,0,0.3)]  p-4 rounded-lg">
-          {/* <div className="flex justify-between items-center mb-4 max-sm:justify-center">
-          
-        </div> */}
-
           <div className="flex-1 flex flex-col md:flex-row justify-between items-center md:space-y-0 md:space-x-4 w-full">
             <div className="flex gap-10 w-full items-center max-sm:flex-col max-sm:gap-4 max-sm:mb-4">
               <h2 className="text-lg font-bold"> {t("manager_auctions")}</h2>
@@ -1089,6 +1084,7 @@ const OverViewAdmin = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>{t("create_auction_btn")}
               </button>
+              
               {/* <!-- Search Input --> */}
               <div className="flex-1 max-sm:w-full">
                 <div className="relative">

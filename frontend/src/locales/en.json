@@ -297,7 +297,8 @@
     "file_exel_instance": "Must select Excel file",
     "end_time_required": "Time is required",
     "file_max_size": "File size must not exceed 10MB",
-    "category_id_required": "Item type is required"
+    "category_id_required": "Item type is required",
+    "participants_required": "Participants are required"
   },
   "validate_bid": {
     "address_required": "Address is required",
@@ -350,5 +351,18 @@
   "minutes": "Minutes",
   "seconds": "Seconds",
   "other_auctions": "Related Products",
-  "describe_auction": "Describe Auction"
+  "describe_auction": "Describe Auction",
+  "probid": "⭐ PROBID YOU CAN TRUST ⭐",
+  "select": "Select",
+  "our_product": "Our Product",
+  "at_our_auction": "At Our Auction",
+  "auction_excellence": "Auction Excellence",
+  "moneyback_guarantee": "Moneyback Guarantee",
+  "support_24_7": "24/7 Support",
+  "start_a_bid": "Tutorial",
+  "view_all_auction": "View All Auction",
+  "all": "All",
+  "participants": "Participants",
+  "loading_users": "Loading users...",
+  "no_users_found": "No users found"
 }

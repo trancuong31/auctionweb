@@ -176,7 +176,10 @@ msgid "Super Admin cannot modify Super Admin information"
 msgstr "슈퍼 관리자는 슈퍼 관리자 정보를 수정할 수 없습니다"
 
 msgid "You don't have permission to create category!"
-msgstr "You don't have permission to create category!"
+msgstr "카테고리를 생성할 권한이 없습니다!"
 
 msgid "Category name already exists"
-msgstr "Category name already exists"
+msgstr "카테고리 이름이 이미 존재합니다"
+
+msgid "User not invited to bid"
+msgstr "사용자가 입찰에 초대되지 않았습니다"

@@ -8,7 +8,8 @@ module.exports = {
     extend: {
     fontFamily: {
       sans: ['Open Sans', 'Helvetica', 'sans-serif'],
-      rele: ['DM Sans', 'sans-serif']
+      rele: ['DM Sans', 'sans-serif'],
+      playfair: ["Playfair Display", "sans-serif"],
     },
   },
   },

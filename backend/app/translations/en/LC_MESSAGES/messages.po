@@ -183,3 +183,6 @@ msgstr "You don't have permission to create category!"
 
 msgid "Category name already exists"
 msgstr "Category name already exists"
+
+msgid "User not invited to bid"
+msgstr "User not invited to bid"

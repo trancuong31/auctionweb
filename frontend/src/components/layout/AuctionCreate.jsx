@@ -22,6 +22,9 @@ const CreateAuctionForm = ({
   const [isDragging, setIsDragging] = useState(false);
   const [inputKey, setInputKey] = useState(false);  
   const [categories, setCategories] = useState([]);
+  const [listUser, setListUser] = useState([]);
+  const [selectedParticipantIds, setSelectedParticipantIds] = useState([]); 
+  const [participantQuery, setParticipantQuery] = useState("");
   const MAX_FILE_SIZE =
     Number(import.meta.env.VITE_MAX_FILE_SIZE) || 10 * 1024 * 1024;
   const { t, i18n } = useTranslation();
@@ -57,6 +60,7 @@ const CreateAuctionForm = ({
     end_time: z.string().min(1, t("validate_auction.end_time_required")),
     start_time: z.any(),
     category_id: z.string().min(1, t("validate_auction.category_id_required")),
+    participants: z.array(z.string()).min(1, t("validate_auction.participants_required")),
   });
 
   dayjs.extend(utc);
@@ -82,6 +86,7 @@ const CreateAuctionForm = ({
       start_time: "",
       end_time: "",
       description: "",
+      participants: [],
       file_exel: null,
       image_url: [],
       category_id: "",
@@ -101,6 +106,7 @@ const CreateAuctionForm = ({
         end_time: "",
         currency: "USD",
         description: "",
+        participants: [],
         file_exel: null,
         image_url: [],
         category_id: "",
@@ -141,12 +147,7 @@ const CreateAuctionForm = ({
       fetchCategories();
     }, []);
 
-  //set category_id khi edit mode và có auction data
-  // useEffect(() => {
-  //   if (mode === "edit" && auction && auction.category_id && categories.length > 0) {
-  //     setValue("category_id", auction.category_id);
-  //   }
-  // }, [mode, auction, categories, setValue]);
+  // Submit form
   const onSubmit = async (formData) => {
     const arrLinkImg = await handlerUploadImgs(formData.image_url);
     const linkExcel = await handleUpLoadExcel();
@@ -292,53 +293,76 @@ const CreateAuctionForm = ({
     }
   };
 
-  // ==== Fake participants (UI only – giữ nguyên logic submit) ====
-const FAKE_PARTICIPANTS = [
-  { id: "u1", name: "Nguyễn Văn Tài",   email: "tainv@example.com" },
-  { id: "u2", name: "Lê Thị Hương",     email: "huonglt@example.com" },
-  { id: "u3", name: "Phạm Minh Tuấn",   email: "tuanpm@example.com" },
-  { id: "u4", name: "Trần Thị Nga",     email: "ngatt@example.com" },
-  { id: "u5", name: "Vũ Đức Anh",       email: "anhvd@example.com" },
-  { id: "u6", name: "Đỗ Quang Huy",     email: "huydq@example.com" },
-];
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await getAll("users", true, { page_size: 100, role: "USER" });
+        let usersData = [];
+        if (response?.data?.users && Array.isArray(response.data.users)) {
+          usersData = response.data.users;
+        
+        if (usersData.length > 0) {
+          const formattedUsers = usersData.map(user => ({
+            id: user.id,
+            name: user.username,
+            email: user.email
+          }));
+          setListUser(formattedUsers);
+          setSelectedParticipantIds(formattedUsers.map(u => u.id));
+        } else {
+          console.warn("No users found in response");
+        }
+      }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
 
-const [selectedParticipantIds, setSelectedParticipantIds] = useState(
-  FAKE_PARTICIPANTS.map(u => u.id) // giống ảnh: mặc định tick hết
-);
+    fetchUsers();
+  }, []);
 
-const allParticipantsChecked =
-  selectedParticipantIds.length === FAKE_PARTICIPANTS.length;
+  useEffect(() => {
+    setValue("participants", selectedParticipantIds);
+  }, [selectedParticipantIds, setValue]);
 
-const toggleAllParticipants = () => {
-  setSelectedParticipantIds(allParticipantsChecked ? [] : FAKE_PARTICIPANTS.map(u => u.id));
-};
+  // Check xem tất cả user đã chọn chưa
+  const allParticipantsChecked =
+    listUser.length > 0 &&
+    selectedParticipantIds.length === listUser.length;
 
-const toggleOneParticipant = (id) => {
-  setSelectedParticipantIds(prev =>
-    prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-  );
-};
+  // const toggleOneParticipant = (id) => {
+  //   setSelectedParticipantIds(prev =>
+  //     prev.includes(id)
+  //       ? prev.filter(x => x !== id)
+  //       : [...prev, id]
+  //   );
+  // };
+  // Tìm kiếm không phân biệt dấu
+  const normalize = (s = "") =>
+    s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-const initialsOf = (fullName) =>
-  fullName
-    .split(" ")
-    .filter(Boolean)
-    .slice(-2)
-    .map(w => w[0]?.toUpperCase())
-    .join("");
-// Tìm kiếm trong danh sách participants (UI only)
-const [participantQuery, setParticipantQuery] = useState("");
+  // Danh sách user sau khi filter
+  const filteredParticipants = listUser.filter(u => {
+    const q = normalize(participantQuery);
+    return (
+      normalize(u.name).includes(q) ||
+      (u.email || "").toLowerCase().includes(q)
+    );
+  });
 
-const normalize = (s = "") =>
-  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+//   const toggleParticipant = (id) => {
+//   setSelectedParticipantIds(prev =>
+//     prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+//   );
+// };
 
-const filteredParticipants = FAKE_PARTICIPANTS.filter(u => {
-  const q = normalize(participantQuery);
-  return (
-    normalize(u.name).includes(q) ||
-    (u.email || "").toLowerCase().includes(q)
-  );
-});
+// const toggleAllParticipants = () => {
+//   setSelectedParticipantIds(
+//     selectedParticipantIds.length === listUser.length
+//       ? []
+//       : listUser.map(u => u.id)
+//   );
+// };
 
   return (
     <div
@@ -600,21 +624,33 @@ const filteredParticipants = FAKE_PARTICIPANTS.filter(u => {
               <div className="mt-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+                    <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                     </svg>
-                    Người tham gia đấu giá<span className="text-red-500">*</span>
+                    {t("participants")}<span className="text-red-500">*</span>
                   </label>
-
                   {/* Tất cả mọi người */}
                   <label className="inline-flex items-center gap-2 text-indigo-600 font-medium cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 accent-blue-600 "
-                      checked={allParticipantsChecked}
-                      onChange={toggleAllParticipants}
+                    <Controller
+                      name="participants"
+                      control={control}
+                      render={({ field: { onChange } }) => (
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 accent-blue-700"
+                          checked={selectedParticipantIds.length === listUser.length}
+                          onChange={() => {
+                            const newIds =
+                              selectedParticipantIds.length === listUser.length
+                                ? []
+                                : listUser.map(u => u.id);
+                            setSelectedParticipantIds(newIds);
+                            onChange(newIds);
+                          }}
+                        />
+                      )}
                     />
-                    Tất cả mọi người
+                    <span>{t("all")}</span>
                   </label>
                 </div>
                 {/* Ô tìm kiếm user */}
@@ -637,28 +673,51 @@ const filteredParticipants = FAKE_PARTICIPANTS.filter(u => {
                     </div>
                   </div>
                 {/* Hộp danh sách người dùng */}
-                <div className="rounded-xl border border-gray-200 bg-white overflow-y-auto max-h-60 shadow-inner">
+                <div className="rounded-xl border border-gray-300 bg-white overflow-y-auto max-h-60">
                   <ul className="divide-y divide-gray-100">
-                    {FAKE_PARTICIPANTS.map(u => {
-                      const checked = selectedParticipantIds.includes(u.id);
-                      return (                        
-                        <li key={u.id} className="flex items-center gap-3 px-4 py-3">                          
-                          <input
-                            type="checkbox"
-                            className="w-4 h-4 accent-indigo-600"
-                            checked={checked}
-                            onChange={() => toggleOneParticipant(u.id)}
-                          />
-                          <div className="flex-1">
-                            <p className="font-semibold text-gray-800 leading-5">{u.name}</p>
-                            <p className="text-sm text-gray-500 leading-4">{u.email}</p>
-                          </div>
-                        </li>
-                      );
-                    })}
+                    {filteredParticipants.length > 0 ? (
+                      filteredParticipants.map(u => {
+                        const checked = selectedParticipantIds.includes(u.id);
+                        return (                        
+                          <li key={u.id} className="flex items-center gap-3 px-4 py-3">                          
+                            <Controller
+                              name="participants"
+                              control={control}
+                              render={({ field: { onChange } }) => (
+                                <input
+                                  type="checkbox"
+                                  className="w-4 h-4 accent-blue-500"
+                                  checked={selectedParticipantIds.includes(u.id)}
+                                  onChange={() => {
+                                    const newIds = selectedParticipantIds.includes(u.id)
+                                      ? selectedParticipantIds.filter(x => x !== u.id)
+                                      : [...selectedParticipantIds, u.id];
+                                    setSelectedParticipantIds(newIds);
+                                    onChange(newIds);
+                                  }}
+                                />
+                              )}
+                            />
+                            <div className="flex-1">
+                              <p className="font-semibold text-gray-800 leading-5">{u.name}</p>
+                              <p className="text-sm text-gray-500 leading-4">{u.email}</p>
+                            </div>
+                          </li>
+                        );
+                      })
+                    ) : (
+                      <li className="px-4 py-8 text-center text-gray-500">
+                        {listUser.length === 0 ? t("loading_users") : t("no_users_found")}
+                      </li>
+                    )}
                   </ul>
                 </div>
               </div>
+              {errors.participants && (
+                <p className="text-red-500 absolute right-1 text-xs">
+                  {errors.participants.message}
+                </p>
+              )}
             </div>
             {/* description */}
             <div className="relative">

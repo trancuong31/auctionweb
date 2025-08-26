@@ -71,7 +71,7 @@ const AuctionSection = ({ titleKey, type }) => {
           <p className="error">{error}</p>
         ) : (
           <>
-            <h2 className="section-title">{t(titleKey)}</h2>
+            <h2 className="section-title"><i>{t(titleKey)}</i></h2>
             <span
               style={{
                 fontWeight: "normal",

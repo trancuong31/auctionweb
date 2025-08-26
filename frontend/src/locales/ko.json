@@ -281,7 +281,8 @@
     "file_exel_instance": "엑셀 파일을 선택해야 합니다",
     "end_time_required": "시간이 필요합니다",
     "file_max_size": "파일 크기는 10MB를 초과할 수 없습니다",
-    "category_id_required": "안녕이라고 말해도 괜찮아"
+    "category_id_required": "안녕이라고 말해도 괜찮아",
+    "participants_required": "참가자는 필수 항목입니다"
   },
   "validate_bid": {
     "address_required": "주소는 필수 항목입니다",
@@ -332,6 +333,19 @@
   "minutes": "분",
   "seconds": "초",
   "other_auctions": "관련 제품",
-  "describe_auction": "경매 설명"
+  "describe_auction": "경매 설명",
+  "probid": "⭐ 당신이 신뢰할 수 있다면 ⭐",
+  "select": "선택",
+  "our_product": "우리 제품",
+  "at_our_auction": "우리 경매에서",
+  "auction_excellence": "경매 우수성",
+  "moneyback_guarantee": "환불 보장",
+  "support_24_7": "24/7 지원",
+  "start_a_bid": "경매 참여 안내",
+  "view_all_auction": "모든 경매 보기",
+  "all": "모두",
+  "participants": "참가자",
+  "loading_users": "사용자 로딩 중...",
+  "no_users_found": "사용자를 찾을 수 없습니다"
 
 }

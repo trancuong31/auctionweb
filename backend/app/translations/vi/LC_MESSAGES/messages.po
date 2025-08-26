@@ -180,3 +180,6 @@ msgstr "Bạn không có quyền tạo danh mục!"
 
 msgid "Category name already exists"
 msgstr "Danh mục đã tồn tại"
+
+msgid "User not invited to bid"
+msgstr "Bạn không được mời tham gia đấu giá"

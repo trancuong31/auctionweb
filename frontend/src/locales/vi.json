@@ -298,7 +298,8 @@
     "file_exel_instance": "Phải chọn tệp Excel",
     "end_time_required": "Thời gian là bắt buộc",
     "file_max_size": "File không được vượt quá 10MB",
-    "category_id_required": "Loại mặt hàng là bắt buộc"
+    "category_id_required": "Loại mặt hàng là bắt buộc",
+    "participants_required": "Người tham gia là bắt buộc"
   },
   "validate_bid": {
     "address_required": "Địa chỉ là bắt buộc",
@@ -351,6 +352,19 @@
   "minutes": "Phút",
   "seconds": "Giây",
   "other_auctions": "Sản phẩm liên quan",
-  "describe_auction": "Mô tả phiên đấu giá"
+  "describe_auction": "Mô tả phiên đấu giá",
+  "select": "Hãy chọn",
+  "probid": "⭐ NẾU BẠN CÓ THỂ TIN TƯỞNG ⭐",
+  "our_product": "Sản phẩm",
+  "at_our_auction": "Tại phiên đấu giá của chúng tôi",
+  "auction_excellence": "Đấu giá xuất sắc",
+  "moneyback_guarantee": "Cam kết hoàn tiền",
+  "support_24_7": "Hỗ trợ 24/7",
+  "start_a_bid": "Hướng dẫn tham gia",
+  "view_all_auction": "Xem tất cả phiên đấu giá",
+  "all": "Tất cả",
+  "participants": "Người tham gia",
+  "loading_users": "Đang tải danh sách người dùng...",
+  "no_users_found": "Không tìm thấy người dùng nào"
 
 }

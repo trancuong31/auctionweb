@@ -104,9 +104,6 @@
   font: inherit;
   color: inherit;
 }
-/* .user-greeting{
-  color: #2e2bf5 !important;
-} */
 .nav-link {
   text-decoration: none;
   color: #555;
@@ -115,8 +112,7 @@
   transition: color 0.4s cubic-bezier(.4,2,.6,1);
 }
 .nav-link:hover {
-  color: #4B48DA;
-  
+  color: #4B48DA;  
 }
 .nav-link::after {
   content: "";

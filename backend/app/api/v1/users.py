@@ -75,6 +75,7 @@ def get_users(
     search_text: Optional[str] = Query(None, description="Tìm kiếm theo username hoặc email"),
     sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: username, email, created_at, bid_count"),
     sort_order: Optional[str] = Query("desc", description="Thứ tự sắp xếp: asc, desc"),
+    role: Optional[str] = Query(None, description="Lọc theo role: USER, ADMIN, SUPER_ADMIN"),
     page: int = Query(1, ge=1, description="Số trang"),
     page_size: int = Query(8, ge=1, le=100, description="Số user mỗi trang")
 ):
@@ -89,11 +90,13 @@ def get_users(
         User,
         func.count(Bid.id).label('bid_count')
     ).outerjoin(Bid, User.id == Bid.user_id).group_by(User.id)
-    
+
     if search_text:
         query = query.filter(
             (User.username.ilike(f"%{search_text}%")) | (User.email.ilike(f"%{search_text}%"))
         )
+    if role:
+        query = query.filter(User.role == role)
     # Sắp xếp
     if sort_by == "username":
         order_col = User.username

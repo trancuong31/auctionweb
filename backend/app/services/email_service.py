@@ -77,7 +77,65 @@ class EmailService:
         except Exception as e:
             print(f"Error sending reset password email: {e}")
             return False
-    
+
+    def send_auction_invitation_email(self, emails: list[str], auction_title: str, auction_id: str, auction_start_time: str, auction_end_time: str) -> bool:
+        """
+        Gửi email mời tham gia đấu giá cho nhiều user trong 1 lần gửi.
+        """
+        try:
+            if not emails:
+                print("List email  NULL.")
+                return False
+            # Tạo email
+            msg = MIMEMultipart()
+            msg['From'] = self.sender_email
+            msg['To'] = self.sender_email  
+            msg['Bcc'] = ", ".join(emails)
+            msg['Subject'] = f"Auction System | Partron Vina - Invitation to Join Auction: {auction_title}"
+
+            # Link đấu giá
+            auction_link = f"{self.app_domain}/auctions/{auction_id}"
+
+            # Nội dung email
+            body = f"""
+            Dear Participant,
+
+            You have been invited to participate in the auction:
+
+            Auction Name: {auction_title}
+            Start Time: {auction_start_time}
+            End Time: {auction_end_time}
+
+            Click the link below to view the auction and place your bids:
+            {auction_link}
+
+            If you have any questions, please contact our support team.
+            IT Team
+            
+            -----------------------------------------------
+            This is an automated email, please do not reply.
+            """
+
+            msg.attach(MIMEText(body, 'plain'))
+
+            # Gửi email
+            if self.sender_email and self.sender_password:
+                server = smtplib.SMTP(self.smtp_server, self.smtp_port)
+                server.starttls()
+                server.login(self.sender_email, self.sender_password)
+                server.sendmail(self.sender_email, emails, msg.as_string())
+                server.quit()
+
+                print(f"Đã gửi email mời đấu giá tới {len(emails)} người.")
+                return True
+            else:
+                print("Thiếu cấu hình SMTP.")
+                return False
+
+        except Exception as e:
+            print(f"Lỗi gửi email mời đấu giá: {e}")
+            return False
+
     
 # Tạo instance global
 email_service = EmailService() 
