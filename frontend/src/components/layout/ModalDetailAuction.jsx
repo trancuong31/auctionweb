@@ -120,9 +120,41 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 alt="Auction Image"
                 className="w-full h-64 object-cover hover:scale-105 transition ease-out duration-500 rounded-2xl"
               />
-              {/* List user được mời tham  tham gia */}
-              <div className="mt-4 px-6 py-3 h-[40%] justify-center  text-lg font-semibold rounded-xl flex items-center border border-gray-400  w-full">
-                Danh sách user được mời tham gia
+              {/* List user được mời tham gia */}
+              <div className="mt-4 w-full">
+                <div className="text-center text-base font-semibold mb-2">
+                  <u>{t("invited_users").toUpperCase()}</u>
+                </div>
+                <div className="border border-gray-300 rounded-xl overflow-x-auto bg-white max-h-52 overflow-y-auto">
+                  <table className="min-w-full text-sm text-left">
+                    <thead className="bg-gray-200 text-gray-700 sticky top-0 z-10">
+                      <tr>
+                        <th className="px-4 py-2 font-semibold">#</th>
+                        <th className="px-4 py-2 font-semibold">{t("email").toUpperCase()}</th>
+                        <th className="px-4 py-2 font-semibold">{t("phone").toUpperCase()}</th>
+                        <th className="px-4 py-2 font-semibold">{t("username").toUpperCase()}</th>
+                        <th className="px-4 py-2 font-semibold">{t("company").toUpperCase()}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Array.isArray(auction.participants) && auction.participants.length > 0 ? (
+                        auction.participants.map((user, idx) => (
+                          <tr key={user.user_id || idx} className="border-t last:border-b-0">
+                            <td className="px-4 py-2">{idx + 1}</td>
+                            <td className="px-4 py-2">{user.email || <span className="italic text-gray-400">{t("no_data")}</span>}</td>
+                            <td className="px-4 py-2">{user.phone_number || <span className="italic text-gray-400">{t("no_data")}</span>}</td>
+                            <td className="px-4 py-2">{user.username || <span className="italic text-gray-400">{t("no_data")}</span>}</td>
+                            <td className="px-4 py-2">{user.company || <span className="italic text-gray-400">{t("no_data")}</span>}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={4} className="italic text-gray-400 text-center py-3">No invited users</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
             {/* detail acution */}
@@ -298,7 +330,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                       className={clsx(
                         "border-t",
                         idx === 0 ? "bg-yellow-100" : "bg-white",
-                        "even:bg-gray-50"
+                        "even:bg-gray-50 "
                       )}
                     >
                       <td className="px-4 py-2">{idx + 1}</td>

@@ -91,7 +91,7 @@ class EmailService:
             msg['From'] = self.sender_email
             msg['To'] = self.sender_email  
             msg['Bcc'] = ", ".join(emails)
-            msg['Subject'] = f"Auction System | Partron Vina - Invitation to Join Auction: {auction_title}"
+            msg['Subject'] = f"Auction System | Partron Vina - Invitation to Join Auction"
 
             # Link đấu giá
             auction_link = f"{self.app_domain}/auctions/{auction_id}"

@@ -359,10 +359,11 @@
   "auction_excellence": "Auction Excellence",
   "moneyback_guarantee": "Moneyback Guarantee",
   "support_24_7": "24/7 Support",
-  "start_a_bid": "Tutorial",
+  "start_a_bid": "Start a Bid",
   "view_all_auction": "View All Auction",
   "all": "All",
   "participants": "Participants",
   "loading_users": "Loading users...",
-  "no_users_found": "No users found"
+  "no_users_found": "No users found",
+  "invited_users": "List of users invited to the auction"
 }

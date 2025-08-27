@@ -4,7 +4,6 @@ from app.models.base import Base
 import uuid
 from datetime import datetime
 
-
 class AuctionParticipant(Base):
     __tablename__ = "auction_participants"
 

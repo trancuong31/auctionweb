@@ -12,7 +12,7 @@ from uuid import UUID
 from datetime import datetime
 from typing import Optional
 import os
-from sqlalchemy import func
+from sqlalchemy import func, delete
 from fastapi.responses import JSONResponse
 from app.models.AuctionParticipant import AuctionParticipant
 from app.models.Bid import Bid
@@ -34,6 +34,14 @@ class AuctionParticipantOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ParticipantOut(BaseModel):
+    user_id: UUID
+    username: Optional[str] = None
+    email: Optional[str] = None
+    company: Optional[str] = None
+    phone_number: Optional[str] = None
+
 class CategoryOut(BaseModel):
     category_id: str
     category_name: str
@@ -89,6 +97,8 @@ class AuctionDetailOut(BaseModel):
     highest_amount: Optional[float] = None
     bids : Optional[List]
     category: Optional[CategoryOut] = None
+    participants: Optional[List[str]] = None
+    participants: Optional[List[ParticipantOut]] = None
 
 class AuctionsWithTotalOut(BaseModel):
     auctions: List[AuctionOut]
@@ -148,6 +158,7 @@ class AuctionUpdate(BaseModel):
     file_exel: Optional[str] = None
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None
+    participants: Optional[List[str]] = None
 
 router = APIRouter()
 
@@ -356,8 +367,9 @@ def create_auction(
 @router.put("/auctions/{auction_id}", response_model=AuctionOut)
 def update_auction(
     request: Request,
+    background_tasks: BackgroundTasks,
     auction_id: str = Path(..., description="ID của auction cần sửa"),    
-    auction_in: AuctionUpdate = ...,
+    auction_in: AuctionUpdate = ...,    
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -388,17 +400,53 @@ def update_auction(
             raise HTTPException(status_code=400, detail="start_time must be before end_time")
     elif "end_time" in update_data:
         if auction.start_time and auction.start_time >= update_data["end_time"]:
-            raise HTTPException(status_code=400, detail="end_time must be after start_time")
-    
+            raise HTTPException(status_code=400, detail="end_time must be after start_time")    
     if "image_url" in update_data and update_data["image_url"] is not None:
         update_data["image_url"] = json.dumps(update_data["image_url"])
+    new_participants = None
+    if "participants" in update_data and update_data["participants"] is not None:
+        new_participants = set(update_data.pop("participants"))
+
+    # set các field còn lại vào Auction
     for key, value in update_data.items():
         setattr(auction, key, value)
+    db.flush()
+    if new_participants is not None:
+        # hiện có trên DB
+        current_ids = {
+            uid for (uid,) in (
+                db.query(AuctionParticipant.user_id)
+                  .filter(AuctionParticipant.auction_id == auction_id)
+                  .all()
+            )
+        }
+        to_add = new_participants - current_ids
+        to_remove = current_ids - new_participants
 
+        if to_remove:
+            db.execute(
+                delete(AuctionParticipant).where(
+                    AuctionParticipant.auction_id == auction_id,
+                    AuctionParticipant.user_id.in_(list(to_remove))
+                )
+            )
+
+        if to_add:
+            emails = [e for (e,) in db.query(User.email).filter(User.id.in_(list(to_add))).all()]
+            if emails:
+                background_tasks.add_task(
+                    email_service.send_auction_invitation_email,
+                    emails=emails,
+                    auction_title=auction.title,
+                    auction_id=auction.id,
+                    auction_start_time=auction.start_time,
+                    auction_end_time=auction.end_time,
+                )
+            db.bulk_save_objects(
+                [AuctionParticipant(auction_id=auction_id, user_id=uid) for uid in to_add]
+            )
     db.commit()
     db.refresh(auction)
-    auction_data = auction.__dict__.copy()
-    auction_data['image_url'] = json.loads(auction.image_url) if auction.image_url else []
     return AuctionOut.from_orm(auction)
 
 #admin upload ảnh khi thêm auction
@@ -696,7 +744,7 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
         Bid.auction_id == auction_id
     ).order_by(Bid.bid_amount.desc()).first()
     auction_data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
-
+    # Lấy danh sách thông tin các user tham gia đấu giá
     bids = db.query(Bid).filter(Bid.auction_id == auction_id).order_by(Bid.bid_amount.desc(), Bid.created_at.asc()).all()
     bid_list = []
     for bid in bids:
@@ -719,6 +767,9 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
     else:
         auction_data["count_users"] = None
     auction_data["bids"] = bid_list
+    # Lấy danh sách participants
+    participants = db.query(AuctionParticipant.user_id, User.email, User.company, User.username, User.phone_number).join(User, AuctionParticipant.user_id == User.id).filter(AuctionParticipant.auction_id == auction_id).all()
+    auction_data["participants"] = [{"user_id": p[0], "email": p[1], "company": p[2], "username": p[3], "phone_number": p[4]} for p in participants]
 
     return auction_data
 
@@ -846,3 +897,9 @@ def get_overview_stats(db: Session = Depends(get_db)):
     
     return result
 
+@router.get("/auctions/{auction_id}/participants")
+def get_auction_participants(auction_id: str, db: Session = Depends(get_db)):
+    participants = db.query(AuctionParticipant.user_id).filter(
+        AuctionParticipant.auction_id == auction_id
+    ).all()
+    return {"participants": [p[0] for p in participants]}

@@ -365,6 +365,7 @@
   "all": "Tất cả",
   "participants": "Người tham gia",
   "loading_users": "Đang tải danh sách người dùng...",
-  "no_users_found": "Không tìm thấy người dùng nào"
+  "no_users_found": "Không tìm thấy người dùng nào",
+  "invited_users": "Danh sách người dùng được mời tham gia đấu giá"
 
 }

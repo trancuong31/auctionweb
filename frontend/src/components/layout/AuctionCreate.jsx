@@ -95,7 +95,7 @@ const CreateAuctionForm = ({
 
   const startTime = watch("start_time");
   const endTime = watch("end_time");
-
+  // chone mode
   useEffect(() => {
     if (mode === "create") {
       reset({
@@ -120,6 +120,7 @@ const CreateAuctionForm = ({
         currency: auction.currency || "USD",
         end_time: auction.end_time || "",
         description: auction.description || "",
+        participants: [],
         file_exel: null,
         image_url: auction.image_url || [],
         category_id: auction.category?.category_id || "",
@@ -133,7 +134,7 @@ const CreateAuctionForm = ({
     const savedLang = sessionStorage.getItem("lang");
     i18n.changeLanguage(savedLang);
   }, [i18n]);
-
+  // Call api Category
   useEffect(() => {
       const fetchCategories = async () => {
         try {
@@ -146,6 +147,28 @@ const CreateAuctionForm = ({
       };
       fetchCategories();
     }, []);
+    // Call api Participants
+    useEffect(() => {
+  const fetchParticipants = async () => {
+    if (!auction?.id) return;
+    try {
+      const res = await getAll(`auctions/${auction.id}/participants`, true);
+      const raw = Array.isArray(res?.participants)
+       ? res.participants
+       : Array.isArray(res?.data?.participants)
+       ? res.data.participants
+       : [];
+     const ids = raw
+       .map(p => (typeof p === "string" ? p : p?.user_id))
+       .filter(Boolean);
+      setSelectedParticipantIds(ids);
+      setValue("participants", ids); 
+    } catch (error) {
+      console.error("Error fetching participants:", error);
+    }
+  };
+  fetchParticipants();
+}, [auction?.id, setValue]);
 
   // Submit form
   const onSubmit = async (formData) => {
@@ -293,6 +316,7 @@ const CreateAuctionForm = ({
     }
   };
 
+  // call api get list users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -308,7 +332,7 @@ const CreateAuctionForm = ({
             email: user.email
           }));
           setListUser(formattedUsers);
-          setSelectedParticipantIds(formattedUsers.map(u => u.id));
+          
         } else {
           console.warn("No users found in response");
         }
@@ -320,7 +344,7 @@ const CreateAuctionForm = ({
 
     fetchUsers();
   }, []);
-
+  // set checkbox selected participants
   useEffect(() => {
     setValue("participants", selectedParticipantIds);
   }, [selectedParticipantIds, setValue]);
@@ -329,18 +353,9 @@ const CreateAuctionForm = ({
   const allParticipantsChecked =
     listUser.length > 0 &&
     selectedParticipantIds.length === listUser.length;
-
-  // const toggleOneParticipant = (id) => {
-  //   setSelectedParticipantIds(prev =>
-  //     prev.includes(id)
-  //       ? prev.filter(x => x !== id)
-  //       : [...prev, id]
-  //   );
-  // };
   // Tìm kiếm không phân biệt dấu
   const normalize = (s = "") =>
     s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
   // Danh sách user sau khi filter
   const filteredParticipants = listUser.filter(u => {
     const q = normalize(participantQuery);
@@ -349,20 +364,6 @@ const CreateAuctionForm = ({
       (u.email || "").toLowerCase().includes(q)
     );
   });
-
-//   const toggleParticipant = (id) => {
-//   setSelectedParticipantIds(prev =>
-//     prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-//   );
-// };
-
-// const toggleAllParticipants = () => {
-//   setSelectedParticipantIds(
-//     selectedParticipantIds.length === listUser.length
-//       ? []
-//       : listUser.map(u => u.id)
-//   );
-// };
 
   return (
     <div
@@ -629,15 +630,17 @@ const CreateAuctionForm = ({
                     </svg>
                     {t("participants")}<span className="text-red-500">*</span>
                   </label>
+                  
                   {/* Tất cả mọi người */}
                   <label className="inline-flex items-center gap-2 text-indigo-600 font-medium cursor-pointer select-none">
+                    <p className="text-gray-600">{t("selected")}: {selectedParticipantIds.length}</p>
                     <Controller
                       name="participants"
                       control={control}
                       render={({ field: { onChange } }) => (
                         <input
                           type="checkbox"
-                          className="w-4 h-4 accent-blue-700"
+                          className="w-4 h-4 accent-blue-700 ui-checkbox"
                           checked={selectedParticipantIds.length === listUser.length}
                           onChange={() => {
                             const newIds =
@@ -674,11 +677,11 @@ const CreateAuctionForm = ({
                   </div>
                 {/* Hộp danh sách người dùng */}
                 <div className="rounded-xl border border-gray-300 bg-white overflow-y-auto max-h-60">
-                  <ul className="divide-y divide-gray-100">
+                  <ul className="divide-y divide-gray-300">
                     {filteredParticipants.length > 0 ? (
                       filteredParticipants.map(u => {
                         const checked = selectedParticipantIds.includes(u.id);
-                        return (                        
+                        return (
                           <li key={u.id} className="flex items-center gap-3 px-4 py-3">                          
                             <Controller
                               name="participants"
@@ -686,7 +689,7 @@ const CreateAuctionForm = ({
                               render={({ field: { onChange } }) => (
                                 <input
                                   type="checkbox"
-                                  className="w-4 h-4 accent-blue-500"
+                                  className="w-4 h-4 accent-blue-500 ui-checkbox"
                                   checked={selectedParticipantIds.includes(u.id)}
                                   onChange={() => {
                                     const newIds = selectedParticipantIds.includes(u.id)
