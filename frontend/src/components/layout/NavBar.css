@@ -138,12 +138,12 @@
 
 /* ==== Bell Icon ==== */
 .bell-icon {
-  color: #2b4af9;
+  color: #1482f7;
   font-size: 20px;
   transition: color 0.2s, transform 0.2s;
 }
 .bell-icon:hover {
-  color: #007bff;
+  color: #2b4af9;
   transform: scale(1.15);
 }
 

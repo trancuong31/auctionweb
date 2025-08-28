@@ -151,7 +151,7 @@ const CreateCategoryForm = ({
               type="submit"
               className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded hover:bg-blue-600 transform transition-transform duration-300 hover:scale-105"
             >
-                {t("submit")}
+                {t("create_category")}
             </button>
           </div>
         </form>

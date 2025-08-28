@@ -55,6 +55,7 @@ const OverViewAdmin = () => {
   const [mode, setMode] = useState("create");
   const { t, i18n } = useTranslation();
   const formRef = useRef();
+  
   const [userParam, setUserParam] = useState({
     sort_by: "",
     sort_order: "",
@@ -98,6 +99,8 @@ const OverViewAdmin = () => {
     const savedLang = sessionStorage.getItem("lang");
     i18n.changeLanguage(savedLang);
   }, [i18n]);
+
+  
 
   const getOverView = async () => {
     try {
@@ -318,8 +321,8 @@ const OverViewAdmin = () => {
           await deleteOne("users", id, true, {
             lang: sessionStorage.getItem("lang") || "en",
           });
+          await getPageUser();
           toast.success(t("success.delete_success"));
-          getPageUser();
         } catch (error) {
           const detail = error?.response?.data?.detail;
           toast.error(detail || t("error.delete_fail"));
@@ -370,10 +373,11 @@ const OverViewAdmin = () => {
     try {
       await update("categories", category.category_id, newCategory, true, {
         lang: sessionStorage.getItem("lang") || "en",
-      });
-      toast.success(t("success.update_category"));
+      });      
       setCurrentEditingCategory(null);
+      await getPageAuction();
       await getPageCategory();
+      toast.success(t("success.update_category"));
     } catch (error) {
       const detail = error?.response?.data?.detail;
       toast.error(detail || t("error.update_category"));
@@ -394,10 +398,10 @@ const OverViewAdmin = () => {
         try {
           await deleteOne("categories", id, true, {
             lang: sessionStorage.getItem("lang") || "en",
-          });
+          });          
+          await getPageCategory();
+          await getPageAuction();
           toast.success(t("success.delete_success_category"));
-          getPageCategory();
-          getPageAuction();
         } catch (error) {
           const detail = error?.response?.data?.detail;
           toast.error(detail || t("error.delete_fail_category"));
