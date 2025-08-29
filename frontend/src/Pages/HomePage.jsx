@@ -64,9 +64,10 @@ function HomePage() {
         </div>
       </div>
     </section>
-
-      <AuctionSection titleKey="ongoing_auctions" type="ongoing" />
+      <AuctionSection  titleKey="ongoing_auctions" type="ongoing" />
+      <hr />
       <AuctionSection titleKey="upcoming_auctions" type="upcoming" />
+      <hr />
       <AuctionSection titleKey="ended_auctions" type="ended" />
     </main>
   );

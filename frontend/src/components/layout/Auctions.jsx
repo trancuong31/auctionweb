@@ -64,7 +64,7 @@ const AuctionSection = ({ titleKey, type }) => {
 
   return (
     <AnimatedContent>
-      <div className="section">
+      <div className=" pb-4 rounded-xl">
         {loading ? (
           <div className="loader" />
         ) : error ? (

@@ -129,14 +129,16 @@
 
 /* ---------- Link “See all” ---------- */
 .see-all {
-  display: inline-block;
+  display: block;
   margin-top: 8px;
+  margin-left: auto;  /* Đẩy ra bên phải */
   font-size: 16px;
   font-weight: 500;
   color: #2563eb; 
-  text-decoration: none; 
-  align-self: flex-end;
+  text-decoration: none;
+  text-align: right;
 }
+
 #total{
   font-size: 14px;
   color: #6b7280;

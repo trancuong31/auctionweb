@@ -236,3 +236,8 @@ body {
   opacity: 1;
 }
 
+img {
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+}
+
