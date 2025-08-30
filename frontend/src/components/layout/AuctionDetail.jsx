@@ -474,7 +474,7 @@ const AuctionDetail = () => {
         <div className="flex justify-center">
           <button
             onClick={openAuctionForm}
-            className="uppercase px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out "
+            className="uppercase px-8 py-4 will-change-transform bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out "
           >
             {t("auction")}
           </button>

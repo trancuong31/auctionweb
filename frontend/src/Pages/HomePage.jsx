@@ -49,7 +49,7 @@ function HomePage() {
         {/* Buttons */}
         <div className="mt-8 flex justify-center gap-4 flex-wrap">
           <Link to="/guide">
-            <button className="px-6 py-3 flex items-center transition-all transform  duration-300 hover:scale-105 bg-gradient-to-r from-blue-500 to-indigo-500  text-white font-semibold rounded-sm shadow-lg ">
+            <button className="px-6 py-3 flex items-center transition-all transform  duration-300 hover:scale-105 will-change-transform bg-gradient-to-r from-blue-500 to-indigo-500  text-white font-semibold rounded-sm shadow-lg ">
               {t("start_a_bid")}
               <span className="ml-2"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 4.5 15 15m0 0V8.25m0 11.25H8.25" />
@@ -57,7 +57,7 @@ function HomePage() {
             </button>
           </Link>
           <Link to="/auctions/search">
-            <button className="px-6 py-3 transition-all transform  duration-300 hover:scale-105 bg-white text-black font-semibold rounded-sm shadow-lg">
+            <button className="px-6 py-3 transition-all transform  duration-300 hover:scale-105 will-change-transform bg-white text-black font-semibold rounded-sm shadow-lg">
               {t("view_all_auction")}
             </button>
           </Link>

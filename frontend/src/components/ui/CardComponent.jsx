@@ -66,7 +66,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="text-gray-500">{t("starting_price")}:</span>
+                <span className="text-gray-500 text-left">{t("starting_price")}:</span>
                 <span className="text-right font-[600] text-[16px]">
                   {item.starting_price
                   ? item.starting_price.toLocaleString(
@@ -80,7 +80,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="text-gray-500">{t("step_price")}:</span>
+                <span className="text-gray-500 text-left">{t("step_price")}:</span>
                 <span className="text-right font-[600]">
                   {item.step_price?.toLocaleString(
                     item.currency === "VND" ? "vi-VN" : "en-US",
@@ -92,7 +92,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="text-gray-500">{t("start_time")}:</span>
+                <span className="text-gray-500 text-left">{t("start_time")}:</span>
                 <span className="text-right font-[600]">
                   {new Date(item.start_time).toLocaleString("en-US", {
                     year: "numeric",
@@ -106,7 +106,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 </span>
               </p>
               <p className="flex justify-between">
-                <span className="text-gray-500">{t("end_time")}:</span>
+                <span className="text-gray-500 text-left">{t("end_time")}:</span>
                 <span className="text-right font-[600]">
                   {new Date(item.end_time).toLocaleString("en-US", {
                     year: "numeric",
@@ -120,7 +120,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 </span>
               </p>
                 <p className="flex justify-between">
-                <span className="text-gray-500">{t("type")}:</span>
+                <span className="text-gray-500 text-left">{t("type")}:</span>
                 <span className="text-right">
                   {item.category?.category_name || t("unknown")}
                 </span>
@@ -128,7 +128,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
 
               {item.status === 2 ? (
                 item.highest_amount !== null && item.winner_info !== null ? (
-                  <p className="flex justify-between">
+                  <p className="flex justify-between text-left">
                     <span className="font-semibold text-gray-500">
                       {t("winning_bid_price")}:
                     </span>

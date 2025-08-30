@@ -299,14 +299,14 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
               <button
                 type="button"
                 onClick={handleClose}
-                className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all transform  duration-300 hover:scale-105"
+                className="px-5 py-2 rounded-lg will-change-transform border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all transform  duration-300 hover:scale-105"
                 disabled={loading}
               >
                {t("cancel")}
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 text-white  transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform  duration-300 hover:scale-105"
+                className="px-5 py-2 rounded-lg will-change-transform bg-gradient-to-r from-blue-500 to-indigo-500 text-white  transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform  duration-300 hover:scale-105"
                 disabled={loading}
               >
                 {loading ? "Đang cập nhật..." : t("update")}

@@ -130,23 +130,22 @@
 /* ---------- Link “See all” ---------- */
 .see-all {
   display: block;
-  margin-top: 8px;
-  margin-left: auto;  /* Đẩy ra bên phải */
+  padding-top: 5px;
+  width: max-content; 
+  margin-left: auto; 
   font-size: 16px;
   font-weight: 500;
-  color: #2563eb; 
-  text-decoration: none;
-  text-align: right;
-}
-
-#total{
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 8px;
+  color: #2563eb;
+  cursor: pointer;
 }
 .see-all:hover {
   color: #4f46e5;
   text-decoration: underline;
+}
+#total{
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 8px;
 }
 .wrapper {
   max-width: 1280px;

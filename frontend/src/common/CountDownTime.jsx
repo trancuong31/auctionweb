@@ -32,7 +32,7 @@ const CountdownTimer = ({ targetTime }) => {
 
   const { days, hours, minutes, seconds } = timeLeft;
   return (
-    <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-white opacity-80 rounded-full shadow-md flex items-center px-6 py-1 space-x-3 z-[1000] text-sm">
+    <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-white opacity-80 md:scale-75 lg:scale-[0.95] xl:scale-100 2xl:scale-100 rounded-full shadow-md flex items-center px-6 py-1 space-x-3 z-[1000] text-sm">
       {/* Days */}
       <div className="flex flex-col items-center">
         <span className="font-bold text-lg text-black">{days}</span>

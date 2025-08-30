@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AnimatedContent from "../ui/animatedContent";
 import RenderCardAuction from "../ui/CardComponent";
+import axiosDefault from "../../services/axiosClient";
 
 const AuctionSection = ({ titleKey, type }) => {
   const [items, setItems] = useState([]);
@@ -39,14 +40,11 @@ const AuctionSection = ({ titleKey, type }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(
-          `/api/v1/auctions?status=${statusMap[type]}&sort_by=created_at&sort_order=desc`
+        const res = await axiosDefault.get(
+          `/auctions?status=${statusMap[type]}&sort_by=created_at&sort_order=desc`
         );
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const data = await res.json();
+        
+        const data = res.data;
         // Lấy 4 phần tử đầu tiên
         const firstFour = (data.auctions || []).slice(0, 4);
         setItems(firstFour);
@@ -82,18 +80,20 @@ const AuctionSection = ({ titleKey, type }) => {
             >
               {t("total")}: {total} {t("asset")}
             </span>
-            <RenderCardAuction
+            <AnimatedContent>
+              <RenderCardAuction
               arrAuction={items}
               numberCol={4}
               clickCard={handleClick}
             />
-            <span 
+            </AnimatedContent>
+            <div 
               onClick={handleSeeAll} 
               className="see-all"
               style={{ cursor: 'pointer' }}
             >
               {t("see_all")}
-            </span>
+            </div>
           </>
         )}
       </div>

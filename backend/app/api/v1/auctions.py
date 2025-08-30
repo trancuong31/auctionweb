@@ -219,6 +219,24 @@ def get_auctions_by_status(
         elif lang == "ko" and getattr(auction, "title_ko", None):
             data["title"] = auction.title_ko or auction.title
             data["description"] = auction.description_ko or auction.description
+        
+        if auction.category:
+            if lang == "vi":
+                data["category"] = {
+                    "category_id": auction.category.category_id,
+                    "category_name": auction.category.category_name_vi or auction.category.category_name
+                }
+            elif lang == "ko":
+                data["category"] = {
+                    "category_id": auction.category.category_id,
+                    "category_name": auction.category.category_name_ko or auction.category.category_name
+                }
+            else:
+                data["category"] = {
+                    "category_id": auction.category.category_id,
+                    "category_name": auction.category.category_name,
+                    "description": auction.category.description
+                }
         # Tính lại status động
         if now < auction.start_time:
             data["status"] = 1  # upcoming
@@ -586,7 +604,7 @@ def search_auctions(
     - status = 2 (ended): end_time <= now (đã kết thúc)
     """
     now = datetime.now()
-    query = db.query(Auction)
+    query = db.query(Auction).options(joinedload(Auction.category))
     lang = request.state.locale
     # Filter theo trạng thái - phân tích trực tiếp điều kiện thời gian
     if status is not None:
@@ -649,6 +667,27 @@ def search_auctions(
         elif lang == "ko" and getattr(auction, "title_ko", None):
             data["title"] = auction.title_ko or auction.title
             data["description"] = auction.description_ko or auction.description
+
+        # Xử lý đa ngôn ngữ cho category
+        if auction.category:
+            if lang == "vi":
+                data["category"] = {
+                    "category_id": auction.category.category_id,
+                    "category_name": auction.category.category_name_vi or auction.category.category_name,                    
+                }
+            elif lang == "ko":
+                data["category"] = {
+                    "category_id": auction.category.category_id,
+                    "category_name": auction.category.category_name_ko or auction.category.category_name,
+                    
+                }
+            else:
+                data["category"] = {
+                    "category_id": auction.category.category_id,
+                    "category_name": auction.category.category_name,
+                    "description": auction.category.description
+                }
+        
         # Xử lý image_url lưu dưới dạng JSON string
         raw_image = getattr(auction, "image_url", None)
         if isinstance(raw_image, str):
@@ -710,7 +749,7 @@ def search_auctions(
 @router.get("/auctions/{auction_id}", response_model=AuctionDetailOut)
 def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(get_db)):
     lang = request.state.locale
-    auction = db.query(Auction).filter(Auction.id == auction_id).first()
+    auction = db.query(Auction).options(joinedload(Auction.category)).filter(Auction.id == auction_id).first()
     if not auction:
         raise HTTPException(status_code=404, detail=_("Auction not found", request))
     
@@ -722,6 +761,27 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
     elif lang == "ko" and getattr(auction, "title_ko", None):
         auction_data["title"] = auction.title_ko or auction.title
         auction_data["description"] = auction.description_ko or auction.description
+    
+    # Xử lý đa ngôn ngữ cho category (luôn chạy, không phụ thuộc vào auction title)
+    if auction.category:
+        if lang == "vi":
+            auction_data["category"] = {
+                "category_id": auction.category.category_id,
+                "category_name": auction.category.category_name_vi or auction.category.category_name,
+                "description": auction.category.description_vi if hasattr(auction.category, 'description_vi') else auction.category.description
+            }
+        elif lang == "ko":
+            auction_data["category"] = {
+                "category_id": auction.category.category_id,
+                "category_name": auction.category.category_name_ko or auction.category.category_name,
+                "description": auction.category.description_ko if hasattr(auction.category, 'description_ko') else auction.category.description
+            }
+        else:
+            auction_data["category"] = {
+                "category_id": auction.category.category_id,
+                "category_name": auction.category.category_name,
+                "description": auction.category.description
+            }
     # Xử lý image_url
     if isinstance(auction.image_url, str):
         try:

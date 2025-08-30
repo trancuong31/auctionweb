@@ -172,7 +172,9 @@ const OverViewAdmin = () => {
     };
     try {
       // setIsLoadingSearch(true);
-      const response = await getAll("categories", true, param);
+      const response = await getAll("categories", true, param,{
+            lang: sessionStorage.getItem("lang") || "en",
+          });
       setCategoryData(response.data.Categories);
       setTotalPageCategory(
         Math.ceil(
@@ -373,7 +375,7 @@ const OverViewAdmin = () => {
     try {
       await update("categories", category.category_id, newCategory, true, {
         lang: sessionStorage.getItem("lang") || "en",
-      });      
+      });
       setCurrentEditingCategory(null);
       await getPageAuction();
       await getPageCategory();
@@ -756,7 +758,7 @@ const OverViewAdmin = () => {
               {/* <!-- Search Button --> */}
               <button
                 onClick={searchUser}
-                className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-lg font-bold text-white text-base
+                className="inline-flex items-center gap-2 px-4 py-3 pr-5 will-change-transform rounded-lg font-bold text-white text-base
                   border border-transparent
                   transform transition-transform duration-300 hover:scale-105
                   bg-gradient-to-r from-blue-500 to-indigo-500"
@@ -911,169 +913,8 @@ const OverViewAdmin = () => {
           onPageChange={getPageUser}
           className={"flex mt-0 justify-end mb-4"}
         />
-        {/* <!-- MANAGER CATEGORY --> */}
-
-        <div className="shadow-[0_2px_8px_rgba(0,0,0,0.3)] p-4 rounded-lg mb-6">
-          <div className="flex justify-between mb-3 items-center max-sm:flex-col max-sm:gap-4">
-            <p className="text-lg font-bold">{t("manager_category")}</p>
-            <button
-                onClick={() => setModeCreateCategory()}
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white flex items-center transform transition-transform duration-300 hover:scale-105 ml-2 justify-center font-bold text-base px-4 py-3 rounded-lg max-sm:w-full"
-              >
-                <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg> {t("create_category")}
-              </button>
-            <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end max-sm:gap-3">    
-
-              {/* <!-- Search Input --> */}
-              <div className="w-[50%] max-sm:w-full">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder={t("category_name")}
-                    className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onChange={(e) =>
-                      setCategoryFilterInput((prev) => ({
-                        ...prev,
-                        search_text: e.target.value.trim(),
-                      }))
-                    }
-                  />
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                    <FontAwesomeIcon icon={faSearch} />
-                  </span>
-                </div>
-              </div>
-              {/* <!-- Category Select --> */}
-              <div className="w-[30%] pb-6 max-sm:w-full">
-                <label className="text-sm font-semibold block mb-1">
-                  {t("sort_by")}
-                </label>
-                {/* Sort select */}
-                <div className="">
-                  <select
-                    onChange={(e) => {
-                      const selectedOption = e.target.selectedOptions[0];
-                      setCategoryFilterInput((prev) => ({
-                        ...prev,
-                        sort_order: selectedOption.dataset.order,
-                      }));
-                    }}
-                    className="border border-gray-400 rounded-lg px-3 py-2 w-full"
-                  >
-                    <option value="category_name" data-order="asc">
-                      {t("sort_category_name_asc")}
-                    </option>
-                    <option value="category_name" data-order="desc">
-                      {t("sort_category_name_desc")}
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              {/* <!-- Search Button --> */}
-              <button
-                onClick={searchCategory}
-                className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-lg font-bold text-white text-base
-             border border-transparent
-             transform transition-transform duration-300 hover:scale-105
-             bg-gradient-to-r from-blue-500 to-indigo-500"
-              >
-                <FontAwesomeIcon icon={faSearch} />
-                <span>{t("search_btn")}</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto border border-gray-300 rounded">
-            <div className="text-center ">
-              {isLoadingSearch && <div className="loader" />}
-            </div>
-            <table className="min-w-full border-collapse">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="border px-2 py-1">#</th>                  
-                  <th className="border px-2 py-1">{t("category_name").split(0,4)}</th>
-                  <th className="border px-2 py-1">{t("description")}</th>
-                  <th className="border px-2 py-1">{t("action")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {categoryData?.map((category, idx) => (
-                  <tr
-                    key={category.category_id || idx}
-                    className=" hover:bg-blue-400 hover:text-white transition"
-                  >
-                    <td className="border px-2 py-1 text-center">{idx + 1}</td>                    
-                    <td className="border px-2 py-1">{
-                    currentEditingCategory === idx ? (
-                        <input
-                          type="text"
-                          name="name"
-                          value={categoryName}
-                          onChange={(e) => setCategoryName(e.target.value)}
-                          className="border px-2 py-1 w-full rounded text-black"
-                        />
-                      ) : (
-                        category.category_name
-                      )}</td>                    
-                    <td className="border px-2 py-1">{currentEditingCategory === idx ? (
-                        <input
-                          type="text"
-                          name="description"
-                          value={categoryDescription}
-                          onChange={(e) => setCategoryDescription(e.target.value)}
-                          className="border px-2 py-1 w-full rounded text-black"
-                        />
-                      ) : (
-                        category.description
-                      )}</td>                    
-                    <td className="border px-2 py-1 space-x-1 text-center max-sm:flex">
-                      {currentEditingCategory === idx ? (
-                        <>
-                          <button
-                            onClick={() => handleEditCategory(category)}
-                            className="bg-teal-100 text-teal-600 text-xs font-semibold px-3 py-2 min-w-16 rounded-md border border-teal-200 hover:bg-teal-300 transition"
-                          >
-                            {t("save")}
-                          </button>
-                          <button
-                            onClick={() => setCurrentEditingCategory(null)}
-                            className="bg-orange-100 text-orange-600 font-semibold text-xs px-3 py-2 rounded-md min-w-[60px] border border-orange-200 hover:bg-orange-300 transition"
-                          >
-                            {t("cancle")}
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            onClick={() => handelClickEditCategory(category, idx)}
-                            className="bg-indigo-100 hover:bg-indigo-200 font-semibold text-indigo-700 transform duration-300 hover:scale-105 text-xs px-3 py-2 rounded min-w-[60px] transition"
-                          >
-                            {t("edit")}
-                          </button>
-                          <button
-                            onClick={() => handleDeleteCategory(category.category_id)}
-                            className="bg-red-100 text-red-600 text-xs font-semibold px-3 py-2 rounded-md transform duration-300 hover:scale-105 border border-red-200 hover:bg-red-300 transition"
-                          >
-                            {t("delete")}
-                          </button>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <Pagination
-          totalPage={totalPageCategory}
-          currentPage={currentIndexPageCategory}
-          onPageChange={getPageCategory}
-          className={"flex mt-0 justify-end mb-4"}
-        />
+        
+        
         {/* <!-- MANAGER AUCTIONS --> */}
 
         <div className="shadow-[0_2px_8px_rgba(0,0,0,0.3)]  p-4 rounded-lg">
@@ -1083,7 +924,7 @@ const OverViewAdmin = () => {
               
               <button
                 onClick={() => setModeCreate()}
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white flex items-center justify-center transform transition-transform duration-300 hover:scale-105 font-bold text-base px-4 py-3 rounded-lg max-sm:w-full"
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white will-change-transform flex items-center justify-center transform transition-transform duration-300 hover:scale-105 font-bold text-base px-4 py-3 rounded-lg max-sm:w-full"
               ><svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>{t("create_auction_btn")}
@@ -1171,7 +1012,7 @@ const OverViewAdmin = () => {
               <div className="">
                 <button
                   onClick={handleSearch}
-                  className="inline-flex items-center gap-2 px-4 py-3 pr-5 rounded-lg font-bold text-white text-base
+                  className="inline-flex items-center gap-2 px-4 py-3 pr-5 will-change-transform rounded-lg font-bold text-white text-base
                     border border-transparent
                     transform transition-transform duration-300 hover:scale-105
                     bg-gradient-to-r from-blue-500 to-indigo-500"
