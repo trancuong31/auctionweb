@@ -19,7 +19,7 @@ import { useParams } from "react-router-dom";
 import imagedefault from "../../assets/images/imagedefault.png";
 import { getOne } from "../../services/api";
 import { toast } from "react-hot-toast";
-
+import { BASE_URL } from "../../config";
 const AuctionDetail = () => {
   const { id } = useParams();
   const [auction, setAuction] = useState(null);
@@ -289,14 +289,14 @@ const AuctionDetail = () => {
                 clonedImages.map((imageUrl, index) => (
                   <img
                     key={`${imageUrl}-${index}`}
-                    src={`${import.meta.env.VITE_BASE_URL}${imageUrl}`}
+                    src={`${BASE_URL}${imageUrl}`}
                     alt={auction.title}
                     className="min-w-full h-[400px] object-cover"
                   />
                 ))
               ) : auction.image_url.length > 0 ? (
                 <img
-                  src={`${import.meta.env.VITE_BASE_URL}${
+                  src={`${BASE_URL}${
                     auction.image_url[0]
                   }`}
                   alt={auction.title}

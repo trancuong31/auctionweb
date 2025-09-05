@@ -3,6 +3,8 @@ import imagedefault from "../../assets/images/imagedefault.png";
 import CountdownTimer from "../../common/CountDownTime";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import { BASE_URL } from "../../config";
+
 const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
   const { t, i18n } = useTranslation();
 
@@ -46,7 +48,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
               <img
                 src={
                   item.image_url && item.image_url.length > 0
-                    ? `${import.meta.env.VITE_BASE_URL}${item.image_url[0]}`
+                    ? `${BASE_URL}${item.image_url[0]}`
                     : imagedefault
                 }
                 alt={item.title || "Auction"}

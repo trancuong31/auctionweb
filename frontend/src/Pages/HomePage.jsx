@@ -3,6 +3,8 @@ import { CheckCircle } from "lucide-react";
 import register from "../assets/images/bg1.jpg"
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import AnimatedText from "../common/AnimatedText";
+
 function HomePage() {
   const { t } = useTranslation();
   return (
@@ -18,7 +20,8 @@ function HomePage() {
       <div className="absolute inset-0 bg-black/60"></div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-3xl mx-auto px-4">
+      <AnimatedText>
+        <div className="relative z-10 max-w-3xl mx-auto px-4">
         {/* Subtitle */}
         <p className="text-white text-sm p-2 tracking-widest mb-3">
           {t("probid")}
@@ -63,6 +66,7 @@ function HomePage() {
           </Link>
         </div>
       </div>
+      </AnimatedText>
     </section>
       <AuctionSection  titleKey="ongoing_auctions" type="ongoing" />
       <hr />

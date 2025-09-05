@@ -5,6 +5,8 @@ import imagedefault from "../../assets/images/imagedefault.png";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { X } from "lucide-react";
+import { BASE_URL } from "../../config";
+
 const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   const [bids, setBids] = useState([]);
   const [auction, setAuction] = useState({});
@@ -114,7 +116,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               <img
                 src={
                   auction.image_url && auction.image_url.length > 0
-                    ? `${import.meta.env.VITE_BASE_URL}${auction.image_url[0]}`
+                    ? `${BASE_URL}${auction.image_url[0]}`
                     : imagedefault
                 }
                 alt="Auction Image"
