@@ -12,6 +12,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   const [auction, setAuction] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [highestBid, setHighestBid] = useState(0);
+  const [lowestBid, setLowestBid] = useState(0);
   const { t, i18n } = useTranslation();
   const handleDownload = async (id) => {
     try {
@@ -65,6 +66,11 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
             ? Math.max(...fetchedBids.map((b) => b.bid_amount))
             : 0;
         setHighestBid(maxBid);
+        const minBid =
+          fetchedBids.length > 0
+            ? Math.min(...fetchedBids.map((b) => b.bid_amount))
+            : 0;
+        setLowestBid(minBid);
       } catch (error) {
         const detail = error.response?.data?.detail;
         toast.error(detail || t("error.fetch_bids", "Failed to fetch bids"));
@@ -151,7 +157,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={4} className="italic text-gray-400 text-center py-3">No invited users</td>
+                          <td colSpan={5} className="italic text-gray-400 text-center py-3">{t("no_data")}</td>
                         </tr>
                       )}
                     </tbody>
@@ -285,10 +291,21 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               {t("total_bids")}:{" "}
               <span className="text-gray-500">{bids?.length || 0}</span>
             </div>
-            <div>
-              <span className="font-medium text-purple-600">
-                {t("highest_bid")}:{" "}
+            <div className="space-x-4">
+              <span className="font-medium text-red-600">
+                <span className="text-gray-600">{t("highest_bid")}:{" "}</span>
                 {highestBid?.toLocaleString(
+                  auction.currency === "VND" ? "vi-VN" : "en-US",
+                  {
+                    style: "currency",
+                    currency: auction.currency === "VND" ? "VND" : "USD",
+                  }
+                )}
+              </span>
+
+              <span className="font-medium text-green-600">
+                <span className="text-gray-600">{t("lowest_bid")}:{" "}</span>
+                {lowestBid?.toLocaleString(
                   auction.currency === "VND" ? "vi-VN" : "en-US",
                   {
                     style: "currency",
@@ -354,7 +371,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                           {bid.file ? (
                             <button
                               onClick={() => handleDownloadFileUser(bid.id)}
-                              className="text-blue-600 text-left hover:underline font-medium"
+                              className="text-blue-600 text-left hover:underline text-[14px] font-medium"
                             >
                               <p title={bid.file.split("/").pop()}>
                                 {bid.file.split("/").pop().length > 30

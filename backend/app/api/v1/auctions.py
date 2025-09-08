@@ -524,7 +524,7 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
 @router.post("/upload/excel")
 def upload_excel(request: Request, file: UploadFile = File(...)):
     allowed_exts = {".xls", ".xlsx"}
-    max_size = 10 * 1024 * 1024  # 10MB
+    max_size = 100 * 1024 * 1024  # 100MB
     if not file.filename:
         return JSONResponse(status_code=400, content={"detail": _("No filename provided", request)})
     ext = os.path.splitext(file.filename)[1].lower()
@@ -532,7 +532,7 @@ def upload_excel(request: Request, file: UploadFile = File(...)):
         return JSONResponse(status_code=400, content={"detail": _("Invalid excel file type", request)})
     contents = file.file.read()
     if len(contents) > max_size:
-        return JSONResponse(status_code=400, content={"detail": _("Excel file too large (max 10MB)", request)})
+        return JSONResponse(status_code=400, content={"detail": _("Excel file too large (max 100MB)", request)})
     if not os.path.exists(UPLOAD_EXCEL_DIR):
         os.makedirs(UPLOAD_EXCEL_DIR)
     

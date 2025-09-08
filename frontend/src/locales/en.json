@@ -365,5 +365,6 @@
   "participants": "Participants",
   "loading_users": "Loading users...",
   "no_users_found": "No users found",
-  "invited_users": "List of users invited to the auction"
+  "invited_users": "List of users invited to the auction",
+  "lowest_bid": "Lowest Bid"
 }
