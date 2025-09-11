@@ -4,7 +4,8 @@ const isLanNetwork = () => {
   if (
     hostname.startsWith("192.168.") ||
     hostname.startsWith("10.") ||
-    hostname.startsWith("172.")
+    hostname.startsWith("172.") ||
+    hostname.startsWith("localhost")
   ) {
     return true;
   }

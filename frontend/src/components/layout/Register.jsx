@@ -119,6 +119,7 @@ function Register() {
       >
         <h1 className="login-title">{t("register", "Register")}</h1>
         <form onSubmit={handleSubmit(submitForm)}>
+          {/* Email Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faEnvelope} />
@@ -135,6 +136,7 @@ function Register() {
               </p>
             )}
           </div>
+          {/* Username Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faUser} />
@@ -143,7 +145,7 @@ function Register() {
               {...register("username")}
               type="text"
               placeholder={t("username", "Username*")}
-              autoComplete="username"
+              autoComplete="off"
             />
             {errors.username && (
               <p className="text-red-500 text-[8px] absolute left-0 ml-1">
@@ -151,6 +153,7 @@ function Register() {
               </p>
             )}
           </div>
+          {/* Company Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faBuilding} />
@@ -167,6 +170,7 @@ function Register() {
               </p>
             )}
           </div>
+          {/* Phone Number Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faPhone} />
@@ -183,6 +187,7 @@ function Register() {
               </p>
             )}
           </div>
+          {/* Password Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faLock} />
@@ -206,6 +211,7 @@ function Register() {
               <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
             </span>
           </div>
+          {/* Confirm Password Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faLock} />
@@ -231,6 +237,7 @@ function Register() {
               <FontAwesomeIcon icon={showConfirm ? faEyeSlash : faEye} />
             </span> */}
           </div>
+
           <button type="submit" className="login-btn">
             {t("register", "Register")}
           </button>

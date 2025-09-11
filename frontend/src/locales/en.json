@@ -296,7 +296,7 @@
     "image_url_min": "Must select at least 2 files",
     "file_exel_instance": "Must select Excel file",
     "end_time_required": "Time is required",
-    "file_max_size": "File size must not exceed 10MB",
+    "file_max_size": "File size must not exceed 100MB",
     "category_id_required": "Item type is required",
     "participants_required": "Participants are required"
   },

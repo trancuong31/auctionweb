@@ -297,7 +297,7 @@
     "image_url_min": "Phải chọn ít nhất một 2 ảnh",
     "file_exel_instance": "Phải chọn tệp Excel",
     "end_time_required": "Thời gian là bắt buộc",
-    "file_max_size": "File không được vượt quá 10MB",
+    "file_max_size": "File không được vượt quá 100MB",
     "category_id_required": "Loại mặt hàng là bắt buộc",
     "participants_required": "Người tham gia là bắt buộc"
   },
