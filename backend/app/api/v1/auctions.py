@@ -566,11 +566,9 @@ def download_excel_by_auction(request: Request, auction_id: str, db: Session = D
     auction = db.query(Auction).filter(Auction.id == auction_id).first()
     if not auction or not auction.file_exel:
         raise HTTPException(status_code=404, detail=_("Auction or file not found", request))
-    #auction.file_exel là '/uploads/excels/auction_xe_123.xlsx'
     # lấy filename = 'auction_xe_123.xlsx'
     filename = os.path.basename(auction.file_exel)
     # Tạo đường dẫn thực tới file
-    # BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
     file_path = os.path.join(BASE_DIR, 'uploads', 'excels', filename)
     if not os.path.isfile(file_path):
         raise HTTPException(status_code=404, detail=_("File not found on server", request))
@@ -578,7 +576,6 @@ def download_excel_by_auction(request: Request, auction_id: str, db: Session = D
     file_size = os.path.getsize(file_path)
 
     headers = {
-        "Content-Disposition": f'attachment; filename="{filename}"',
         "Content-Length": str(file_size)
     }
     return FileResponse(

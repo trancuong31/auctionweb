@@ -113,6 +113,7 @@ function Login() {
         }`}
       >
         <h1 className="login-title">{t("login", "Login")}</h1>
+        <p className="text-center mb-4 text-[14px] text-gray-600">{t("login_des")}</p>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <span className="input-icon">
@@ -165,6 +166,7 @@ function Login() {
                 borderRadius: 6,
                 border: "1px solid #ddd",
                 fontSize: 12,
+                outline: "none"
               }}
             >
               <option value="vi">Tiếng Việt</option>

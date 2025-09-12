@@ -278,7 +278,8 @@
     "category_name_max_length": "Category name must not exceed 100 characters",
     "description_required": "Description is required",
     "description_max_length": "Description must not exceed 500 characters",
-    "create_category_failed": "create category failed"
+    "create_category_failed": "create category failed",
+    "download_file": "Failed to download file"
   },
   "no_data": "No data available",
   "no_file": "No file",
@@ -372,5 +373,7 @@
   "lowest_bid": "Lowest Bid",
   "auction_type": "Auction Type",
   "sell": "SELL",
-  "buy": "BUY"
+  "buy": "BUY",
+  "login_des": "Log in to participate in auctions and manage transactions",
+  "register_des": "Register an account to participate in auctions and manage transactions"
 }

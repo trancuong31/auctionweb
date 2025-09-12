@@ -33,12 +33,10 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
       ) : (
         arrAuction.map((item) => (
           <button
-            className="max-w-[400px] rounded-bl-[10px] rounded-br-[10px] overflow-hidden transition-transform duration-[600] ease-in-out shadow-[0_4px_16px_rgba(0,0,0,0.20)] flex flex-col h-full hover:shadow-[0_8px_32px_rgba(29,180,255,0.4)] group"
+            className="max-w-[350px] rounded-bl-[10px] rounded-br-[10px] transition-transform duration-[600] ease-in-out shadow-[0_4px_16px_rgba(0,0,0,0.20)] flex flex-col h-full hover:shadow-[0_8px_32px_rgba(29,180,255,0.4)] group"
             key={item.id}
             style={{ cursor: "pointer" }}
-            onClick={() => clickCard(item.id)}
-          >
-            
+            onClick={() => clickCard(item.id)}          >            
             <div className="h-[200px] flex items-center justify-center relative overflow-hidden">
               {item.status == 0 ? (
                 <CountdownTimer targetTime={item.end_time} />
@@ -59,14 +57,23 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   " transition-transform duration-500 ease-in-out border-4 border-white will-change-transform group-hover:scale-110"
                 }
               />
-              {/* <div className="absolute inset-0 bg-[#18181c] -z-10"></div> */}
             </div>            
             <div className="bg-white p-3 text-sm leading-[1.5] flex-grow">
-              <p className="flex justify-between">
-                <span className="break-all w-0 flex-1 min-w-0 text-left font-[600]">
-                  {item.title}
+              {/* title */}
+              <p className="flex justify-between relative overflow-visible">
+                <span className="relative break-words w-0 flex-1 min-w-0 text-left text-[16px] font-[600] group/title">
+                  {item.title.length > 70 ? item.title.slice(0, 70) + "..." : item.title}
+                  {/* Tooltip - chỉ hiển thị khi hover vào title */}
+                  {item.title.length > 70 && (
+                    <span className="absolute z-[1000] font-normal text-center left-1/2 bottom-full mb-2 -translate-x-1/2 w-max max-w-[350px] rounded-lg bg-[#0082c8] px-3 py-2 text-white text-sm shadow-lg opacity-0 group-hover/title:opacity-100 pointer-events-none transition-all duration-500 ease-in-out transform group-hover/title:translate-y-0 translate-y-1">
+                      {item.title}
+                      {/* Arrow */}
+                      <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#0082c8]"></span>
+                    </span>
+                  )}
                 </span>
               </p>
+              {/* starting price */}
               <p className="flex justify-between">
                 <span className="text-gray-500 text-left">{t("starting_price")}:</span>
                 <span className="text-right font-[600]">
@@ -81,6 +88,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   : t("see_file")}
                 </span>
               </p>
+              {/* step price */}
               <p className="flex justify-between">
                 <span className="text-gray-500 text-left">{t("step_price")}:</span>
                 <span className="text-right font-[600]">

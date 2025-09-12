@@ -118,6 +118,7 @@ function Register() {
         }`}
       >
         <h1 className="login-title">{t("register", "Register")}</h1>
+        <p className="text-center text-[14px] mb-2 text-gray-600">{t("register_des")}</p>
         <form onSubmit={handleSubmit(submitForm)}>
           {/* Email Input */}
           <div className="input-group">

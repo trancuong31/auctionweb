@@ -27,11 +27,15 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
+      toast.error(t("error.download_file", "Failed to download file"));
       console.error("Error download file:", error);
     }
   };
 
-  const handleDownloadFileUser = async (id) => {
+  // const handleDownload = (id) => {
+  //   window.open(`${BASE_URL}/api/v1/download/excel/by-auction/${id}`,);
+  // }
+  const handleDownloadFileUser = async (userName, id) => {
     try {
       const res = await fetch(`/api/v1/download/excel/${id}`);
       if (!res.ok) throw new Error("Dowload file fail!");
@@ -39,14 +43,18 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `bid-${id}.xlsx`;
+      a.download = `bid-${userName}-${id}.xlsx`;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
+      toast.error(t("error.download_file", "Failed to download file"));
       console.error("Error download file:", error);
     }
   };
 
+  // const handleDownloadFileUser = (id) => {
+  //   window.open(`${BASE_URL}/api/v1/download/excel/${id}`, "_self");
+  // }
   const handleSortByBidAmount = () => {
     const newSortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
     setSortOrder(newSortOrder);
@@ -370,73 +378,79 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               </thead>
               <tbody>
                 {!isLoading ? (
-                  bids?.map((bid, idx) => (
-                    <tr
-                      key={idx}
-                      className={clsx(
-                        "border-t",
-                        bid.is_winner ? "bg-yellow-200": "bg-white"
-                      )}
-                    >
-                      <td className="px-4 py-2">{idx + 1}</td>
-                      <td className="px-4 py-2">{bid.email || "-"}</td>
-                      <td className="px-4 py-2">{bid.user_name || "-"}</td>
-                      <td className="px-4 text-green-500 py-2">
-                        {bid.bid_amount != null
-                          ? bid.bid_amount.toLocaleString(
-                              auction.currency === "VND" ? "vi-VN" : "en-US",
-                              {
-                                style: "currency",
-                                currency: auction.currency === "VND" ? "VND" : "USD",
-                              }
-                            )
-                          : "-"}
-                      </td>
-                      <td className="px-4 text-green-500 py-2">
-                        <p className="text-red-600 font-bold text-[14px]">
-                          {bid.file ? (
-                            <button
-                              onClick={() => handleDownloadFileUser(bid.id)}
-                              className="text-blue-600 text-left hover:underline"
-                            >
-                              <p title={bid.file.split("/").pop()}>
-                                {bid.file.split("/").pop().length > 30
-                                  ? bid.file.split("/").pop().slice(0, 20) +
-                                    "..."
-                                  : bid.file.split("/").pop()}
-                              </p>
-                            </button>
-                          ) : (
-                            <span className="text-gray-400 italic">
-                              {t("no_file")}
-                            </span>
-                          )}
-                        </p>
-                      </td>
-                      <td className="px-4 py-2">
-                        {bid.created_at
-                          ? new Date(bid.created_at).toLocaleString("en-US", {
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                              hour12: false,
-                            })
-                          : "-"}
-                      </td>
-                      <td className="px-4 py-2 w-[300px] align-top">
-                        <div className="max-h-[80px] overflow-y-auto break-words whitespace-normal pr-1">
-                          {bid.note || "N/A"}
-                        </div>
-                      </td>
+                  bids && bids.length > 0 ? (
+                    bids.map((bid, idx) => (
+                      <tr
+                        key={idx}
+                        className={clsx(
+                          "border-t",
+                          bid.is_winner ? "bg-yellow-200": "bg-white"
+                        )}
+                      >
+                        <td className="px-4 py-2">{idx + 1}</td>
+                        <td className="px-4 py-2">{bid.email || "-"}</td>
+                        <td className="px-4 py-2">{bid.user_name || "-"}</td>
+                        <td className="px-4 text-green-500 py-2">
+                          {bid.bid_amount != null
+                            ? bid.bid_amount.toLocaleString(
+                                auction.currency === "VND" ? "vi-VN" : "en-US",
+                                {
+                                  style: "currency",
+                                  currency: auction.currency === "VND" ? "VND" : "USD",
+                                }
+                              )
+                            : "-"}
+                        </td>
+                        <td className="px-4 text-green-500 py-2">
+                          <p className="text-red-600 font-bold text-[14px]">
+                            {bid.file ? (
+                              <button
+                                onClick={() => handleDownloadFileUser(bid.user_name, bid.id)}
+                                className="text-blue-600 text-left hover:underline"
+                              >
+                                <p title={bid.file.split("/").pop()}>
+                                  {bid.file.split("/").pop().length > 30
+                                    ? bid.file.split("/").pop().slice(0, 20) +
+                                      "..."
+                                    : bid.file.split("/").pop()}
+                                </p>
+                              </button>
+                            ) : (
+                              <span className="text-gray-400 italic">
+                                {t("no_file")}
+                              </span>
+                            )}
+                          </p>
+                        </td>
+                        <td className="px-4 py-2">
+                          {bid.created_at
+                            ? new Date(bid.created_at).toLocaleString("en-US", {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: false,
+                              })
+                            : "-"}
+                        </td>
+                        <td className="px-4 py-2 w-[300px] align-top">
+                          <div className="max-h-[80px] overflow-y-auto break-words whitespace-normal pr-1">
+                            {bid.note || "N/A"}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={7} className="italic text-gray-400 text-center py-3">{t("no_data")}</td>
                     </tr>
-                  ))
+                  )
                 ) : (
                   <tr>
-                    <td colSpan={6} className="text-center py-4">
-                      Loading bids...
+                    <td colSpan={7} className="text-center py-4">
+                      <div className="loader my-10" />
                     </td>
                   </tr>
                 )}

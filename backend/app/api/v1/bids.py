@@ -220,8 +220,15 @@ def download_excel_by_auction(request: Request, id: str, db: Session = Depends(g
     file_path = os.path.join(BASE_DIR, 'uploads', 'excels', filename)
     if not os.path.isfile(file_path):
         raise HTTPException(status_code=404, detail=_("File not found on server", request))
+    
+    file_size = os.path.getsize(file_path)
+
+    headers = {
+        "Content-Length": str(file_size)
+    }
     return FileResponse(
         path=file_path,
         filename=filename,
+        headers=headers,
         media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )

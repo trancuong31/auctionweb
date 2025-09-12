@@ -260,7 +260,7 @@ const AuctionSearch = () => {
           <span className="font-bold text-red-500">{total}</span>
         </div>
         {isLoading ? (
-          <div className="loader my-10" />
+          <div className="loader my-5" />
         ) : (
           <RenderCardAuction
             arrAuction={arrAuction}

@@ -262,7 +262,8 @@
     "category_name_max_length": "카테고리 이름은 100자를 초과할 수 없습니다",
     "description_required": "설명은 필수입니다",
     "description_max_length": "설명은 500자를 초과할 수 없습니다",
-    "create_category_failed": "카테고리 생성 실패!"
+    "create_category_failed": "카테고리 생성 실패!",
+    "download_file": "파일 다운로드 실패"
   },
   "no_data": "데이터가 없습니다",
   "no_file": "파일이 없습니다",
@@ -354,5 +355,7 @@
   "lowest_bid": "최저 입찰가",
   "auction_type": "경매 유형",
   "sell": "판매 등록",
-  "buy": "구매 등록"
+  "buy": "구매 등록",
+  "login_des": "로그인하여 경매에 참여하고 거래를 관리하세요",
+  "register_des": "계정을 등록하여 경매에 참여하고 거래를 관리하세요"
 }

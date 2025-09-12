@@ -279,7 +279,8 @@
     "category_name_max_length": "Tên danh mục không được vượt quá 100 ký tự",
     "description_required": "Mô tả là bắt buộc",
     "description_max_length": "Mô tả không được vượt quá 500 ký tự",
-    "create_category_failed": "Tạo danh mục thất bại!"
+    "create_category_failed": "Tạo danh mục thất bại!",
+    "download_file": "Tải tệp thất bại!"
   },
   "no_data": "Không có dữ liệu",
   "no_file": "Không có file",
@@ -373,5 +374,7 @@
   "lowest_bid": "Giá thầu thấp nhất",
   "auction_type": "Loại hình đấu giá",
   "sell": "Đăng bán",
-  "buy": "Đăng mua"
+  "buy": "Đăng mua",
+  "login_des": "Đăng nhập để tham gia đấu giá và quản lý giao dịch",
+  "register_des": "Đăng ký tài khoản để tham gia đấu giá và quản lý giao dịch"
 }

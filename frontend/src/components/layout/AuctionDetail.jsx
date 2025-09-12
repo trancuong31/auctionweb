@@ -1,26 +1,16 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ModalAuction from "./formAuction";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import AnimatedContent from "../ui/animatedContent";
 import AuctionSection from "./Auctions";
-import {
-  faTags,
-  faMoneyBill,
-  faSignal5,
-  faFileText,
-  faUser,
-  faUsers,
-  faLayerGroup,
-  faBoxes,
-  faGavel
-} from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import imagedefault from "../../assets/images/imagedefault.png";
 import { getOne } from "../../services/api";
 import { toast } from "react-hot-toast";
 import { BASE_URL } from "../../config";
+import { CheckCircle, ClockFading, AlarmClockCheck, ClockIcon, Banknote, ArrowUp01,Boxes, Group, File,Users, User } from "lucide-react";
+
 const AuctionDetail = () => {
   const { id } = useParams();
   const [auction, setAuction] = useState(null);
@@ -193,24 +183,27 @@ const AuctionDetail = () => {
     setIsOpen(true);
   };
 
-  const handleDownload = async (id) => {
-    try {
-      const res = await fetch(`/api/v1/download/excel/by-auction/${id}`);
-      if (!res.ok) throw new Error("Dowload file fail!");
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `auction-${id}.xlsx`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      const detail = error?.response?.data?.detail;
-      toast.error(detail || "Error download file:", error);
-      console.error("Error download file:", error);
-    }
-  };
+  // const handleDownload = async (id) => {
+  //   try {
+  //     const res = await fetch(`/api/v1/download/excel/by-auction/${id}`);
+  //     if (!res.ok) throw new Error("Dowload file fail!");
+  //     const blob = await res.blob();
+  //     const url = window.URL.createObjectURL(blob);
+  //     const a = document.createElement("a");
+  //     a.href = url;
+  //     a.download = `auction-${id}.xlsx`;
+  //     a.click();
+  //     window.URL.revokeObjectURL(url);
+  //   } catch (error) {
+  //     const detail = error?.response?.data?.detail;
+  //     toast.error(detail || "Error download file:", error);
+  //     console.error("Error download file:", error);
+  //   }
+  // };
 
+  const handleDownload = (id) => {
+    window.open(`${BASE_URL}/api/v1/download/excel/by-auction/${id}`, "_self");
+  }
   const handleSelectImg = (index) => {
     setselectImg(index);
     resetInterval();
@@ -260,10 +253,43 @@ const AuctionDetail = () => {
         onClose={() => setIsOpen(false)}
       />
       <AnimatedContent>
-        <h1 className="text-2xl mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] font-bold text-left text-black-300 drop-shadow break-words w-1/2">
+        <h1 className="text-2xl mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] sm:w-[100%] lg:w-[50%] font-bold text-left text-black-300 drop-shadow break-words">
           {auction.title}
         </h1>
+        {/* status */}
+        <p className="justify-start flex items-center gap-2 mt-2 mb-2">
+          <span className="text-gray-500 text-sm">{t("status")}:{" "}</span>
+          <span
+          className={`inline-flex items-center gap-1 px-2 py-1 rounded text-white text-sm font-medium
+            ${auction.status === 0 
+              ? "bg-blue-200 text-blue-800 font-semibold" 
+              : auction.status === 1 
+              ? "bg-yellow-200 text-yellow-800 font-semibold" 
+              : auction.status === 2 
+              ? "bg-green-200 text-green-800 font-semibold" 
+              : "bg-gray-200 text-gray-800 font-semibold"}`}
+        >
+          {auction.status === 0 && (
+            <AlarmClockCheck className="w-5 h-5" />
+            
+          )}
+          {auction.status === 1 && (
+            <ClockFading className="w-5 h-5" />
+          )}
+          {auction.status === 2 && (
+            <CheckCircle className="h-4 w-4" />
+          )}
 
+          {auction.status === 0
+            ? t("ongoing_auctions")
+            : auction.status === 1
+            ? t("upcoming_auctions")
+            : auction.status === 2
+            ? t("ended_auctions")
+            : auction.status}
+        </span>
+
+        </p>
         <div className="flex flex-col lg:flex-row items-start gap-10">
           {/* Slider Image */}
           <div className="flex-1 overflow-hidden relative rounded-lg shadow-lg border border-gray-300">
@@ -281,7 +307,7 @@ const AuctionDetail = () => {
             >
               &#10095;
             </button>
-
+            
             <div
               ref={sliderRef}
               className="flex transition-transform duration-700 ease-in-out"
@@ -331,142 +357,146 @@ const AuctionDetail = () => {
           </div>
 
           {/* Auction Info */}
-          <div className="flex-1 text-xl font-medium space-y-6 text-gray-800">
-            <p>
-              <FontAwesomeIcon icon={faTags} className="mr-4 text-blue-500" />
-              {t("deadline")}:{" "}
-              <span className="font-semibold">
+          <div className="flex-1 text-xl w-full font-medium space-y-6 text-gray-800">
+            {/* deadline */}
+            <div className="relative p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
+              <p className="text-blue-600 text-sm font-medium">{t("deadline")}</p>
+              <p className="text-blue-600 text-2xl font-semibold">
                 {new Date(auction.end_time).toLocaleString("vi-VN")}
-              </span>
-            </p>
-            {/* starting price */}
-            <p>
-              <FontAwesomeIcon
-                icon={faMoneyBill}
-                className="mr-4 text-blue-500"
-              />
-              {t("starting_price")}:{" "}
-              <span className="font-semibold text-black-700 text-[24px]">
-                {auction.starting_price && auction.starting_price !== 0
-                  ? auction.starting_price.toLocaleString(
-                      auction.currency === "VND" ? "vi-VN" : "en-US",
-                      {
-                        style: "currency",
-                        currency: auction.currency === "VND" ? "VND" : "USD",
-                      }
-                    )
-                  : t("see_file")}
-              </span>
-            </p>
-            {/* step price */}
-            <p>
-              <FontAwesomeIcon
-                icon={faLayerGroup}
-                className="mr-4 text-blue-500"
-              />
-              {t("step_price")}:{" "}
-              <span className="font-semibold text-black-700">
-                {auction.step_price?.toLocaleString(
-                  auction.currency === "VND" ? "vi-VN" : "en-US",
-                  {
-                    style: "currency",
-                    currency: auction.currency === "VND" ? "VND" : "USD",
-                  }
-                )}
-              </span>
-            </p>
-            {/* status */}
-            <p>
-              <FontAwesomeIcon
-                icon={faSignal5}
-                className="mr-4 text-blue-500"
-              />
-              {t("status")}:{" "}
-              <span className="font-thin">
-                {auction.status === 0
-                  ? "Ongoing"
-                  : auction.status === 1
-                  ? "Upcoming"
-                  : auction.status === 2
-                  ? "Ended"
-                  : auction.status}
-              </span>
-            </p>
-            {/* type category */}
-            <p>
-              <FontAwesomeIcon
-                icon={faBoxes}
-                className="mr-4 text-blue-500"
-              />
-              {t("type")}:{" "}
-              <span className="font-thin">
-                {auction.category.category_name || t("unknown")}
-              </span>
-            </p>
-            {/* type auction */}
-            <p>
-              <FontAwesomeIcon
-                icon={faGavel}
-                className="mr-4 text-blue-500"
-              />
-              {t("auction_type")}:{" "}
-              <span className="font-thin">
-                {auction.auction_type === "SELL" ? t("sell") : t("buy")}
-              </span>
-            </p>
-            {/* file excel */}
-            <p>
-              <FontAwesomeIcon
-                icon={faFileText}
-                className="mr-4 text-blue-500"
-              />
-              {t("attached_file")}:{" "}
-              {auction.file_exel ? (
-                <button
-                  onClick={() => handleDownload(auction.id)}
-                  className="text-blue-600 hover:underline font-medium"
-                >
-                  <p>
-                    {auction.file_exel.split("/").pop().length > 30
-                      ? auction.file_exel.split("/").pop().slice(0, 30) +
-                        "...xlsx"
-                      : auction.file_exel.split("/").pop()}
-                  </p>
-                </button>
-              ) : (
-                <span className="text-gray-400 italic">{t("no_file")}</span>
-              )}
-            </p>
-            {/* số người tham gia đấu giá */}
-            {(auction.status === 0 || auction.status === 2) &&
-              auction.count_users != null && (
-                <p>
-                  <FontAwesomeIcon
-                    icon={faUsers}
-                    className="mr-4 text-blue-500"
-                  />
-                  {t("number_of_bids")}: {auction.count_users}
-                </p>
-              )}
-            {auction.status === 2 && (
-              <p>
-                <FontAwesomeIcon
-                  icon={faUser}
-                  className="mr-4 text-blue-500"
-                />
-                {t("winner")}:{" "}
-                {Array.isArray(auction.bids) &&
-                auction.bids.find((bid) => bid.is_winner) ? (
-                  <span className="font-semibold text-green-700">
-                    {auction.bids.find((bid) => bid.is_winner).user_name}
-                  </span>
-                ) : (
-                  <span className="text-red-500 font-semibold">
-                    {t("no_winner")}
-                  </span>
-                )}
               </p>
-            )}
+              <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                <ClockIcon className="h-10 w-10" />
+              </div>
+            </div>
+            {/* starting price & step price */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* starting price */}
+              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
+                <p className="text-blue-600 text-sm font-medium">{t("starting_price")}</p>
+                <p className="text-blue-600 text-lg font-semibold">
+                  {auction.starting_price && auction.starting_price !== 0
+                    ? auction.starting_price.toLocaleString(
+                        auction.currency === "VND" ? "vi-VN" : "en-US",
+                        {
+                          style: "currency",
+                          currency: auction.currency === "VND" ? "VND" : "USD",
+                        }
+                      )
+                    : t("see_file")}
+                </p>
+                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                  <Banknote className="h-10 w-10" />
+                </div>
+              </div>
+              {/* step price */}
+              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
+                <p className="text-blue-600 text-sm font-medium">{t("step_price")}</p>
+                <p className="text-blue-600 text-lg font-semibold">
+                  {auction.step_price && auction.step_price !== 0
+                    ? auction.step_price.toLocaleString(
+                        auction.currency === "VND" ? "vi-VN" : "en-US",
+                        {
+                          style: "currency",
+                          currency: auction.currency === "VND" ? "VND" : "USD",
+                        }
+                      )
+                    : t("see_file")}
+                </p>
+                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                  <ArrowUp01 className="h-10 w-10" />
+                </div>
+              </div>
+            </div>            
+            {/* type category & type auction */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* type category */}
+              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
+                <p className="text-blue-600 text-sm font-medium">{t("type")}</p>
+                <p className="text-blue-600 text-lg">
+                  {auction.category.category_name || t("unknown")}
+                </p>
+                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                  <Boxes className="h-10 w-10" />
+                </div>
+              </div>
+              {/* type auction */}
+              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
+                <p className="text-blue-600 text-sm font-medium">{t("auction_type")}</p>
+                <p className="text-blue-600 text-lg">
+                  {auction.auction_type === "SELL" ? t("sell") : t("buy")}
+                </p>
+                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                  <Group className="h-10 w-10" />
+                </div>
+              </div>
+            </div>
+            {/* file excel & number of bids */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* file excel */}
+              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
+                <p className="text-blue-600 text-sm font-medium">{t("attached_file")}</p>
+                <div className="text-blue-600 text-lg font-semibold">
+                  {auction.file_exel ? (
+                    <button
+                      onClick={() => handleDownload(auction.id)}
+                      className="text-blue-600 hover:underline font-medium"
+                    >
+                      <p>
+                        {auction.file_exel.split("/").pop().length > 25
+                          ? auction.file_exel.split("/").pop().slice(0, 25) +
+                            "...xlsx"
+                          : auction.file_exel.split("/").pop()}
+                      </p>
+                    </button>
+                  ) : (
+                    <span className="text-gray-400 italic">{t("no_file")}</span>
+                  )}
+                </div>
+                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                  <File className="h-10 w-10" />
+                </div>
+              </div>
+              {/* số người tham gia đấu giá */}   
+              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
+                <p className="text-blue-600 text-sm font-medium">{t("participants")}</p>
+                <div className="text-blue-600 text-lg font-semibold">
+                  {(auction.status === 0 || auction.status === 2) &&
+                  auction.count_users != null ? (
+                    <span>
+                      {t("number_of_bids")}: {auction.count_users}
+                    </span>
+                  ) : (
+                    <span className="text-gray-400 italic">{t("no_data")}</span>
+                  )}
+                </div>
+                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                  <Users className="h-10 w-10" />
+                </div>
+              </div>
+            </div>
+            {/* Winner info - chỉ hiển thị khi đấu giá kết thúc */}
+            {auction.status === 2 && (
+              <div className="relative p-4 rounded-lg shadow-md bg-gradient-to-r from-green-50 to-white border border-green-100">
+                <p className="text-green-600 text-sm font-medium text-center">{t("winner")}</p>
+                <div className="text-green-600 text-2xl text-center font-semibold">
+                  {Array.isArray(auction.bids) &&
+                  auction.bids.find((bid) => bid.is_winner) ? (
+                    <span>
+                      <span className="font-semibold text-green-700">
+                        {auction.bids.find((bid) => bid.is_winner).user_name}
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="text-red-500 font-semibold">
+                      {t("no_winner")}
+                    </span>
+                  )}
+                </div>
+                <div className="absolute bottom-2 right-2 text-green-300 opacity-20">
+                  <User className="h-10 w-10" />
+                </div>
+              </div>
+            )}            
           </div>
         </div>
         {/* Mô tả */}
@@ -488,6 +518,7 @@ const AuctionDetail = () => {
             </p>
           )}
         </div>
+
         {/* Nút đấu giá */}
         <div className="flex justify-center">
           <button
@@ -496,9 +527,9 @@ const AuctionDetail = () => {
           >
             {t("auction")}
           </button>
-        </div>
-      </AnimatedContent>
+        </div>      
       {/* Các phiên đấu giá liên quan */}
+      </AnimatedContent>      
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-1 text-gray-600 font-rele">
           <u>{t("other_auctions").toUpperCase()}</u>

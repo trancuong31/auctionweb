@@ -1089,8 +1089,8 @@ const OverViewAdmin = () => {
                       <td className="border px-2 py-1 max-w-96 text-center break-words">
                         {idx + 1}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words">
-                        {auction.title}
+                      <td className="border px-2 py-1 max-w-96 break-words" title={auction.title}>
+                        {auction.title.length > 70 ? auction.title.slice(0, 70) + "..." : auction.title}
                       </td>
                       <td className="border px-2 py-1 max-w-96 break-words">
                         {auction.category.category_name || "N/A"}
