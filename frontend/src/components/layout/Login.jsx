@@ -175,7 +175,7 @@ function Login() {
           <div className="login-options">
             <label  className="flex items-center gap-2 cursor-pointer">
               <input
-                class="ui-checkbox"
+                className="ui-checkbox"
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}

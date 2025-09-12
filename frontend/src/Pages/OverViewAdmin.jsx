@@ -488,7 +488,7 @@ const OverViewAdmin = () => {
       <AnimatedContent>
         {/* <!-- OVERVIEW --> */}
 
-        <div className="text-white rounded-lg grid sm:grid-cols-3 gap-6 mb-6">
+        <div className="text-white rounded-lg mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] grid sm:grid-cols-3 gap-6 mb-6">
           {/* Total Users */}
           <div className="flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
             <div className="flex-1 pr-3 text-left">
@@ -751,6 +751,12 @@ const OverViewAdmin = () => {
                     <option value="create_at" data-order="desc">
                       {t("sort_create_at_desc")}
                     </option>
+                    <option value="bid_count" data-order="asc">
+                      {t("sort_bid_count_asc")}
+                    </option>
+                    <option value="bid_count" data-order="desc">
+                      {t("sort_bid_count_desc")}
+                    </option>
                   </select>
                 </div>
               </div>
@@ -797,6 +803,7 @@ const OverViewAdmin = () => {
                     className=" hover:bg-blue-400 hover:text-white transition"
                   >
                     <td className="border px-2 py-1 text-center">{idx + 1}</td>
+                    {/* Name */}
                     <td className="border px-2 py-1">
                       {currentEditing === idx ? (
                         <input
@@ -810,7 +817,9 @@ const OverViewAdmin = () => {
                         user.username
                       )}
                     </td>
+                    {/* Email */}
                     <td className="border px-2 py-1">{user.email}</td>
+                    {/* Phone Number */}
                     <td className="border px-2 py-1 text-center">
                       {currentEditing === idx ? (
                         <input
@@ -824,6 +833,7 @@ const OverViewAdmin = () => {
                         user.phone_number || "N/A"
                       )}
                     </td>
+                    {/* Role */}
                     <td
                       className={`border px-2 py-1 text-center ${
                         user.role === "ADMIN"
@@ -835,7 +845,9 @@ const OverViewAdmin = () => {
                     >
                       {user.role}
                     </td>
+                    {/* Count Bid */}
                     <td className="border px-2 py-1 text-center">{user.bid_count}</td>
+                    {/* Company */}
                     <td className="border px-2 py-1">
                       {currentEditing === idx ? (
                         <input
@@ -849,6 +861,7 @@ const OverViewAdmin = () => {
                         user.company || "N/A"
                       )}
                       </td>
+                    {/* Status */}
                     <td className="border px-2 py-1">
                       <div className="flex justify-center">
                         {user.status ? (
@@ -868,7 +881,8 @@ const OverViewAdmin = () => {
                         )}
                       </div>
                     </td>
-                    <td className="border px-2 py-1 space-x-1 text-center max-sm:flex">
+                    {/* Action */}
+                    <td className="border px-2 py-1 space-x-1 text-center max-sm:flex whitespace-nowrap">
                       {currentEditing === idx ? (
                         <>
                           <button
@@ -994,7 +1008,13 @@ const OverViewAdmin = () => {
                   </select>
                 </div>
               </div>
-              <select
+              <div className="w-[15%] pb-6 max-sm:w-full">
+                {/* Status select */}
+                <div className="col-span-1">
+                  <label className="text-sm font-[700] mb-1 mr-2 block">
+                    {t("status")}
+                  </label>
+                  <select
                 onChange={(e) =>
                   setAuctionFilterInput((prev) => ({
                     ...prev,
@@ -1008,6 +1028,9 @@ const OverViewAdmin = () => {
                 <option value="1">{t("upcoming_auctions")}</option>
                 <option value="2">{t("ended_auctions")}</option>
               </select>
+                </div>
+              </div>
+              
               {/* <!-- Search Button --> */}
               <div className="">
                 <button
@@ -1033,6 +1056,7 @@ const OverViewAdmin = () => {
                   <th className="border px-2 py-1">#</th>
                   <th className="border px-2 py-1">{t("title")}</th>
                   <th className="border px-2 py-1">{t("type")}</th>
+                  <th className="border px-2 py-1">{t("auction_type")}</th>
                   <th className="border px-2 py-1">{t("start_time")}</th>
                   <th className="border px-2 py-1">{t("end_time")}</th>
                   <th className="border px-2 py-1">{t("starting_price")}</th>
@@ -1070,6 +1094,9 @@ const OverViewAdmin = () => {
                       </td>
                       <td className="border px-2 py-1 max-w-96 break-words">
                         {auction.category.category_name || "N/A"}
+                      </td>
+                      <td className="border text-center px-2 py-1 max-w-96 break-words">
+                        {auction.auction_type === "BUY" ? t("buy") : t("sell")}
                       </td>
                       <td className="border px-2 py-1 max-w-96 break-words text-center">
                         {dayjs(auction.start_time).format("MM/DD/YYYY HH:mm")}

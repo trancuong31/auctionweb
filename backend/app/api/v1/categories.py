@@ -56,8 +56,7 @@ def get_categories(
 ):
     # Base query
     query = db.query(Category).order_by(Category.created_at.desc())
-    lang = request.state.locale  # "en", "vi", "ko"
-    print(lang)
+    lang = request.state.locale
     # Tìm kiếm theo tên danh mục
     if search_text:
         query = query.filter(Category.category_name.ilike(f"%{search_text}%"))

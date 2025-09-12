@@ -131,7 +131,7 @@ function Register() {
               autoComplete="email"
             />
             {errors.email && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.email.message}
               </p>
             )}
@@ -148,7 +148,7 @@ function Register() {
               autoComplete="off"
             />
             {errors.username && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.username.message}
               </p>
             )}
@@ -165,7 +165,7 @@ function Register() {
               autoComplete="organization"
             />
             {errors.company && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.company.message}
               </p>
             )}
@@ -182,7 +182,7 @@ function Register() {
               autoComplete="tel"
             />
             {errors.phone_number && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.phone_number.message}
               </p>
             )}
@@ -199,7 +199,7 @@ function Register() {
               autoComplete="new-password"
             />
             {errors.password && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.password.message}
               </p>
             )}
@@ -225,7 +225,7 @@ function Register() {
               onChange={(e) => setConfirm(e.target.value)}
             />
             {errors.password && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.password.message}
               </p>
             )}

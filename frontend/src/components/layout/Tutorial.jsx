@@ -16,7 +16,7 @@ function Tutorial() {
 
   return (
     <AnimatedContent>
-      <main className="tutorial-content ">
+      <main className="tutorial-content mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
         <div
           style={{
             background: "#fff",
@@ -35,7 +35,7 @@ function Tutorial() {
               fontSize: "2rem",
             }}
           >
-            {t("auction_guide_title")}
+            {t("auction_guide_title").toUpperCase()}
           </h3>
           <ol
             style={{

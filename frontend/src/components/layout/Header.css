@@ -8,14 +8,13 @@
   background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
   position: fixed;
   width: 100%;
-
   overflow: hidden;
   box-shadow: 
     0 10px 30px rgba(30, 58, 138, 0.3),
     0 1px 0 rgba(255, 255, 255, 0.1) inset;
   border-bottom: 1px solid rgba(59, 130, 246, 0.3);
   backdrop-filter: blur(20px);
-  z-index: 1111;
+  z-index: 1112;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

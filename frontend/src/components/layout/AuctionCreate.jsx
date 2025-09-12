@@ -63,6 +63,9 @@ const CreateAuctionForm = ({
     start_time: z.any(),
     category_id: z.string().min(1, t("validate_auction.category_id_required")),
     participants: z.array(z.string()).min(1, t("validate_auction.participants_required")),
+    auction_type: z.enum(["SELL", "BUY"], {
+      errorMap: () => ({ message: t("validate_auction.auction_type_required") }),
+    }),
   });
 
   dayjs.extend(utc);
@@ -92,6 +95,7 @@ const CreateAuctionForm = ({
       file_exel: null,
       image_url: [],
       category_id: "",
+      auction_type: ""
     },
   });
 
@@ -102,6 +106,7 @@ const CreateAuctionForm = ({
     if (mode === "create") {
       reset({
         title: "",
+        auction_type: "",
         starting_price: 0,
         step_price: 0,
         start_time: "",
@@ -116,6 +121,7 @@ const CreateAuctionForm = ({
     } else if (mode === "edit" && auction) {
       reset({
         title: auction.title || "",
+        auction_type: auction.auction_type || "BUY",
         starting_price: auction.starting_price || 0,
         step_price: auction.step_price || 0,
         start_time: auction.start_time || "",
@@ -373,7 +379,7 @@ const CreateAuctionForm = ({
   return (
     <div
       className={clsx(
-        "fixed inset-0 flex items-center pt-[50px] justify-center bg-black bg-opacity-50 z-50 max-sm:pt-[100px] ",
+        "fixed inset-0 flex items-center pt-[50px] justify-center bg-black bg-opacity-50 z-[2000] ",
         isOpen ? "visible" : "invisible"
       )}
       // onClick={onClickClose}
@@ -415,7 +421,7 @@ const CreateAuctionForm = ({
           >
             <div className="flex gap-4">
               {/* title */}
-              <div className="flex-1 relative">                
+              <div className="flex-[3] relative">                
                 <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
                   <svg
                     className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
@@ -445,20 +451,10 @@ const CreateAuctionForm = ({
                 )}
               </div>
               {/* type product */}
-              <div className="flex-1 relative">
+              <div className="flex-[3] relative">
                 <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-                  <svg
-                    className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"
-                    />
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 6.878V6a2.25 2.25 0 0 1 2.25-2.25h7.5A2.25 2.25 0 0 1 18 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 0 0 4.5 9v.878m13.5-3A2.25 2.25 0 0 1 19.5 9v.878m0 0a2.246 2.246 0 0 0-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0 1 21 12v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6c0-.98.626-1.813 1.5-2.122" />
                   </svg>
                   {t("type")}<span className="text-red-500">*</span>
                 </label>
@@ -469,13 +465,35 @@ const CreateAuctionForm = ({
                   <option value="">{t("select_group")}</option>
                   {categories.map((cat) => (
                     <option key={cat.category_id} value={cat.category_id}>
-                      {cat.category_name}
+                      {cat.category_name.toLowerCase()}
                     </option>
                   ))}
                 </select>
                 {errors.category_id && (
                   <p className="text-red-500 absolute right-1 text-xs">
                     {errors.category_id.message}
+                  </p>
+                )}
+              </div>
+              {/* type auction */}
+              <div className="flex-[2] relative">
+                <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.25-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z" />
+                  </svg>
+                  {t("auction_type")}<span className="text-red-500">*</span>
+                </label>
+                <select
+                  {...register("auction_type")}
+                  className="w-full p-[10px] rounded-lg flex items-center border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                >
+                  <option value="">{t("select_group")}</option>
+                  <option value="SELL">{t("sell")}</option>
+                  <option value="BUY">{t("buy")}</option>
+                </select>
+                {errors.auction_type && (
+                  <p className="text-red-500 absolute right-1 text-xs">
+                    {errors.auction_type.message}
                   </p>
                 )}
               </div>

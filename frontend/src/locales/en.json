@@ -74,7 +74,7 @@
   "title": "Title",
   "start_time": "Start Time",
   "end_time": "End Time",
-  "highest_price": "Highest Price",
+  "highest_price": "Winning Price",
   "logout": "Logout",
   "edit": "Edit",
   "delete": "Delete",
@@ -102,6 +102,8 @@
   "sort_title_desc": "Title from Z to A",
   "sort_create_at_asc": "Create At from Oldest to Latest",
   "sort_create_at_desc": "Create At from Latest to Oldest",
+  "sort_bid_count_asc": "Bid Count from Low to High",
+  "sort_bid_count_desc": "Bid Count from High to Low",
   "sort_start_time_asc": "Start Time from Oldest to Latest",
   "sort_start_time_desc": "Start Time from Latest to Oldest",
   "sort_end_time_asc": "End Time from Oldest to Latest",
@@ -137,7 +139,7 @@
   "address": "Address",
   "bid_amount_usd": "Bid Amount",
   "additional_notes": "Additional Notes",
-  "enter_delivery_address": "Enter your delivery address",
+  "enter_delivery_address": "Enter your address",
   "add_special_requirement_or_comment": "add any special requirement or comment",
   "submit_bid": "Submit Bid",
   "auction_detail": "Auction Details",
@@ -293,12 +295,13 @@
     "description_max": "Description must not exceed 3000 characters",
     "starting_price_min": "Starting price must be > 0",
     "step_price_min": "Price step must be > 0",
-    "image_url_min": "Must select at least 2 files",
+    "image_url_min": "Must select at least 2 images",
     "file_exel_instance": "Must select Excel file",
     "end_time_required": "Time is required",
     "file_max_size": "File size must not exceed 100MB",
     "category_id_required": "Item type is required",
-    "participants_required": "Participants are required"
+    "participants_required": "Participants are required",
+    "auction_type_required": "Auction type is required"
   },
   "validate_bid": {
     "address_required": "Address is required",
@@ -366,5 +369,8 @@
   "loading_users": "Loading users...",
   "no_users_found": "No users found",
   "invited_users": "List of users invited to the auction",
-  "lowest_bid": "Lowest Bid"
+  "lowest_bid": "Lowest Bid",
+  "auction_type": "Auction Type",
+  "sell": "SELL",
+  "buy": "BUY"
 }

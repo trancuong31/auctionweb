@@ -14,7 +14,7 @@ const AnimatedContent = ({
   initialOpacity = 0,
   animateOpacity = true,
   scale = 1,
-  threshold = 0.3,
+  threshold = 0.1,
   delay = 0,
   onComplete,
 }) => {

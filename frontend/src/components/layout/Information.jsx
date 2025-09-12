@@ -15,7 +15,7 @@ function Information() {
 
   return (
     <AnimatedContent>
-      <main className="information-content">
+      <main className="information-content mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
         <div
           style={{
             background: "#fff",
@@ -36,7 +36,7 @@ function Information() {
               textAlign: "center",
             }}
           >
-            {t("vision_title")}
+            {t("vision_title").toUpperCase()}
           </h2>
           <div
             style={{

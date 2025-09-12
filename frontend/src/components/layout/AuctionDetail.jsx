@@ -13,6 +13,7 @@ import {
   faUsers,
   faLayerGroup,
   faBoxes,
+  faGavel
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
@@ -259,7 +260,7 @@ const AuctionDetail = () => {
         onClose={() => setIsOpen(false)}
       />
       <AnimatedContent>
-        <h1 className="text-2xl font-bold text-left text-black-300 drop-shadow break-words w-1/2">
+        <h1 className="text-2xl mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] font-bold text-left text-black-300 drop-shadow break-words w-1/2">
           {auction.title}
         </h1>
 
@@ -338,6 +339,7 @@ const AuctionDetail = () => {
                 {new Date(auction.end_time).toLocaleString("vi-VN")}
               </span>
             </p>
+            {/* starting price */}
             <p>
               <FontAwesomeIcon
                 icon={faMoneyBill}
@@ -356,6 +358,7 @@ const AuctionDetail = () => {
                   : t("see_file")}
               </span>
             </p>
+            {/* step price */}
             <p>
               <FontAwesomeIcon
                 icon={faLayerGroup}
@@ -372,6 +375,7 @@ const AuctionDetail = () => {
                 )}
               </span>
             </p>
+            {/* status */}
             <p>
               <FontAwesomeIcon
                 icon={faSignal5}
@@ -388,6 +392,7 @@ const AuctionDetail = () => {
                   : auction.status}
               </span>
             </p>
+            {/* type category */}
             <p>
               <FontAwesomeIcon
                 icon={faBoxes}
@@ -398,6 +403,18 @@ const AuctionDetail = () => {
                 {auction.category.category_name || t("unknown")}
               </span>
             </p>
+            {/* type auction */}
+            <p>
+              <FontAwesomeIcon
+                icon={faGavel}
+                className="mr-4 text-blue-500"
+              />
+              {t("auction_type")}:{" "}
+              <span className="font-thin">
+                {auction.auction_type === "SELL" ? t("sell") : t("buy")}
+              </span>
+            </p>
+            {/* file excel */}
             <p>
               <FontAwesomeIcon
                 icon={faFileText}
@@ -420,6 +437,7 @@ const AuctionDetail = () => {
                 <span className="text-gray-400 italic">{t("no_file")}</span>
               )}
             </p>
+            {/* số người tham gia đấu giá */}
             {(auction.status === 0 || auction.status === 2) &&
               auction.count_users != null && (
                 <p>

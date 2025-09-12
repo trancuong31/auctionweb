@@ -84,3 +84,22 @@ MANIFEST
 Dockerfile
 docker-compose.yml
 *.dockerignore
+
+# -------------------------
+# Excel Files
+# -------------------------
+*.xlsx
+*.xls
+*.xlsm
+*.xlsb
+*.xltx
+*.xltm
+# -------------------------
+# Image Files
+# -------------------------
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff

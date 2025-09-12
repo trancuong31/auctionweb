@@ -14,7 +14,7 @@ function Contact() {
   }, [i18n]);
   return (
     <AnimatedContent>
-      <main className="rule-content">
+      <main className="rule-content mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
         <div
           style={{
             background: "#fff",
@@ -33,7 +33,7 @@ function Contact() {
               fontSize: "2rem",
             }}
           >
-            {t("contact_title")}
+            {t("contact_title").toUpperCase()}
           </h3>
           <div style={{ display: "flex", alignItems: "center", gap: "40px" }}>
             <div style={{ flex: 1 }}>

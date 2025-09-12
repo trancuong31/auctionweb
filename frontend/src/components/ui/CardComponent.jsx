@@ -69,7 +69,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
               </p>
               <p className="flex justify-between">
                 <span className="text-gray-500 text-left">{t("starting_price")}:</span>
-                <span className="text-right font-[600] text-[16px]">
+                <span className="text-right font-[600]">
                   {item.starting_price
                   ? item.starting_price.toLocaleString(
                       item.currency === "VND" ? "vi-VN" : "en-US",
@@ -93,6 +93,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   )}
                 </span>
               </p>
+              {/* start time */}
               <p className="flex justify-between">
                 <span className="text-gray-500 text-left">{t("start_time")}:</span>
                 <span className="text-right font-[600]">
@@ -107,6 +108,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   })}
                 </span>
               </p>
+              {/* end time */}
               <p className="flex justify-between">
                 <span className="text-gray-500 text-left">{t("end_time")}:</span>
                 <span className="text-right font-[600]">
@@ -121,13 +123,25 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   })}
                 </span>
               </p>
-                <p className="flex justify-between">
+              {/* category type */}
+              <p className="flex justify-between">
                 <span className="text-gray-500 text-left">{t("type")}:</span>
                 <span className="text-right">
                   {item.category?.category_name || t("unknown")}
                 </span>
               </p>
-
+              {/* auction type */}
+              {/* <p className="flex justify-between">
+                <span className="text-gray-500 text-left">{t("auction_type")}:</span>
+                <span className="text-right">
+                  {item.auction_type === "SELL"
+                    ? t("sell").toLocaleUpperCase()
+                    : item.auction_type === "BUY"
+                    ? t("buy").toLocaleUpperCase()
+                    : t("unknown").toLocaleUpperCase()}
+                </span>
+              </p> */}
+                    
               {item.status === 2 ? (
                 item.highest_amount !== null && item.winner_info !== null ? (
                   <p className="flex justify-between text-left">
@@ -135,10 +149,13 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                       {t("winning_bid_price")}:
                     </span>
                     <span className="text-red-500 font-bold">
-                      {item.highest_amount?.toLocaleString("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                      })}
+                      {item.highest_amount?.toLocaleString(
+                        item.currency === "VND" ? "vi-VN" : "en-US",
+                        {
+                          style: "currency",
+                          currency: item.currency === "VND" ? "VND" : "USD",
+                        }
+                      )}
                     </span>
                   </p>
                 ) : (

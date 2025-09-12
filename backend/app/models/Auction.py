@@ -1,14 +1,16 @@
-from sqlalchemy import Column, String, Integer, DateTime, Text, Numeric, UUID, ForeignKey
+from sqlalchemy import Column, String, Integer, DateTime, Text, Numeric, UUID, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from app.models.base import Base
 import uuid
 from datetime import datetime
+from app.enums import TypeAuction
 
 class Auction(Base):
     __tablename__ = "auctions"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     category_id = Column(String(36), ForeignKey("categories.category_id", ondelete='CASCADE'), nullable=False)
+    auction_type = Column(Enum(TypeAuction), nullable=False, default=TypeAuction.BUY)
     title = Column(String, nullable=False)
     title_vi = Column(String, nullable=False)
     title_ko = Column(String, nullable=False)

@@ -17,7 +17,7 @@ function Rule() {
 
   return (
     <AnimatedContent>
-      <main className="rule-content " translate="yes">
+      <main className="rule-content mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]" translate="yes">
         <div
           style={{
             background: "#fff",
@@ -36,7 +36,7 @@ function Rule() {
               fontSize: "2rem",
             }}
           >
-            {ruleTitle}
+            {ruleTitle.toUpperCase()}
           </h3>
           <ol
             className="google-translate-section"

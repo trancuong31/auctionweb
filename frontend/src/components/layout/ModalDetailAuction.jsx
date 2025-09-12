@@ -13,6 +13,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [highestBid, setHighestBid] = useState(0);
   const [lowestBid, setLowestBid] = useState(0);
+  const [sortOrder, setSortOrder] = useState('desc');
   const { t, i18n } = useTranslation();
   const handleDownload = async (id) => {
     try {
@@ -44,6 +45,24 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
     } catch (error) {
       console.error("Error download file:", error);
     }
+  };
+
+  const handleSortByBidAmount = () => {
+    const newSortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+    setSortOrder(newSortOrder);
+    
+    const sortedBids = [...bids].sort((a, b) => {
+      const amountA = a.bid_amount || 0;
+      const amountB = b.bid_amount || 0;
+      
+      if (newSortOrder === 'asc') {
+        return amountA - amountB;
+      } else {
+        return amountB - amountA;
+      }
+    });
+    
+    setBids(sortedBids);
   };
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
@@ -86,7 +105,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   return (
     <div
       className={
-        "fixed inset-0 flex items-center justify-center z-50 max-sm:pt-[60px] bg-black bg-opacity-50 " +
+        "fixed inset-0 flex items-center justify-center z-[2000] max-sm:pt-[60px] bg-black bg-opacity-50 " +
         (isOpen ? "visible" : "invisible")
       }
       style={{ pointerEvents: isOpen ? "auto" : "none" }}
@@ -116,9 +135,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
         </div>
         
         <div className="flex-1 p-4 sm:p-6 overflow-y-auto max-h-[calc(95vh-120px)]">
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* image */}
+          <div className="flex flex-col lg:flex-row gap-6">            
             <div className="lg:w-1/2 w-full">
+            {/* image */}
               <img
                 src={
                   auction.image_url && auction.image_url.length > 0
@@ -134,14 +153,14 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                   <u>{t("invited_users").toUpperCase()}</u>
                 </div>
                 <div className="border border-gray-300 rounded-xl overflow-x-auto bg-white max-h-52 overflow-y-auto">
-                  <table className="min-w-full text-sm text-left">
+                  <table className="min-w-full text-xs text-left">
                     <thead className="bg-gray-200 text-gray-700 sticky top-0 z-10">
                       <tr>
-                        <th className="px-4 py-2 font-semibold">#</th>
-                        <th className="px-4 py-2 font-semibold">{t("email").toUpperCase()}</th>
-                        <th className="px-4 py-2 font-semibold">{t("phone").toUpperCase()}</th>
-                        <th className="px-4 py-2 font-semibold">{t("username").toUpperCase()}</th>
-                        <th className="px-4 py-2 font-semibold">{t("company").toUpperCase()}</th>
+                        <th className="px-4 py-2 font-semibold whitespace-nowrap">#</th>
+                        <th className="px-4 py-2 font-semibold whitespace-nowrap">{t("email").toUpperCase()}</th>
+                        <th className="px-4 py-2 font-semibold whitespace-nowrap">{t("phone").toUpperCase()}</th>
+                        <th className="px-4 py-2 font-semibold whitespace-nowrap">{t("username").toUpperCase()}</th>
+                        <th className="px-4 py-2 font-semibold whitespace-nowrap">{t("company").toUpperCase()}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -249,10 +268,10 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                   </p>
                 </div>
               </div>
-
-              
+              {/* status and type */}
               <div className="mt-4 px-6 py-3  text-lg font-semibold rounded-xl flex items-center border border-gray-400 justify-between w-full">
-                <p className="text-sm font-semibold">{t("current_status")}</p>
+                {/* status */}
+                <p className="text-sm font-semibold">{t("current_status")}:</p>
                 <span className="text-sm font-medium text-black-600 px-4 py-1 rounded-lg">
                   {auction.status === 0
                     ? t("ongoing_auctions")
@@ -260,9 +279,8 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     ? t("upcoming_auctions")
                     : t("ended_auctions")}
                 </span>
-              </div>
-              <div className="mt-4 px-6 py-3  text-lg font-semibold rounded-xl flex items-center border border-gray-400 justify-between w-full">
-                <p className="text-sm text-white-500 font-semibold">{t("type")}</p>
+                {/* product type */}
+                <p className="text-sm text-white-500 font-semibold">{t("type")}:</p>
                 <span className="text-sm font-medium bg-white text-black-600 px-4 py-1 rounded-lg">
                   {auction.category?.category_name || "N/A"}
                 </span>
@@ -272,7 +290,6 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                 <p className="text-sm font-medium text-gray-500">
                   {t("description")}
                 </p>
-
                 {auction.description && auction.description.trim() !== "" ? (
                   <div
                     className="text-gray-700 text-sm max-h-20 overflow-y-auto prose prose-slate  max-w-none ck-content"
@@ -286,6 +303,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               </div>
             </div>
           </div>
+          {/* info bids */}
           <div className="flex justify-between items-center text-sm text-gray-700 px-4 py-2">
             <div>
               {t("total_bids")}:{" "}
@@ -321,14 +339,23 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
               <thead className="bg-gray-200 text-gray-700 sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 font-semibold uppercase">#</th>
-                  <th className="px-4 py-2 font-semibold uppercase">
-                    {t("supplier_email")}
+                  <th className="px-4 py-2 font-semibold uppercase whitespace-nowrap">
+                    {t("email")}
                   </th>
-                  <th className="px-4 py-2 font-semibold uppercase">
+                  <th className="px-4 py-2 font-semibold uppercase whitespace-nowrap">
                     {t("user_name")}
                   </th>
-                  <th className="px-4 py-2 font-semibold uppercase">
-                    {t("bid_amount_usd")}
+                  <th 
+                    className="px-4 py-2 font-semibold whitespace-nowrap uppercase cursor-pointer hover:bg-gray-300 transition-colors duration-200 select-none"
+                    onClick={handleSortByBidAmount}
+                    title={`Sort ${sortOrder === 'desc' ? 'ascending' : 'descending'}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>{t("bid_amount_usd")}</span>
+                      <span className="ml-1 text-lg">
+                        {sortOrder === 'desc' ? '↓' : '↑'}
+                      </span>
+                    </div>
                   </th>
                   <th className="px-4 py-2 font-semibold uppercase">
                     {t("attached_file")}
@@ -348,8 +375,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                       key={idx}
                       className={clsx(
                         "border-t",
-                        idx === 0 ? "bg-yellow-100" : "bg-white",
-                        "even:bg-gray-50 "
+                        bid.is_winner ? "bg-yellow-200": "bg-white"
                       )}
                     >
                       <td className="px-4 py-2">{idx + 1}</td>
@@ -367,11 +393,11 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                           : "-"}
                       </td>
                       <td className="px-4 text-green-500 py-2">
-                        <p className="text-red-600 font-bold text-lg">
+                        <p className="text-red-600 font-bold text-[14px]">
                           {bid.file ? (
                             <button
                               onClick={() => handleDownloadFileUser(bid.id)}
-                              className="text-blue-600 text-left hover:underline text-[14px] font-medium"
+                              className="text-blue-600 text-left hover:underline"
                             >
                               <p title={bid.file.split("/").pop()}>
                                 {bid.file.split("/").pop().length > 30
@@ -402,7 +428,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                       </td>
                       <td className="px-4 py-2 w-[300px] align-top">
                         <div className="max-h-[80px] overflow-y-auto break-words whitespace-normal pr-1">
-                          {bid.note || "null"}
+                          {bid.note || "N/A"}
                         </div>
                       </td>
                     </tr>

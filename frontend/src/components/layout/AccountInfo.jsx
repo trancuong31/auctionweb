@@ -118,7 +118,7 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
   return (
     <div
       className={
-        "fixed inset-0 flex items-center justify-center z-50 max-sm:pt-[140px] bg-black bg-opacity-50 " +
+        "fixed inset-0 flex items-center justify-center z-[2000] max-sm:pt-[140px] bg-black bg-opacity-50 " +
         (isOpen ? "visible" : "invisible")
       }
       style={{ pointerEvents: isOpen ? "auto" : "none" }}

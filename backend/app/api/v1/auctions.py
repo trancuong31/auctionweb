@@ -52,6 +52,7 @@ class CategoryOut(BaseModel):
 class AuctionOut(BaseModel):
     id: UUID
     title: str
+    auction_type: str
     description: Optional[str]
     starting_price: float
     step_price: float
@@ -83,6 +84,7 @@ class AuctionOut(BaseModel):
 class AuctionDetailOut(BaseModel):
     id: UUID
     title: str
+    auction_type: str
     description: Optional[str]
     starting_price: float
     step_price: float
@@ -108,6 +110,7 @@ class AuctionsWithTotalOut(BaseModel):
 
 class AuctionCreate(BaseModel):
     title: str
+    auction_type: Optional[str] = "BUY"
     title_vi: Optional[str] = None
     title_ko: Optional[str] = None
     description: Optional[str] = None
@@ -145,6 +148,7 @@ class OverviewStats(BaseModel):
 
 class AuctionUpdate(BaseModel):
     title: Optional[str] = None
+    auction_type: Optional[str] = None
     title_vi: Optional[str] = None
     title_ko: Optional[str] = None
     description: Optional[str] = None
@@ -329,6 +333,7 @@ def create_auction(
         # 2. Thêm Auction vào bảng Auction
         auction = Auction(
             title=auction_in.title,
+            auction_type=auction_in.auction_type if auction_in.auction_type in ["BUY", "SELL"] else "BUY",
             category_id=auction_in.category_id,
             title_vi=auction_in.title_vi,
             title_ko=auction_in.title_ko,
@@ -424,7 +429,9 @@ def update_auction(
     new_participants = None
     if "participants" in update_data and update_data["participants"] is not None:
         new_participants = set(update_data.pop("participants"))
-
+    if "auction_type" in update_data:
+        if update_data["auction_type"] not in ["BUY", "SELL"]:
+            raise HTTPException(status_code=400, detail="Invalid auction_type value")
     # set các field còn lại vào Auction
     for key, value in update_data.items():
         setattr(auction, key, value)
@@ -585,6 +592,7 @@ def download_excel_by_auction(request: Request, auction_id: str, db: Session = D
 def search_auctions(
     request: Request,
     category_id: Optional[str] = Query(None, description="Lọc theo danh mục"),
+    auction_type: Optional[str] = Query(None, description="Lọc theo loại đấu giá: BUY hoặc SELL"),
     status: Optional[int] = Query(None, description="0: ongoing, 1: upcoming, 2: ended"),
     title: Optional[str] = Query(None, description="Tìm kiếm theo title auction"),
     sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: title, created_at, start_time, end_time"),
@@ -637,6 +645,9 @@ def search_auctions(
     # Lọc theo danh mục
     if category_id:
         query = query.filter(Auction.category_id == category_id)
+    # Lọc theo loại đấu giá
+    if auction_type in ["BUY", "SELL"]:
+        query = query.filter(Auction.auction_type == auction_type)
     # Sắp xếp
     if sort_by == "title":
         if sort_order.lower() == "asc":
@@ -735,11 +746,16 @@ def search_auctions(
             else:
                 # Nếu chưa có người trúng thầu, lấy giá cao nhất trong số những người đấu giá hợp lệ
                 min_valid_bid = float(auction.starting_price) + float(auction.step_price)
-                highest_valid_bid = db.query(Bid).filter(
-                    Bid.auction_id == auction.id,
-                    Bid.bid_amount >= min_valid_bid
-                ).order_by(Bid.bid_amount.desc()).first()
-                
+                if auction.auction_type == "SELL":
+                    highest_valid_bid = db.query(Bid).filter(
+                        Bid.auction_id == auction.id,
+                        Bid.bid_amount >= min_valid_bid
+                    ).order_by(Bid.bid_amount.desc()).first()
+                elif auction.auction_type == "BUY":
+                    highest_valid_bid = db.query(Bid).filter(
+                        Bid.auction_id == auction.id,
+                        Bid.bid_amount <= min_valid_bid
+                    ).order_by(Bid.bid_amount.asc()).first()
                 try:
                     data["highest_amount"] = float(highest_valid_bid.bid_amount) if highest_valid_bid else None
                 except Exception:
