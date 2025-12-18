@@ -321,7 +321,7 @@ def create_auction(
     - status = 1 (upcoming): start_time > now (sắp diễn ra)
     - status = 2 (ended): end_time <= now (đã kết thúc)
     """
-    now = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh"))
+    now = datetime.now()
     status = 0
     if auction_in.start_time <= now < auction_in.end_time:
         status = 0

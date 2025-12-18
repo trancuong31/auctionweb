@@ -18,6 +18,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
     "grid gap-4",
     "grid-cols-1",
     "sm:grid-cols-2",
+    "justify-items-center",
     "md:grid-cols-3",
     "lg:grid-cols-4",
     numberCol && {
@@ -33,7 +34,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
       ) : (
         arrAuction.map((item) => (
           <button
-            className="max-w-[350px] rounded-bl-[10px] rounded-br-[10px] transition-transform duration-[600] ease-in-out shadow-[0_4px_16px_rgba(0,0,0,0.20)] flex flex-col h-full hover:shadow-[0_8px_32px_rgba(29,180,255,0.4)] group"
+            className="max-w-[350px] w-full rounded-bl-[10px] rounded-br-[10px] transition-transform duration-[600] ease-in-out shadow-[0_4px_16px_rgba(0,0,0,0.20)] flex flex-col h-full hover:shadow-[0_8px_32px_rgba(29,180,255,0.4)] group"
             key={item.id}
             style={{ cursor: "pointer" }}
             onClick={() => clickCard(item.id)}          >            

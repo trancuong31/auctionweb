@@ -6,6 +6,7 @@ from app.enums import UserRole
 
 class User(Base):
     __tablename__ = "users"
+    
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     email = Column(String(255), unique=True, nullable=False)
     username = Column(String(50), nullable=False)
@@ -15,10 +16,9 @@ class User(Base):
     role = Column(Enum(UserRole), nullable=False, default=UserRole.USER)
     created_at = Column(DateTime, nullable=False)
     status = Column(Integer, nullable=False, default=1)
-    # Relationships
+    # # Quan hệ ngược về Bid, Auction, Notification, Order
     # bids = relationship("Bid", back_populates="user")
     bids = relationship("Bid", back_populates="user", cascade="all, delete-orphan")
     notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
     orders = relationship("Order", back_populates="user", cascade="all, delete-orphan")
     participated_auctions = relationship("AuctionParticipant", back_populates="user", cascade="all, delete")
-

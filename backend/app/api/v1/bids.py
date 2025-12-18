@@ -170,8 +170,6 @@ def create_bid(
         db.rollback()
         raise HTTPException(status_code=500, detail="Unexpected error: " + str(e))
 
-
-
 @router.get("/bids/user", response_model=List[BidWithAuctionOut])
 def get_bids_by_user(
     request: Request,
@@ -222,7 +220,6 @@ def download_excel_by_auction(request: Request, id: str, db: Session = Depends(g
         raise HTTPException(status_code=404, detail=_("File not found on server", request))
     
     file_size = os.path.getsize(file_path)
-
     headers = {
         "Content-Length": str(file_size)
     }

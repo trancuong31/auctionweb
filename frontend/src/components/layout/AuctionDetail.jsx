@@ -9,7 +9,7 @@ import imagedefault from "../../assets/images/imagedefault.png";
 import { getOne } from "../../services/api";
 import { toast } from "react-hot-toast";
 import { BASE_URL } from "../../config";
-import { CheckCircle, ClockFading, AlarmClockCheck, ClockIcon, Banknote, ArrowUp01,Boxes, Group, File,Users, User } from "lucide-react";
+import { CheckCircle, ClockFading, AlarmClockCheck, ClockIcon, Banknote, ArrowUp01,Boxes, Group, File,Users, Trophy } from "lucide-react";
 
 const AuctionDetail = () => {
   const { id } = useParams();
@@ -260,7 +260,7 @@ const AuctionDetail = () => {
         <p className="justify-start flex items-center gap-2 mt-2 mb-2">
           <span className="text-gray-500 text-sm">{t("status")}:{" "}</span>
           <span
-          className={`inline-flex items-center gap-1 px-2 py-1 rounded text-white text-sm font-medium
+          className={`inline-flex items-center gap-1 px-2 py-1 rounded text-sm font-medium
             ${auction.status === 0 
               ? "bg-blue-200 text-blue-800 font-semibold" 
               : auction.status === 1 
@@ -361,10 +361,10 @@ const AuctionDetail = () => {
             {/* deadline */}
             <div className="relative p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
               <p className="text-blue-600 text-sm font-medium">{t("deadline")}</p>
-              <p className="text-blue-600 text-2xl font-semibold">
+              <p className="text-red-500 text-2xl font-semibold">
                 {new Date(auction.end_time).toLocaleString("vi-VN")}
               </p>
-              <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+              <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
                 <ClockIcon className="h-10 w-10" />
               </div>
             </div>
@@ -373,7 +373,7 @@ const AuctionDetail = () => {
               {/* starting price */}
               <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
                 <p className="text-blue-600 text-sm font-medium">{t("starting_price")}</p>
-                <p className="text-blue-600 text-lg font-semibold">
+                <p className="text-blue-600 text- xl font-semibold">
                   {auction.starting_price && auction.starting_price !== 0
                     ? auction.starting_price.toLocaleString(
                         auction.currency === "VND" ? "vi-VN" : "en-US",
@@ -384,15 +384,15 @@ const AuctionDetail = () => {
                       )
                     : t("see_file")}
                 </p>
-                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
                   <Banknote className="h-10 w-10" />
                 </div>
               </div>
               {/* step price */}
               <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
                 <p className="text-blue-600 text-sm font-medium">{t("step_price")}</p>
-                <p className="text-blue-600 text-lg font-semibold">
-                  {auction.step_price && auction.step_price !== 0
+                <p className="text-blue-600 text-xl font-semibold">
+                  {auction.step_price !== null && auction.step_price !== undefined
                     ? auction.step_price.toLocaleString(
                         auction.currency === "VND" ? "vi-VN" : "en-US",
                         {
@@ -402,30 +402,30 @@ const AuctionDetail = () => {
                       )
                     : t("see_file")}
                 </p>
-                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
                   <ArrowUp01 className="h-10 w-10" />
                 </div>
               </div>
-            </div>            
+            </div>
             {/* type category & type auction */}
             <div className="flex flex-col sm:flex-row gap-4">
               {/* type category */}
-              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
-                <p className="text-blue-600 text-sm font-medium">{t("type")}</p>
-                <p className="text-blue-600 text-lg">
+              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-gray-100 to-white border border-blue-100">
+                <p className="text-gray-600 text-sm font-medium">{t("type")}</p>
+                <p className="text-gray-600 text-lg font-semibold">
                   {auction.category.category_name || t("unknown")}
                 </p>
-                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
                   <Boxes className="h-10 w-10" />
                 </div>
               </div>
               {/* type auction */}
-              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
-                <p className="text-blue-600 text-sm font-medium">{t("auction_type")}</p>
-                <p className="text-blue-600 text-lg">
+              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-gray-100 to-white border border-blue-100">
+                <p className="text-gray-600 text-sm font-medium">{t("auction_type")}</p>
+                <p className="text-gray-600 text-lg font-semibold">
                   {auction.auction_type === "SELL" ? t("sell") : t("buy")}
                 </p>
-                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
                   <Group className="h-10 w-10" />
                 </div>
               </div>
@@ -433,17 +433,18 @@ const AuctionDetail = () => {
             {/* file excel & number of bids */}
             <div className="flex flex-col sm:flex-row gap-4">
               {/* file excel */}
-              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
-                <p className="text-blue-600 text-sm font-medium">{t("attached_file")}</p>
+              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-gray-100 to-white border border-blue-100">
+                <p className="text-gray-600 text-sm font-medium">{t("attached_file")}</p>
                 <div className="text-blue-600 text-lg font-semibold">
                   {auction.file_exel ? (
                     <button
                       onClick={() => handleDownload(auction.id)}
-                      className="text-blue-600 hover:underline font-medium"
+                      className="text-blue-600 hover:underline font-semibold"
+                      title={auction.file_exel.split("/").pop()}
                     >
                       <p>
-                        {auction.file_exel.split("/").pop().length > 25
-                          ? auction.file_exel.split("/").pop().slice(0, 25) +
+                        {auction.file_exel.split("/").pop().length > 15
+                          ? auction.file_exel.split("/").pop().slice(0, 15) +
                             "...xlsx"
                           : auction.file_exel.split("/").pop()}
                       </p>
@@ -452,14 +453,14 @@ const AuctionDetail = () => {
                     <span className="text-gray-400 italic">{t("no_file")}</span>
                   )}
                 </div>
-                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
                   <File className="h-10 w-10" />
                 </div>
               </div>
               {/* số người tham gia đấu giá */}   
-              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
-                <p className="text-blue-600 text-sm font-medium">{t("participants")}</p>
-                <div className="text-blue-600 text-lg font-semibold">
+              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-gray-100 to-white border border-blue-100">
+                <p className="text-gray-600 text-sm font-medium">{t("participants")}</p>
+                <div className="text-gray-600 text-lg font-semibold">
                   {(auction.status === 0 || auction.status === 2) &&
                   auction.count_users != null ? (
                     <span>
@@ -469,7 +470,7 @@ const AuctionDetail = () => {
                     <span className="text-gray-400 italic">{t("no_data")}</span>
                   )}
                 </div>
-                <div className="absolute bottom-2 right-2 text-blue-300 opacity-20">
+                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
                   <Users className="h-10 w-10" />
                 </div>
               </div>
@@ -492,8 +493,8 @@ const AuctionDetail = () => {
                     </span>
                   )}
                 </div>
-                <div className="absolute bottom-2 right-2 text-green-300 opacity-20">
-                  <User className="h-10 w-10" />
+                <div className="absolute bottom-2 right-2 text-green-500 opacity-20">
+                  <Trophy className="h-10 w-10" />
                 </div>
               </div>
             )}            

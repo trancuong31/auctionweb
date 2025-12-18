@@ -12,4 +12,5 @@ class Category(Base):
     category_name_ko = Column(String, nullable=False)
     description = Column(Text)
     created_at = Column(DateTime, default=False)
+    # Quan hệ ngược về Auctions
     auctions = relationship("Auction", back_populates="category", cascade="all, delete-orphan")

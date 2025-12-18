@@ -3,8 +3,10 @@
   justify-content: space-between;
   padding: 10px 20px;
   border-bottom: 1px solid #ccc;
-  background-color: white;
+  background-color: rgba(255,255,255,0.8);
   position: fixed;
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
   width: 100%;
   z-index: 1111;
   white-space: nowrap;

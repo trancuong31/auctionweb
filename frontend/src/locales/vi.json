@@ -376,5 +376,6 @@
   "sell": "Đăng bán",
   "buy": "Đăng mua",
   "login_des": "Đăng nhập để tham gia đấu giá và quản lý giao dịch",
-  "register_des": "Đăng ký tài khoản để tham gia đấu giá và quản lý giao dịch"
+  "register_des": "Đăng ký tài khoản để tham gia đấu giá và quản lý giao dịch",
+  "selected": "Đã chọn"
 }

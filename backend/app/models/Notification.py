@@ -16,6 +16,6 @@ class Notification(Base):
     message_ko = Column(String, nullable=False)
     is_read = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.now)
-
+    # Quan hệ ngược về User và Auction
     user = relationship("User", back_populates="notifications")
     auction = relationship("Auction", back_populates="notifications", cascade="all, delete")
