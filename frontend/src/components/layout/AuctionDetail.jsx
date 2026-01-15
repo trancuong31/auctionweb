@@ -535,7 +535,7 @@ const AuctionDetail = () => {
                 </div>
               ) : (
                 <div className="flex items-center justify-center py-4">
-                  <div className="px-6 py-3 bg-green-100 rounded-full">
+                  <div className="px-6 py-3 bg-green-100 rounded-xl">
                     <p className="text-green-600 text-xl font-bold">
                       {t("ended") || "Đã kết thúc"}
                     </p>

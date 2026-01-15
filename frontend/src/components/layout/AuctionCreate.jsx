@@ -386,7 +386,7 @@ const CreateAuctionForm = ({
     >
       <div
         className={clsx(
-          "bg-white w-full max-w-4xl max-sm:w-[90%] max-h-[95%] rounded-2xl relative overflow-hidden fade-slide-up",
+          "bg-white w-full max-w-4xl sm:w-[95%] md:w-[90%] max-h-[95%] rounded-2xl relative overflow-hidden fade-slide-up",
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
         )}
         onClick={(e) => e.stopPropagation()}
@@ -414,12 +414,12 @@ const CreateAuctionForm = ({
             </svg>
           </button>
         </div>
-        <div className="mt-[7%] max-sm:mt-[10%] min-[1500px]:mt-[10%] overflow-y-auto scrollbar-thumb-gray-400 p-2 pt-0 max-h-[80vh] pr-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+        <div className="mt-[7%] max-sm:mt-[12%] min-[1500px]:mt-[10%] overflow-y-auto scrollbar-thumb-gray-400 p-3 sm:p-4 pt-0 max-h-[80vh] pr-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4 min-w-[300px] mt-[14px] max-w-[1500px]"
+            className="space-y-4 sm:space-y-5 mt-3 sm:mt-[14px]"
           >
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               {/* title */}
               <div className="flex-[3] relative">                
                 <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
@@ -498,7 +498,7 @@ const CreateAuctionForm = ({
                 )}
               </div>
             </div>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               {/* currency */}
               <div className="flex-1 relative">
                   <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
@@ -508,7 +508,7 @@ const CreateAuctionForm = ({
                     {t("currency")}
                     <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex flex-row gap-6 mt-3 justify-center">
+                  <div className="flex flex-row gap-4 sm:gap-6 mt-2 sm:mt-3 justify-start sm:justify-center">
                     <label className="flex items-center gap-2">
                       <input
                         type="radio"
@@ -645,18 +645,17 @@ const CreateAuctionForm = ({
             </div>
             {/* participants */}
             <div className="relative">
-              <div className="mt-4">
-                <div className="flex items-center justify-between mb-2">
+              <div className="mt-2 sm:mt-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-2">
                   <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
                     <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                     </svg>
                     {t("participants")}<span className="text-red-500">*</span>
                   </label>
-                  
                   {/* Tất cả mọi người */}
-                  <label className="inline-flex items-center gap-2 text-indigo-600 font-medium cursor-pointer select-none">
-                    <p className="text-gray-600">{t("selected")}: {selectedParticipantIds.length}</p>
+                  <label className="inline-flex items-center gap-2 text-indigo-600 font-medium cursor-pointer select-none text-sm">
+                    <p className="text-gray-600 text-xs sm:text-sm">{t("selected")}: {selectedParticipantIds.length}</p>
                     <Controller
                       name="participants"
                       control={control}
@@ -699,7 +698,7 @@ const CreateAuctionForm = ({
                     </div>
                   </div>
                 {/* Hộp danh sách người dùng */}
-                <div className="rounded-xl border border-gray-300 bg-white overflow-y-auto max-h-60">
+                <div className="rounded-xl border border-gray-300 bg-white overflow-y-auto max-h-40 sm:max-h-60">
                   <ul className="divide-y divide-gray-300">
                     {filteredParticipants.length > 0 ? (
                       filteredParticipants.map(u => {
@@ -911,7 +910,7 @@ const CreateAuctionForm = ({
                     </div>
                     {/* Image Preview Area */}
                     <div
-                      className="grid grid-cols-6 gap-2 ml-1"
+                      className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 ml-1"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {[...(imgFiles || [])].map((item, index) => {

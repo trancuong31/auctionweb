@@ -9,6 +9,7 @@ import NotificationDropdown from "./NotificationDropdown";
 import AuctionHistory from "./AuctionHistory";
 import { useTranslation } from "react-i18next";
 import AccountInfo from "./AccountInfo";
+import logo from "../../assets/images/logo.png";
 dayjs.extend(relativeTime);
 
 function NavBar() {
@@ -111,7 +112,7 @@ function NavBar() {
       {mobileMenuOpen && <div className="mobile-menu-backdrop" onClick={closeMobileMenu}></div>}
       <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="mobile-menu-header">
-          <img src="/src/assets/images/logo.png" alt="Logo" className="mobile-menu-logo" />
+          <img src={logo} alt="Logo" className="mobile-menu-logo" />
           <button className="mobile-menu-close" onClick={closeMobileMenu}>×</button>
         </div>
         <div className="mobile-menu-nav">
