@@ -9,7 +9,7 @@ import imagedefault from "../../assets/images/imagedefault.png";
 import { getOne } from "../../services/api";
 import { toast } from "react-hot-toast";
 import { BASE_URL } from "../../config";
-import { CheckCircle, ClockFading, AlarmClockCheck, ClockIcon, Banknote, ArrowUp01,Boxes, Group, File,Users, Trophy } from "lucide-react";
+import { CheckCircle, ClockFading, AlarmClockCheck, ClockIcon, Banknote, ArrowUp01, Boxes, Group, File, Users, Trophy } from "lucide-react";
 
 const AuctionDetail = () => {
   const { id } = useParams();
@@ -20,6 +20,48 @@ const AuctionDetail = () => {
   const [selectImg, setselectImg] = useState(1);
   const sliderRef = useRef(null);
   const intervalRef = useRef(null);
+  
+  // Countdown state
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [prevCountdown, setPrevCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [isExpired, setIsExpired] = useState(false);
+  const targetTime =
+    auction?.status === 1
+      ? auction?.start_time
+      : auction?.end_time;
+
+  // Countdown logic
+  useEffect(() => {
+    if (!targetTime) return;
+    
+    const calculateTimeLeft = () => {
+      const now = new Date().getTime();
+      const distance = new Date(targetTime).getTime() - now;
+      
+      if (distance <= 0) {
+        setIsExpired(true);
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      }
+      
+      return {
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((distance / (1000 * 60)) % 60),
+        seconds: Math.floor((distance / 1000) % 60),
+      };
+    };
+
+    setCountdown(calculateTimeLeft());
+    
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        setPrevCountdown(prev);
+        return calculateTimeLeft();
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [targetTime]);
 
   useEffect(() => {
     getAuction();
@@ -253,7 +295,7 @@ const AuctionDetail = () => {
         onClose={() => setIsOpen(false)}
       />
       <AnimatedContent>
-        <h1 className="text-2xl mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] sm:w-[100%] lg:w-[50%] font-bold text-left text-black-300 drop-shadow break-words">
+        <h1 className="text-2xl mt-[130px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] sm:w-[100%] lg:w-[50%] font-bold text-left text-black-300 drop-shadow break-words">
           {auction.title}
         </h1>
         {/* status */}
@@ -359,14 +401,147 @@ const AuctionDetail = () => {
           {/* Auction Info */}
           <div className="flex-1 text-xl w-full font-medium space-y-6 text-gray-800">
             {/* deadline */}
-            <div className="relative p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
-              <p className="text-blue-600 text-sm font-medium">{t("deadline")}</p>
-              <p className="text-red-500 text-2xl font-semibold">
-                {new Date(auction.end_time).toLocaleString("vi-VN")}
-              </p>
-              <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
-                <ClockIcon className="h-10 w-10" />
-              </div>
+            <div className="relative rounded-2xl shadow-md bg-gradient-to-r from-gray-50 to-white border border-gray-100 overflow-hidden">
+              <p className="text-blue-600 p-[16px] pb-0 text-sm font-medium">{t("deadline")}</p>
+              
+              {/* Inline CSS for animations */}
+              <style>{`
+                @keyframes slideInFromTop {
+                  0% {
+                    transform: translateY(-100%);
+                    opacity: 0;
+                  }
+                  100% {
+                    transform: translateY(0);
+                    opacity: 1;
+                  }
+                }
+                @keyframes slideOutToBottom {
+                  0% {
+                    transform: translateY(0);
+                    opacity: 1;
+                  }
+                  100% {
+                    transform: translateY(100%);
+                    opacity: 0;
+                  }
+                }
+                .flip-digit-container {
+                  position: relative;
+                  display: inline-flex;
+                  overflow: hidden;
+                  width: 0.65em;
+                  height: 1.3em;
+                  justify-content: center;
+                }
+                .digit-new {
+                  position: absolute;
+                  animation: slideInFromTop 0.5s ease-out forwards;
+                }
+                .digit-old {
+                  position: absolute;
+                  animation: slideOutToBottom 0.5s ease-out forwards;
+                }
+                .countdown-box {
+                  transition: all 0.3s ease;
+                  overflow: hidden;
+                }
+              `}</style>
+              
+              {/* Custom Countdown Timer */}
+              {auction.status !== 2 && !isExpired ? (
+                <div className="flex items-center justify-center gap-3 sm:gap-4 pb-4 pt-2">
+                  {/* Days */}
+                  <div className="flex flex-col items-center">
+                    <div className="countdown-box bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-3 min-w-[60px] sm:min-w-[70px] flex justify-center">
+                      <span className="flip-digit-container text-2xl sm:text-3xl font-bold text-blue-600">
+                        {Math.floor(prevCountdown.days / 10) !== Math.floor(countdown.days / 10) && (
+                          <span key={`days-tens-old-${Math.floor(prevCountdown.days / 10)}`} className="digit-old">{Math.floor(prevCountdown.days / 10)}</span>
+                        )}
+                        <span key={`days-tens-${Math.floor(countdown.days / 10)}`} className={Math.floor(prevCountdown.days / 10) !== Math.floor(countdown.days / 10) ? "digit-new" : ""}>{Math.floor(countdown.days / 10)}</span>
+                      </span>
+                      <span className="flip-digit-container text-2xl sm:text-3xl font-bold text-blue-600">
+                        {prevCountdown.days % 10 !== countdown.days % 10 && (
+                          <span key={`days-ones-old-${prevCountdown.days % 10}`} className="digit-old">{prevCountdown.days % 10}</span>
+                        )}
+                        <span key={`days-ones-${countdown.days % 10}`} className={prevCountdown.days % 10 !== countdown.days % 10 ? "digit-new" : ""}>{countdown.days % 10}</span>
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-500 mt-2 font-medium">{t("days") || "Ngày"}</span>
+                  </div>
+
+                  <span className="text-2xl text-gray-300 font-light self-center mb-5">:</span>
+
+                  {/* Hours */}
+                  <div className="flex flex-col items-center">
+                    <div className="countdown-box bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-3 min-w-[60px] sm:min-w-[70px] flex justify-center">
+                      <span className="flip-digit-container text-2xl sm:text-3xl font-bold text-blue-600">
+                        {Math.floor(prevCountdown.hours / 10) !== Math.floor(countdown.hours / 10) && (
+                          <span key={`hours-tens-old-${Math.floor(prevCountdown.hours / 10)}`} className="digit-old">{Math.floor(prevCountdown.hours / 10)}</span>
+                        )}
+                        <span key={`hours-tens-${Math.floor(countdown.hours / 10)}`} className={Math.floor(prevCountdown.hours / 10) !== Math.floor(countdown.hours / 10) ? "digit-new" : ""}>{Math.floor(countdown.hours / 10)}</span>
+                      </span>
+                      <span className="flip-digit-container text-2xl sm:text-3xl font-bold text-blue-600">
+                        {prevCountdown.hours % 10 !== countdown.hours % 10 && (
+                          <span key={`hours-ones-old-${prevCountdown.hours % 10}`} className="digit-old">{prevCountdown.hours % 10}</span>
+                        )}
+                        <span key={`hours-ones-${countdown.hours % 10}`} className={prevCountdown.hours % 10 !== countdown.hours % 10 ? "digit-new" : ""}>{countdown.hours % 10}</span>
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-500 mt-2 font-medium">{t("hours") || "Giờ"}</span>
+                  </div>
+
+                  <span className="text-2xl text-gray-300 font-light self-center mb-5">:</span>
+
+                  {/* Minutes */}
+                  <div className="flex flex-col items-center">
+                    <div className="countdown-box bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-3 min-w-[60px] sm:min-w-[70px] flex justify-center">
+                      <span className="flip-digit-container text-2xl sm:text-3xl font-bold text-blue-600">
+                        {Math.floor(prevCountdown.minutes / 10) !== Math.floor(countdown.minutes / 10) && (
+                          <span key={`minutes-tens-old-${Math.floor(prevCountdown.minutes / 10)}`} className="digit-old">{Math.floor(prevCountdown.minutes / 10)}</span>
+                        )}
+                        <span key={`minutes-tens-${Math.floor(countdown.minutes / 10)}`} className={Math.floor(prevCountdown.minutes / 10) !== Math.floor(countdown.minutes / 10) ? "digit-new" : ""}>{Math.floor(countdown.minutes / 10)}</span>
+                      </span>
+                      <span className="flip-digit-container text-2xl sm:text-3xl font-bold text-blue-600">
+                        {prevCountdown.minutes % 10 !== countdown.minutes % 10 && (
+                          <span key={`minutes-ones-old-${prevCountdown.minutes % 10}`} className="digit-old">{prevCountdown.minutes % 10}</span>
+                        )}
+                        <span key={`minutes-ones-${countdown.minutes % 10}`} className={prevCountdown.minutes % 10 !== countdown.minutes % 10 ? "digit-new" : ""}>{countdown.minutes % 10}</span>
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-500 mt-2 font-medium">{t("minutes") || "Phút"}</span>
+                  </div>
+
+                  <span className="text-2xl text-gray-300 font-light self-center mb-5">:</span>
+
+                  {/* Seconds */}
+                  <div className="flex flex-col items-center">
+                    <div className="countdown-box rounded-xl shadow-sm border border-blue-200 px-3 py-3 min-w-[60px] sm:min-w-[70px] flex justify-center">
+                      <span className="flip-digit-container text-2xl sm:text-3xl font-bold text-blue-600">
+                        {Math.floor(prevCountdown.seconds / 10) !== Math.floor(countdown.seconds / 10) && (
+                          <span key={`seconds-tens-old-${Math.floor(prevCountdown.seconds / 10)}`} className="digit-old">{Math.floor(prevCountdown.seconds / 10)}</span>
+                        )}
+                        <span key={`seconds-tens-${Math.floor(countdown.seconds / 10)}`} className={Math.floor(prevCountdown.seconds / 10) !== Math.floor(countdown.seconds / 10) ? "digit-new" : ""}>{Math.floor(countdown.seconds / 10)}</span>
+                      </span>
+                      <span className="flip-digit-container text-2xl sm:text-3xl font-bold text-blue-600">
+                        {prevCountdown.seconds % 10 !== countdown.seconds % 10 && (
+                          <span key={`seconds-ones-old-${prevCountdown.seconds % 10}`} className="digit-old">{prevCountdown.seconds % 10}</span>
+                        )}
+                        <span key={`seconds-ones-${countdown.seconds % 10}`} className={prevCountdown.seconds % 10 !== countdown.seconds % 10 ? "digit-new" : ""}>{countdown.seconds % 10}</span>
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-500 mt-2 font-medium">{t("seconds") || "Giây"}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center py-4">
+                  <div className="px-6 py-3 bg-green-100 rounded-full">
+                    <p className="text-green-600 text-xl font-bold">
+                      {t("ended") || "Đã kết thúc"}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
             {/* starting price & step price */}
             <div className="flex flex-col sm:flex-row gap-4">

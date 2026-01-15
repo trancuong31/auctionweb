@@ -488,7 +488,7 @@ const OverViewAdmin = () => {
       <AnimatedContent>
         {/* <!-- OVERVIEW --> */}
 
-        <div className="text-white rounded-lg mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] grid sm:grid-cols-3 gap-6 mb-6">
+        <div className="text-white rounded-lg mt-[160px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] grid sm:grid-cols-3 gap-6 mb-6">
           {/* Total Users */}
           <div className="flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
             <div className="flex-1 pr-3 text-left">

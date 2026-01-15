@@ -17,9 +17,20 @@ function NavBar() {
   const [showNotification, setShowNotification] = useState(false);
   const [showAccountInfo, setShowAccountInfo] = useState(false);
   const [showAuctionHistory, setShowAuctionHistory] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
   const bellRef = useRef();
   const dropdownRef = useRef();
   const { t, i18n } = useTranslation();
+
+  // Detect mobile screen
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 480);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const closeMobileMenu = () => setMobileMenuOpen(false);
 
   const handleLogout = () => {
     logout();
@@ -60,6 +71,104 @@ function NavBar() {
 
   return (
     <>
+      {/* Mobile Header Bar */}
+      <div className="mobile-header">
+        <button 
+          className="hamburger-btn"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+        </button>
+        <div className="mobile-header-right">
+          {user ? (
+            <>
+              {isMobile && <NotificationDropdown triggerRef={bellRef} />}
+              <span
+                className="nav-link"
+                onClick={() => setShowAccountInfo(true)}
+                style={{ cursor: "pointer" }}
+              >
+                {t("account_info")}
+              </span>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" className="mobile-auth-btn mobile-auth-filled">
+                {t("login", "Đăng nhập")}
+              </NavLink>
+              <NavLink to="/register" className="mobile-auth-btn mobile-auth-outline">
+                {t("register", "Đăng ký")}
+              </NavLink>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && <div className="mobile-menu-backdrop" onClick={closeMobileMenu}></div>}
+      <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+        <div className="mobile-menu-header">
+          <img src="/src/assets/images/logo.png" alt="Logo" className="mobile-menu-logo" />
+          <button className="mobile-menu-close" onClick={closeMobileMenu}>×</button>
+        </div>
+        <div className="mobile-menu-nav">
+          <NavLink to="/" className="mobile-nav-link" onClick={closeMobileMenu}>
+            {t("home", "Trang chủ")}
+          </NavLink>
+          <NavLink to="/guide" className="mobile-nav-link" onClick={closeMobileMenu}>
+            {t("tutorial", "Hướng dẫn")}
+          </NavLink>
+          <NavLink to="/contact" className="mobile-nav-link" onClick={closeMobileMenu}>
+            {t("contact", "Liên hệ")}
+          </NavLink>
+          <NavLink to="/about" className="mobile-nav-link" onClick={closeMobileMenu}>
+            {t("information", "Giới thiệu")}
+          </NavLink>
+          <NavLink to="/auctions/search" className="mobile-nav-link" onClick={closeMobileMenu}>
+            {t("auction", "Đấu giá")}
+          </NavLink>
+          <NavLink to="/history" className="mobile-nav-link" onClick={closeMobileMenu}>
+            {t("history", "Lịch sử")}
+          </NavLink>
+          <NavLink to="/policy" className="mobile-nav-link" onClick={closeMobileMenu}>
+            {t("rule", "Quy định")}
+          </NavLink>
+          {(user?.role === "admin" || user?.role === "super_admin") && (
+            <NavLink to="/admin" className="mobile-nav-link" onClick={closeMobileMenu}>
+              {t("dashboard", "Dashboard")}
+            </NavLink>
+          )}
+          {user && (
+            <>
+              <span
+                className="mobile-nav-link"
+                onClick={() => { setShowAccountInfo(true); closeMobileMenu(); }}
+              >
+                {t("account_info", "Thông tin tài khoản")}
+              </span>
+              {user?.role === "user" && (
+                <span
+                  className="mobile-nav-link"
+                  onClick={() => { setShowAuctionHistory(true); closeMobileMenu(); }}
+                >
+                  {t("auction_history", "Lịch sử đấu giá")}
+                </span>
+              )}
+              <span
+                className="mobile-nav-link"
+                onClick={() => { handleLogout(); closeMobileMenu(); }}
+              >
+                {t("logout", "Đăng xuất")}
+              </span>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Desktop Nav - hidden on mobile */}
       <nav className="nav-wrapper">
         <div className="nav-left">
           <NavLink to="/" className="nav-link">
@@ -92,7 +201,8 @@ function NavBar() {
         <div className="nav-right">
           {user ? (
             <>
-              <NotificationDropdown triggerRef={bellRef} />
+              {/* Bell icon for desktop - only render when not mobile */}
+              {!isMobile && <NotificationDropdown triggerRef={bellRef} />}
               <span
                 className="user-greeting nav-link"
                 onClick={() => setShowAccountInfo(true)}
@@ -112,7 +222,6 @@ function NavBar() {
                   className="nav-link"
                   onClick={() => setShowAuctionHistory(true)}
                   style={{ cursor: "pointer" }}
-                  // tabIndex={0}
                   onKeyDown={(e) =>
                     (e.key === "Enter" || e.key === " ") &&
                     setShowAuctionHistory(true)

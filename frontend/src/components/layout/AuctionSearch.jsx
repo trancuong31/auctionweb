@@ -120,7 +120,7 @@ const AuctionSearch = () => {
 
   return (
     <AnimatedContent>
-      <div className="shadow-[0_4px_24px_rgba(0,0,0,0.30)] mt-[250px] sm:mt-[160px] md:mt-[190px] lg:mt-[150px] xl:mt-[100px] p-4 text-xs rounded-xl">
+      <div className="shadow-[0_4px_24px_rgba(0,0,0,0.30)] sm:mt-[160px] md:mt-[190px] mt-[160px] lg:mt-[150px] xl:mt-[100px] p-4 text-xs rounded-xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4 mb-4 items-end">
           {/* Search input */}
           <div className="relative col-span-1">

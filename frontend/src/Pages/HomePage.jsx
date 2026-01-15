@@ -8,7 +8,7 @@ import AnimatedText from "../common/AnimatedText";
 function HomePage() {
   const { t } = useTranslation();
   return (
-    <main className="shadow-[0_4px_24px_rgba(0,0,0,0.30)] mt-[260px] p-4 sm:mt-[160px] lg:mt-[100px] md:mt-[170px] rounded-xl">
+    <main className="shadow-[0_4px_24px_rgba(0,0,0,0.30)] mt-[160px] p-4 sm:mt-[160px] lg:mt-[100px] md:mt-[170px] rounded-xl">
       <section className="relative w-full  h-[630px] flex items-center justify-center text-center mb-[35px]">
       {/* Background Image */}
       <img

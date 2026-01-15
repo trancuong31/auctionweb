@@ -17,7 +17,7 @@ function Rule() {
 
   return (
     <AnimatedContent>
-      <main className="rule-content mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]" translate="yes">
+      <main className="rule-content mt-[160px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]" translate="yes">
         <div
           style={{
             background: "#fff",

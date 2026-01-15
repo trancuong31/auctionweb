@@ -16,7 +16,7 @@ function Tutorial() {
 
   return (
     <AnimatedContent>
-      <main className="tutorial-content mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
+      <main className="tutorial-content mt-[160px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
         <div
           style={{
             background: "#fff",
