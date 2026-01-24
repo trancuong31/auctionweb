@@ -376,5 +376,17 @@
   "sell": "Đăng bán",
   "buy": "Đăng mua",
   "login_des": "Đăng nhập để tham gia đấu giá và quản lý giao dịch",
-  "register_des": "Đăng ký tài khoản để tham gia đấu giá và quản lý giao dịch"
+  "register_des": "Đăng ký tài khoản để tham gia đấu giá và quản lý giao dịch",
+  "basic_info": "Thông tin cơ bản",
+  "pricing_info": "Thông tin giá",
+  "time_schedule": "Thời gian",
+  "files_images": "Tệp & Hình ảnh",
+  "selected": "đã chọn",
+  "optional": "Tùy chọn",
+  "minimum_2_images": "Tối thiểu 2 ảnh",
+  "search_by_name_email": "Tìm theo tên hoặc email...",
+  "enter_product_name": "Nhập tên sản phẩm đấu giá...",
+  "product_description_detail": "Mô tả chi tiết về sản phẩm...",
+  "processing": "Đang xử lý...",
+  "delete_image": "Xóa ảnh"
 }

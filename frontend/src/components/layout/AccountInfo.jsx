@@ -7,7 +7,9 @@ import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
 export default function UpdateAccountModal({ isOpen, onClose }) {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { t, i18n } = useTranslation();
@@ -76,6 +78,10 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
       })
       .catch((err) => {
         toast.error(err.response?.data?.detail || err.message || "Error load account info");
+        if (err.response?.status === 401) {
+          navigate("/login");
+          return;
+        }
       })
       .finally(() => setLoading(false));
   }, [isOpen, user?.id]);

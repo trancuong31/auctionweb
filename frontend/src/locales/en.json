@@ -375,5 +375,17 @@
   "sell": "SELL",
   "buy": "BUY",
   "login_des": "Log in to participate in auctions and manage transactions",
-  "register_des": "Register an account to participate in auctions and manage transactions"
+  "register_des": "Register an account to participate in auctions and manage transactions",
+  "basic_info": "Basic Information",
+  "pricing_info": "Pricing Information",
+  "time_schedule": "Time Schedule",
+  "files_images": "Files & Images",
+  "selected": "selected",
+  "optional": "Optional",
+  "minimum_2_images": "Minimum 2 images",
+  "search_by_name_email": "Search by name or email...",
+  "enter_product_name": "Enter product name for auction...",
+  "product_description_detail": "Product detailed description...",
+  "processing": "Processing...",
+  "delete_image": "Delete image"
 }

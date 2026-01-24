@@ -676,7 +676,7 @@ const AuctionDetail = () => {
           </div>
         </div>
         {/* Mô tả */}
-        <div className="w-full p-6 rounded-lg text-base text-justify leading-relaxed text-gray-700">
+        <div className="w-full pt-4 rounded-lg text-base text-justify leading-relaxed text-gray-700">
           <hr className=" border-gray-600" />
           {auction.description && auction.description.trim() !== "" ? (
             <div>

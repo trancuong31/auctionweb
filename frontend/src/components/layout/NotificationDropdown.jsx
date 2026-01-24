@@ -5,9 +5,11 @@ import axiosClient from "../../services/axiosClient";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 dayjs.extend(relativeTime);
 
 const NotificationDropdown = ({ triggerRef }) => {
+  const navigate = useNavigate();
   const dropdownRef = useRef();
   const [notifications, setNotifications] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -27,7 +29,8 @@ const NotificationDropdown = ({ triggerRef }) => {
       axiosClient
         .get("/notifications")
         .then((res) => setNotifications(res.data || []))
-        .catch(() => setNotifications([]));
+        .catch(() =>
+           setNotifications([]));
     };
     fetchNotifications();
     const intervalId = setInterval(fetchNotifications, 120000);

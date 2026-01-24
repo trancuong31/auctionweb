@@ -357,5 +357,17 @@
   "sell": "판매 등록",
   "buy": "구매 등록",
   "login_des": "로그인하여 경매에 참여하고 거래를 관리하세요",
-  "register_des": "계정을 등록하여 경매에 참여하고 거래를 관리하세요"
+  "register_des": "계정을 등록하여 경매에 참여하고 거래를 관리하세요",
+  "basic_info": "기본 정보",
+  "pricing_info": "가격 정보",
+  "time_schedule": "일정",
+  "files_images": "파일 & 이미지",
+  "selected": "선택됨",
+  "optional": "선택 사항",
+  "minimum_2_images": "최소 2개 이미지",
+  "search_by_name_email": "이름 또는 이메일로 검색...",
+  "enter_product_name": "경매 상품명 입력...",
+  "product_description_detail": "상품 상세 설명...",
+  "processing": "처리 중...",
+  "delete_image": "이미지 삭제"
 }

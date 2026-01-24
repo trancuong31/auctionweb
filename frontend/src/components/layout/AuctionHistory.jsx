@@ -25,11 +25,16 @@ const AuctionHistory = ({ isOpen, onClose }) => {
     axiosClient
       .get("/bids/user")
       .then((res) => setAuctionHistory(res.data))
-      .catch((err) =>
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          navigate("/login");
+          return;
+        }
         setError(
           "Lỗi khi tải dữ liệu lịch sử đấu giá" +
             (err.response?.data?.detail || "")
-        )
+        );
+      }        
       )
       .finally(() => setLoading(false));
   }, [isOpen]);
