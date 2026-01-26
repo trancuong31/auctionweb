@@ -4,9 +4,11 @@ import CountdownTimer from "../../common/CountDownTime";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { BASE_URL } from "../../config";
+import { useTetMode } from "../../contexts/TetModeContext";
 
 const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
   const { t, i18n } = useTranslation();
+  const { tetMode } = useTetMode();
 
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
@@ -25,7 +27,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
   return (
     <div className={gridClass}>
       {!arrAuction || arrAuction.length === 0 ? (
-        <p className="text-gray-600 col-span-full text-center">
+        <p className={`col-span-full text-center ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
           {t("no_data")}
         </p>
       ) : (
@@ -36,17 +38,19 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
             tabIndex={0}
             onClick={() => clickCard(item.id)}
             onKeyDown={(e) => e.key === "Enter" && clickCard(item.id)}
-            className="
+            className={`
               w-full max-w-[350px] mx-auto
               rounded-bl-[10px] rounded-br-[10px]
-              transition-transform duration-[600] ease-in-out
+              transition-all duration-300 ease-in-out
               shadow-[0_4px_16px_rgba(0,0,0,0.20)]
               flex flex-col h-full
-              hover:shadow-[0_8px_32px_rgba(29,180,255,0.4)]
               group
               cursor-pointer
-              bg-transparent
-            "
+              ${tetMode 
+                ? 'bg-[#242526] hover:shadow-[0_8px_32px_rgba(220,38,38,0.4)] border border-[#3a3b3c]' 
+                : 'bg-transparent hover:shadow-[0_8px_32px_rgba(29,180,255,0.4)]'
+              }
+            `}
           >
             {/* IMAGE (GIỮ NGUYÊN) */}
             <div className="h-[200px] flex items-center justify-center relative overflow-hidden">
@@ -68,15 +72,15 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   (item.image_url?.length
                     ? "w-full h-full object-cover"
                     : "img-no") +
-                  " transition-transform duration-500 ease-in-out border-4 border-white will-change-transform group-hover:scale-110"
+                  ` transition-transform duration-500 ease-in-out border-4 will-change-transform group-hover:scale-110 ${tetMode ? 'border-[#3a3b3c]' : 'border-white'}`
                 }
               />
             </div>
 
             {/* CONTENT (CHỈ ĐỔI LAYOUT) */}
-            <div className="bg-white p-3 text-sm leading-[1.5] flex-grow text-left">
+            <div className={`p-3 text-sm leading-[1.5] flex-grow text-left rounded-b-[10px] ${tetMode ? 'bg-[#242526]' : 'bg-white'}`}>
               <p className="flex justify-between relative overflow-visible">
-                <span className="relative break-words w-0 flex-1 min-w-0 text-left text-[16px] font-[600] group/title">
+                <span className={`relative break-words w-0 flex-1 min-w-0 text-left text-[16px] font-[600] group/title ${tetMode ? 'text-white' : ''}`}>
                   {item.title.length > 70
                     ? item.title.slice(0, 70) + "..."
                     : item.title}
@@ -103,8 +107,8 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
 
               {/* GRID INFO – FIX iOS */}
               <div className="grid grid-cols-[auto_1fr] gap-y-1">
-                <span className="text-gray-500">{t("starting_price")}:</span>
-                <span className="text-right font-[600]">
+                <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("starting_price")}:</span>
+                <span className={`text-right font-[600] ${tetMode ? 'text-white' : ''}`}>
                   {item.starting_price
                     ? item.starting_price.toLocaleString(
                         item.currency === "VND" ? "vi-VN" : "en-US",
@@ -116,8 +120,8 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                     : t("see_file")}
                 </span>
 
-                <span className="text-gray-500">{t("step_price")}:</span>
-                <span className="text-right font-[600]">
+                <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("step_price")}:</span>
+                <span className={`text-right font-[600] ${tetMode ? 'text-white' : ''}`}>
                   {item.step_price?.toLocaleString(
                     item.currency === "VND" ? "vi-VN" : "en-US",
                     {
@@ -127,8 +131,8 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   )}
                 </span>
 
-                <span className="text-gray-500">{t("start_time")}:</span>
-                <span className="text-right font-[600]">
+                <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("start_time")}:</span>
+                <span className={`text-right font-[600] ${tetMode ? 'text-white' : ''}`}>
                   {new Date(item.start_time).toLocaleString("en-US", {
                     year: "numeric",
                     month: "2-digit",
@@ -140,8 +144,8 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   })}
                 </span>
 
-                <span className="text-gray-500">{t("end_time")}:</span>
-                <span className="text-right font-[600]">
+                <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("end_time")}:</span>
+                <span className={`text-right font-[600] ${tetMode ? 'text-white' : ''}`}>
                   {new Date(item.end_time).toLocaleString("en-US", {
                     year: "numeric",
                     month: "2-digit",
@@ -153,19 +157,19 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                   })}
                 </span>
 
-                <span className="text-gray-500">{t("type")}:</span>
-                <span className="text-right">
+                <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("type")}:</span>
+                <span className={`text-right ${tetMode ? 'text-white' : ''}`}>
                   {item.category?.category_name || t("unknown")}
                 </span>
 
                 {item.status === 2 && (
                   <>
-                    <span className="font-semibold text-gray-500">
+                    <span className={`font-semibold ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       {t("winning_bid_price")}:
                     </span>
                     {item.highest_amount !== null &&
                     item.winner_info !== null ? (
-                      <span className="text-red-500 font-bold text-right">
+                      <span className={`font-bold text-right ${tetMode ? 'text-yellow-400' : 'text-red-500'}`}>
                         {item.highest_amount?.toLocaleString(
                           item.currency === "VND" ? "vi-VN" : "en-US",
                           {
@@ -175,7 +179,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                         )}
                       </span>
                     ) : (
-                      <span className="text-red-500 font-bold text-right">
+                      <span className={`font-bold text-right ${tetMode ? 'text-yellow-400' : 'text-red-500'}`}>
                         {t("unsuccessful")}
                       </span>
                     )}

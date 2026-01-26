@@ -18,6 +18,26 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Tet Mode */
+.header-container.tet-header {
+  background: #18191a !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  border-bottom: 1px solid rgba(203, 5, 2, 0.5) !important;
+}
+
+.header-container.tet-header::before {
+  background: none !important;
+}
+
+.header-container.tet-header::after {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(203, 5, 2, 0.8) 20%, 
+    rgba(255, 215, 0, 1) 50%, 
+    rgba(203, 5, 2, 0.8) 80%, 
+    transparent 100%) !important;
+}
+
 .header-container::before {
   content: '';
   position: absolute;

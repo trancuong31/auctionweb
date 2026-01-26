@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import "./NavBar.css";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTetMode } from "../../contexts/TetModeContext";
 import { useState, useRef, useEffect } from "react";
 import axiosClient from "../../services/axiosClient";
 import dayjs from "dayjs";
@@ -10,10 +11,12 @@ import AuctionHistory from "./AuctionHistory";
 import { useTranslation } from "react-i18next";
 import AccountInfo from "./AccountInfo";
 import logo from "../../assets/images/logo.png";
+import tetIconCoin from "../../assets/images/tet-icon-coin.svg";
 dayjs.extend(relativeTime);
 
 function NavBar() {
   const { user, logout } = useAuth();
+  const { tetMode, toggleTetMode } = useTetMode();
   const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState(false);
   const [showAccountInfo, setShowAccountInfo] = useState(false);
@@ -170,42 +173,51 @@ function NavBar() {
       </div>
 
       {/* Desktop Nav - hidden on mobile */}
-      <nav className="nav-wrapper">
+      <nav className={`nav-wrapper transition-all duration-300 ${tetMode ? 'tet-mode-nav' : ''}`} style={tetMode ? { backgroundColor: '#CB0502' } : {}}>
         <div className="nav-left">
-          <NavLink to="/" className="nav-link">
+          <NavLink to="/" className={`nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}>
             {t("home", "Home")}
           </NavLink>
-          <NavLink to="/auctions/search" className="nav-link">
+          <NavLink to="/auctions/search" className={`nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}>
             {t("auction", "Auction")}
           </NavLink>
-          <NavLink to="/about" className="nav-link">
+          <NavLink to="/about" className={`nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}>
             {t("information", "Information")}
           </NavLink>
-          <NavLink to="/history" className="nav-link">
+          <NavLink to="/history" className={`nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}>
             {t("history", "History")}
           </NavLink>
-          <NavLink to="/guide" className="nav-link">
+          <NavLink to="/guide" className={`nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}>
             {t("tutorial", "Tutorial")}
           </NavLink>
-          <NavLink to="/contact" className="nav-link">
+          <NavLink to="/contact" className={`nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}>
             {t("contact", "Contact")}
           </NavLink>
-          <NavLink to="/policy" className="nav-link">
+          <NavLink to="/policy" className={`nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}>
             {t("rule", "Rule")}
           </NavLink>
           {(user?.role === "admin" || user?.role === "super_admin") && (
-            <NavLink to="/admin" className="nav-link">
+            <NavLink to="/admin" className={`nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}>
               {t("dashboard", "Dashboard")}
             </NavLink>
           )}
         </div>
         <div className="nav-right">
+          {/* Tet Mode Switch */}
+          <button
+            onClick={toggleTetMode}
+            className={`tet-mode-switch flex items-center gap-1.5 px-3 py-1 rounded-full transition-all duration-300 ${tetMode ? 'bg-red-600 text-yellow-300' : 'bg-gray-400 text-gray-300'}`}
+            title={tetMode ? t("tet_mode_turn_off") : t("tet_mode_turn_on")}
+          >
+            <img src={tetIconCoin} alt="Tet" className={`w-3 h-3 transition-transform duration-300 ${tetMode ? 'rotate-0' : 'rotate-180 grayscale'}`} />
+            <span className="text-xs font-medium hidden sm:inline">{tetMode ? t("tet_mode_on") : t("tet_mode_off")}</span>
+          </button>
           {user ? (
             <>
               {/* Bell icon for desktop - only render when not mobile */}
               {!isMobile && <NotificationDropdown triggerRef={bellRef} />}
               <span
-                className="user-greeting nav-link"
+                className={`user-greeting nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}
                 onClick={() => setShowAccountInfo(true)}
                 style={{ cursor: "pointer" }}
                 onKeyDown={(e) =>
@@ -220,7 +232,7 @@ function NavBar() {
 
               {user?.role === "user" && (
                 <span
-                  className="nav-link"
+                  className={`nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}
                   onClick={() => setShowAuctionHistory(true)}
                   style={{ cursor: "pointer" }}
                   onKeyDown={(e) =>
@@ -234,16 +246,16 @@ function NavBar() {
                 </span>
               )}
 
-              <button className="nav-link button-link" onClick={handleLogout}>
+              <button className={`nav-link button-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`} onClick={handleLogout}>
                 {t("logout", "Logout")}
               </button>
             </>
           ) : (
             <>
-              <NavLink to="/login" className="nav-link">
+              <NavLink to="/login" className={`nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}>
                 {t("login", "Đăng nhập")}
               </NavLink>
-              <NavLink to="/register" className="nav-link">
+              <NavLink to="/register" className={`nav-link ${tetMode ? '!text-white hover:!text-yellow-300' : ''}`}>
                 {t("register", "Register")}
               </NavLink>
             </>

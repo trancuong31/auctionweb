@@ -152,6 +152,15 @@
   transform: scaleX(1);
 }
 
+/* Tet Mode - Active underline yellow */
+.tet-mode-nav .nav-link::after {
+  background-color: #fbbf24;
+}
+
+.tet-mode-nav .nav-link.active {
+  color: #fbbf24;
+}
+
 /* ==== Bell Icon ==== */
 .bell-icon {
   color: #1482f7;
@@ -161,6 +170,16 @@
 
 .bell-icon:hover {
   color: #2b4af9;
+  transform: scale(1.15);
+}
+
+/* Tet Mode - Bell icon yellow */
+.tet-mode-nav .bell-icon {
+  color: #fbbf24;
+}
+
+.tet-mode-nav .bell-icon:hover {
+  color: #fde047;
   transform: scale(1.15);
 }
 
