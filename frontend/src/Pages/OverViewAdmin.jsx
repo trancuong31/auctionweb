@@ -497,7 +497,7 @@ const OverViewAdmin = () => {
               <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_user")}
               </p>
-              <div className="text-sm font-semibold mt-1">
+              <div className={`text-sm font-semibold mt-1 ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter value={overViewData.total_user || 0} />
               </div>
             </div>
@@ -529,7 +529,7 @@ const OverViewAdmin = () => {
               <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_auction")}
               </p>
-              <div className="text-xl sm:text-2xl font-bold">
+              <div className={`text-xl sm:text-2xl font-bold ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter value={overViewData.total_auction || 0} />
               </div>
             </div>
@@ -561,7 +561,7 @@ const OverViewAdmin = () => {
               <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_successful_auctions")}
               </p>
-              <div className="text-xl sm:text-2xl font-bold">
+              <div className={`text-xl sm:text-2xl font-bold ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter
                   value={overViewData.total_successful_auctions || 0}
                 />
@@ -595,7 +595,7 @@ const OverViewAdmin = () => {
               <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_auction_in_progress")}
               </p>
-              <div className="text-xl sm:text-2xl font-bold">
+              <div className={`text-xl sm:text-2xl font-bold ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter
                   value={overViewData.total_auction_in_progress || 0}
                 />
@@ -629,7 +629,7 @@ const OverViewAdmin = () => {
               <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_upcoming_auctions")}
               </p>
-              <div className="text-xl sm:text-2xl font-bold">
+              <div className={`text-xl sm:text-2xl font-bold ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter
                   value={overViewData.total_upcoming_auctions || 0}
                 />
@@ -663,7 +663,7 @@ const OverViewAdmin = () => {
               <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_unsuccessful_auctions")}
               </p>
-              <div className="text-xl sm:text-2xl font-bold">
+              <div className={`text-xl sm:text-2xl font-bold ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter
                   value={overViewData.total_unsuccessful_auctions || 0}
                 />

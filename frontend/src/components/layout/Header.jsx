@@ -1,4 +1,6 @@
 import logo from "../../assets/images/logo.png";
+import tetIconCoin from "../../assets/images/tet-icon-coin.svg";
+import tetHeaderFlower from "../../assets/images/tet-header-flower (1).svg";
 import "./Header.css";
 import RealTime from "../ui/realtime";
 import { useTranslation } from "react-i18next";
@@ -27,11 +29,42 @@ function Header() {
         <Link to="/">
           <img src={logo} alt="Logo" className="header-logo" />
         </Link>
+        {tetMode && (
+          <img 
+            src={tetHeaderFlower} 
+            alt="" 
+            className="w-24 h-12 object-contain hidden md:block"
+          />
+        )}
       </div>
       <div className="header-center">
+        {tetMode && (
+          <img 
+            src={tetIconCoin} 
+            alt="" 
+            className="w-8 h-8 mr-2 animate-spin-slow"
+            style={{ animationDuration: '3s' }}
+          />
+        )}
         <span className={`header-title ${tetMode ? '!text-white' : ''}`}>{t("auction_online")}</span>
+        {tetMode && (
+          <img 
+            src={tetIconCoin} 
+            alt="" 
+            className="w-8 h-8 ml-2 animate-spin-slow"
+            style={{ animationDuration: '3s' }}
+          />
+        )}
       </div>
       <div className={`header-right ${tetMode ? 'text-white' : ''}`}>
+        {/* {tetMode && (
+          <img 
+            src={tetHeaderFlower} 
+            alt="" 
+            className="w-24 h-12 object-contain hidden md:block"
+            style={{ transform: 'rotate(180deg)' }}
+          />
+        )} */}
         <RealTime />
       </div>
     </div>

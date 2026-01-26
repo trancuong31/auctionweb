@@ -12,6 +12,8 @@ import { useTranslation } from "react-i18next";
 import AccountInfo from "./AccountInfo";
 import logo from "../../assets/images/logo.png";
 import tetIconCoin from "../../assets/images/tet-icon-coin.svg";
+import tetHeaderHorse from "../../assets/images/tet-header-horse.svg";
+import toast from "react-hot-toast";
 dayjs.extend(relativeTime);
 
 function NavBar() {
@@ -26,6 +28,34 @@ function NavBar() {
   const bellRef = useRef();
   const dropdownRef = useRef();
   const { t, i18n } = useTranslation();
+
+  // Function to show random Tet greeting
+  const showTetGreetings = (isActivating) => {
+    const greetingsList = isActivating 
+      ? t('tet_greetings', { returnObjects: true })
+      : t('tet_off_greetings', { returnObjects: true });
+    
+    // Random 1 greeting from the list
+    const randomIndex = Math.floor(Math.random() * greetingsList.length);
+    const randomGreeting = greetingsList[randomIndex];
+    
+    toast.success(randomGreeting, {
+      duration: 3000,
+      position: 'top-center',
+      style: {
+        background: isActivating ? '#CB0502' : '#4b5563',
+        color: '#fff',
+        fontWeight: 'bold',
+      },
+    });
+  };
+
+  // Handle Tet mode toggle with greetings
+  const handleTetModeToggle = () => {
+    const willActivate = !tetMode;
+    toggleTetMode();
+    showTetGreetings(willActivate);
+  };
 
   // Detect mobile screen
   useEffect(() => {
@@ -203,9 +233,18 @@ function NavBar() {
           )}
         </div>
         <div className="nav-right">
+          {tetMode && (
+            <img 
+              src={tetHeaderHorse} 
+              alt="" 
+              className="w-20 h-full mr-2 object-contain hidden md:inline-block"
+              aria-hidden="true"
+            />
+          )}
+          
           {/* Tet Mode Switch */}
           <button
-            onClick={toggleTetMode}
+            onClick={handleTetModeToggle}
             className={`tet-mode-switch flex items-center gap-1.5 px-3 py-1 rounded-full transition-all duration-300 ${tetMode ? 'bg-red-600 text-yellow-300' : 'bg-gray-400 text-gray-300'}`}
             title={tetMode ? t("tet_mode_turn_off") : t("tet_mode_turn_on")}
           >

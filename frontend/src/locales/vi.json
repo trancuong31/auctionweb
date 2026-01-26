@@ -54,6 +54,28 @@
   "tet_mode_off": "Tắt",
   "tet_mode_turn_off": "Tắt chế độ Tết",
   "tet_mode_turn_on": "Bật chế độ Tết",
+  "tet_greetings": [
+    "Chúc mừng năm mới! An khang thịnh vượng!",
+    "Vạn sự như ý, tài lộc dồi dào!",
+    "Phúc lộc thọ đầy nhà, hạnh phúc tràn đầy!",
+    "Xuân về vạn sự tốt lành!",
+    "Năm mới phát tài, phát lộc!",
+    "Cung chúc tân xuân, vạn sự như ý!",
+    "Gia đình sum vầy, hạnh phúc bên nhau!",
+    "Sức khỏe dồi dào, tiền vào như nước!",
+    "Công danh phát đạt, sự nghiệp thăng tiến!",
+    "Năm mới bình an, may mắn rộng mở!"
+  ],
+  "tet_off_greetings": [
+    "Hẹn gặp lại trong dịp Tết!",
+    "Chúc bạn một ngày tốt lành!",
+    "Cảm ơn bạn đã trải nghiệm chủ đề Tết!",
+    "Chúc bạn làm việc hiệu quả!",
+    "Hẹn gặp lại bạn sớm!",
+    "Chúc bạn một ngày làm việc vui vẻ!",
+    "Chúc bạn luôn vui vẻ!",
+    "Chúc bạn đạt được mọi mục tiêu!"
+  ],
   "auction": "Đấu giá",
   "information": "Thông tin",
   "history": "Lịch sử",

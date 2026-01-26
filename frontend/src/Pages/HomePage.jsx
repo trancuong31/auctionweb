@@ -37,7 +37,7 @@ function HomePage() {
           <img 
             src={tetFireworksRight} 
             alt="Fireworks Right" 
-            className="absolute top-0 right-0 w-8 md:w-8 lg:w-16 h-auto object-contain pointer-events-none z-10"
+            className="absolute top-0 right-0 w-12 md:w-12 lg:w-24 h-auto object-contain pointer-events-none z-10"
           />
         </>
       )}

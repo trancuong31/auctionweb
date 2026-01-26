@@ -52,6 +52,28 @@
   "tet_mode_off": "Off",
   "tet_mode_turn_off": "Turn off Tet mode",
   "tet_mode_turn_on": "Turn on Tet mode",
+  "tet_greetings": [
+    "Happy Lunar New Year! Peace and Prosperity!",
+    "May all your wishes come true with abundant fortune!",
+    "Blessings of health, wealth and happiness!",
+    "Spring brings good luck and prosperity!",
+    "Wishing you success and prosperity!",
+    "Happy New Year! May everything go well!",
+    "Family reunion, happiness together!",
+    "Good health and overflowing wealth!",
+    "Career advancement and great achievements!",
+    "Safe and lucky new year ahead!"
+  ],
+  "tet_off_greetings": [
+    "See you next Tet celebration!",
+    "Have a wonderful day!",
+    "Thank you for enjoying the Tet theme!",
+    "Wishing you a productive day!",
+    "Hope to see you again soon!",
+    "Have a great working day!",
+    "Stay happy and cheerful!",
+    "May you achieve all your goals!"
+  ],
   "auction": "Auction",
   "information": "Information",
   "history": "History",
