@@ -1,7 +1,7 @@
 /* Footer.css */
 
 .footer {
-  background-color: #2563EB; 
+  background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
   color: #FFFFFF;
   padding: 16px 24px;
   font-family: 'Open Sans', sans-serif;
@@ -10,7 +10,7 @@
 .footer__container {
   display: flex;
   flex-wrap: wrap;
-  max-width: 1280px;
+  max-width: 1920px;
   margin: 0 auto;
 }
 
@@ -18,8 +18,6 @@
   flex: 1 1 50%;
   padding: 8px;
 }
-
-
 
 .footer__help {
   text-align: right;
@@ -39,15 +37,17 @@
 
 .footer__list--inline {
   display: inline-block;
-  text-align: left;
+  text-align: right;
 }
 
 .footer__item {
   margin-bottom: 4px;
   text-decoration: underline;
+  transition: transform 0.3s ease;
 }
 .footer__item:hover {
-  color: #00ff84; 
+  color: #00ff66; 
+  transform: translateX(-5px);
 }
 .footer__label {
   font-weight: 600;
@@ -61,4 +61,10 @@
   .footer__help {
     margin-top: 16px;
   }
+}
+
+/* Tet Mode */
+.footer.tet-footer {
+  background: #18191a !important;
+  color: #ffffff !important;
 }

@@ -1,0 +1,108 @@
+# -------------------------
+# Python Cache & Bytecode
+# -------------------------
+__pycache__/
+*.pyc
+*.pyo
+
+# -------------------------
+# Environment / Virtualenv
+# -------------------------
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# -------------------------
+# Config & Secrets
+# -------------------------
+*.env
+*.ini
+*.toml
+*.cfg
+*.secret
+*.key
+*.pem
+
+# -------------------------
+# Logs & Reports
+# -------------------------
+*.log
+*.out
+*.err
+*.pid
+coverage/
+htmlcov/
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+
+# -------------------------
+# Build & Distribution
+# -------------------------
+build/
+dist/
+develop-eggs/
+.eggs/
+*.egg
+*.egg-info/
+MANIFEST
+
+# -------------------------
+# Jupyter Notebook
+# -------------------------
+.ipynb_checkpoints
+
+# -------------------------
+# Database / Data Dumps
+# -------------------------
+*.sqlite3
+*.db
+*.sql
+*.bak
+*.dump
+
+# -------------------------
+# IDE / Editor Files
+# -------------------------
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.iml
+
+# -------------------------
+# Docker / Container Files
+# -------------------------
+Dockerfile
+docker-compose.yml
+*.dockerignore
+
+# -------------------------
+# Excel Files
+# -------------------------
+*.xlsx
+*.xls
+*.xlsm
+*.xlsb
+*.xltx
+*.xltm
+# -------------------------
+# Image Files
+# -------------------------
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+
+# bỏ qua các file  .md
+*.md

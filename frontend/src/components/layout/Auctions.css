@@ -1,7 +1,7 @@
 /* ---------- Tổng quan container ---------- */
 #webcrumbs {
   font-family: 'Open Sans', sans-serif;
-  background: #f9fafb;
+  background: #F6F7FB;
   padding: 16px 24px;
 }
 
@@ -14,17 +14,18 @@
 
 /* ---------- Mỗi section ---------- */
 .section {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   display: flex;
-  padding: 0 2em;
+  /* padding: 0 2em; */
   flex-direction: column;
   border-bottom: 1px solid #9f9f9fcd;
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: 28px;
+  font-family: 'Playfair Display', sans-serif;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-top: 8px;
   color: #1f2937;
 }
 
@@ -128,22 +129,23 @@
 
 /* ---------- Link “See all” ---------- */
 .see-all {
-  display: inline-block;
-  margin-top: 8px;
+  display: block;
+  padding-top: 5px;
+  width: max-content; 
+  margin-left: auto;
   font-size: 16px;
   font-weight: 500;
-  color: #2563eb; 
-  text-decoration: none; 
-  align-self: flex-end;
+  color: #2563eb;
+  cursor: pointer;
+}
+.see-all:hover {
+  color: #4f46e5;
+  text-decoration: underline;
 }
 #total{
   font-size: 14px;
   color: #6b7280;
   margin-bottom: 8px;
-}
-.see-all:hover {
-  color: #4f46e5;
-  text-decoration: underline;
 }
 .wrapper {
   max-width: 1280px;
