@@ -1,9 +1,11 @@
 # -------------------------
 # Python Cache & Bytecode
 # -------------------------
+# Python
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 
 # -------------------------
 # Environment / Virtualenv
