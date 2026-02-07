@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import NavBar from "./NavBar";
+import VoidBidWarningModal from "./VoidBidWarningModal";
 import { useTetMode } from "../../contexts/TetModeContext";
 
 const MainLayout = () => {
@@ -18,6 +19,7 @@ const MainLayout = () => {
         <Outlet />
       </main>
       <Footer />
+      <VoidBidWarningModal />
     </div>
   );
 };

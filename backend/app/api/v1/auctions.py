@@ -839,7 +839,11 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
             "created_at": bid.created_at,
             "note": bid.note,
             "address": bid.address,
-            "is_winner": bid.is_winner
+            "is_winner": bid.is_winner,
+            "status": bid.status,
+            "void_reason": bid.void_reason,
+            "voided_at": bid.voided_at,
+            "voided_by": bid.voided_by
         })
     if auction_data["status"] in [0, 2]:
         count_users = db.query(Bid.user_id).filter(Bid.auction_id == auction_id).distinct().count()
@@ -852,6 +856,7 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
     auction_data["participants"] = [{"user_id": p[0], "email": p[1], "company": p[2], "username": p[3], "phone_number": p[4]} for p in participants]
 
     return auction_data
+
 
 def get_monthly_stats(db: Session, target_date: datetime):
     """Tính toán thống kê cho từng tháng"""

@@ -1,4 +1,5 @@
 import RangeCalender from "../ui/RangeCalender";
+import CustomSelect from "../ui/CustomSelect";
 import { create, update, getAll } from "../../services/api";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -103,6 +104,22 @@ const CreateAuctionForm = ({
 
   const startTime = watch("start_time");
   const endTime = watch("end_time");
+
+  // Prepare options for selects
+  const categoryOptions = [
+    { value: "", label: t("select_group") },
+    ...categories.map(cat => ({
+      value: cat.category_id,
+      label: cat.category_name.toLowerCase()
+    }))
+  ];
+
+  const auctionTypeOptions = [
+    { value: "", label: t("select_group") },
+    { value: "SELL", label: t("sell") },
+    { value: "BUY", label: t("buy") }
+  ];
+
   // chone mode
   useEffect(() => {
     if (mode === "create") {
@@ -468,18 +485,18 @@ const CreateAuctionForm = ({
                     </svg>
                     {t("type")}<span className="text-red-500 ml-1">*</span>
                   </label>
-                  <select
-                    {...register("category_id")}
-                    className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-all text-sm appearance-none ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white focus:border-[#CB0502] focus:ring-4 focus:ring-red-900/30' : 'bg-white border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'}`}
-                    style={{backgroundImage: "url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22%236b7280%22%3E%3Cpath stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22/%3E%3C/svg%3E')", backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center", backgroundSize: "20px"}}
-                  >
-                    <option value="">{t("select_group")}</option>
-                    {categories.map((cat) => (
-                      <option key={cat.category_id} value={cat.category_id}>
-                        {cat.category_name.toLowerCase()}
-                      </option>
-                    ))}
-                  </select>
+                  <Controller
+                    name="category_id"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomSelect
+                        value={field.value}
+                        onChange={field.onChange}
+                        options={categoryOptions}
+                        placeholder={t("select_group")}
+                      />
+                    )}
+                  />
                   {errors.category_id && (
                     <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -498,15 +515,18 @@ const CreateAuctionForm = ({
                     </svg>
                     {t("auction_type")}<span className="text-red-500 ml-1">*</span>
                   </label>
-                  <select
-                    {...register("auction_type")}
-                    className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-all text-sm appearance-none ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white focus:border-[#CB0502] focus:ring-4 focus:ring-red-900/30' : 'bg-white border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'}`}
-                    style={{backgroundImage: "url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22%236b7280%22%3E%3Cpath stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22/%3E%3C/svg%3E')", backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center", backgroundSize: "20px"}}
-                  >
-                    <option value="">{t("select_group")}</option>
-                    <option value="SELL">{t("sell")}</option>
-                    <option value="BUY">{t("buy")}</option>
-                  </select>
+                  <Controller
+                    name="auction_type"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomSelect
+                        value={field.value}
+                        onChange={field.onChange}
+                        options={auctionTypeOptions}
+                        placeholder={t("select_group")}
+                      />
+                    )}
+                  />
                   {errors.auction_type && (
                     <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -635,7 +655,7 @@ const CreateAuctionForm = ({
                   {t("select_time")}
                   <span className="text-red-500 ml-1">*</span>
                 </label>
-                <div className={`p-4 rounded-xl border-2 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c]' : 'bg-gray-50 border-gray-200'}`}>
+                <div className={`p-1 rounded-xl border-2 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c]' : 'bg-gray-50 border-gray-200'}`}>
                   <RangeCalender
                     onChange={(dates) => {
                       if (dates.length === 2) {
@@ -655,6 +675,7 @@ const CreateAuctionForm = ({
                         : []
                     }
                     allowMinDate={false}
+                    hideIcon={true}
                   />
                 </div>
                 {errors.end_time && (

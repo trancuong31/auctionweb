@@ -1,10 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ArrowUpDown, List } from "lucide-react";
 import { getAll, update, deleteOne, updateSatus } from "../services/api";
 import CreateAuctionForm from "../components/layout/AuctionCreate";
 import CreateCategoryForm from "../components/layout/CategoryCreate";
 import ModalDetailAuction from "../components/layout/ModalDetailAuction";
 import Pagination from "../components/ui/Pagination";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
+import CustomSelect from "../components/ui/CustomSelect";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import { useDebounceCallback } from "../hooks/useDebounceCallback";
@@ -724,42 +726,36 @@ const OverViewAdmin = () => {
                 </label>
                 {/* Sort select */}
                 <div className="">
-                  <select
-                    onChange={(e) => {
-                      const selectedOption = e.target.selectedOptions[0];
+                  <CustomSelect
+                    value={userFilterInput.sort_by && userFilterInput.sort_order ? `${userFilterInput.sort_by}_${userFilterInput.sort_order}` : ""}
+                    onChange={(value) => {
+                      if (!value) {
+                        setUserFilterInput((prev) => ({
+                          ...prev,
+                          sort_by: "",
+                          sort_order: "",
+                        }));
+                        return;
+                      }
+                      const [sort_by, sort_order] = value.split("_");
                       setUserFilterInput((prev) => ({
                         ...prev,
-                        sort_by: selectedOption.value,
-                        sort_order: selectedOption.dataset.order,
+                        sort_by,
+                        sort_order,
                       }));
                     }}
-                    className={`rounded-lg px-3 py-2 w-full ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white' : 'border border-gray-400'}`}
-                  >
-                    <option value="username" data-order="asc">
-                      {t("sort_username_asc")}
-                    </option>
-                    <option value="username" data-order="desc">
-                      {t("sort_username_desc")}
-                    </option>
-                    <option value="email" data-order="asc">
-                      {t("sort_email_asc")}
-                    </option>
-                    <option value="email" data-order="desc">
-                      {t("sort_email_desc")}
-                    </option>
-                    <option value="create_at" data-order="asc">
-                      {t("sort_create_at_asc")}
-                    </option>
-                    <option value="create_at" data-order="desc">
-                      {t("sort_create_at_desc")}
-                    </option>
-                    <option value="bid_count" data-order="asc">
-                      {t("sort_bid_count_asc")}
-                    </option>
-                    <option value="bid_count" data-order="desc">
-                      {t("sort_bid_count_desc")}
-                    </option>
-                  </select>
+                    options={[
+                      { value: "username_asc", label: t("sort_username_asc") },
+                      { value: "username_desc", label: t("sort_username_desc") },
+                      { value: "email_asc", label: t("sort_email_asc") },
+                      { value: "email_desc", label: t("sort_email_desc") },
+                      { value: "create_at_asc", label: t("sort_create_at_asc") },
+                      { value: "create_at_desc", label: t("sort_create_at_desc") },
+                      { value: "bid_count_asc", label: t("sort_bid_count_asc") },
+                      { value: "bid_count_desc", label: t("sort_bid_count_desc") },
+                    ]}
+                    placeholder={t("select_sort")}
+                  />
                 </div>
               </div>
 
@@ -971,43 +967,36 @@ const OverViewAdmin = () => {
                   <label className={`text-sm font-[700] mb-1 mr-2 block ${tetMode ? 'text-gray-300' : ''}`}>
                     {t("sort_by")}
                   </label>
-                  <select
-                    onChange={(e) => {
-                      const selectedOption = e.target.selectedOptions[0];
+                  <CustomSelect
+                    value={auctionFilterInput.sort_by && auctionFilterInput.sort_order ? `${auctionFilterInput.sort_by}_${auctionFilterInput.sort_order}` : ""}
+                    onChange={(value) => {
+                      if (!value) {
+                        setAuctionFilterInput((prev) => ({
+                          ...prev,
+                          sort_by: "",
+                          sort_order: "",
+                        }));
+                        return;
+                      }
+                      const [sort_by, sort_order] = value.split("_");
                       setAuctionFilterInput((prev) => ({
                         ...prev,
-                        sort_by: selectedOption.value,
-                        sort_order: selectedOption.dataset.order,
+                        sort_by,
+                        sort_order,
                       }));
                     }}
-                    className={`rounded-lg px-3 py-2 w-full ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white' : 'border border-gray-400'}`}
-                  >
-                    <option value="">{t("select_sort")}</option>
-                    <option value="title" data-order="asc">
-                      {t("sort_title_asc")}
-                    </option>
-                    <option value="title" data-order="desc">
-                      {t("sort_title_desc")}
-                    </option>
-                    <option value="create_at" data-order="asc">
-                      {t("sort_create_at_asc")}
-                    </option>
-                    <option value="create_at" data-order="desc">
-                      {t("sort_create_at_desc")}
-                    </option>
-                    <option value="start_time" data-order="asc">
-                      {t("sort_start_time_asc")}
-                    </option>
-                    <option value="start_time" data-order="desc">
-                      {t("sort_start_time_desc")}
-                    </option>
-                    <option value="end_time" data-order="asc">
-                      {t("sort_end_time_asc")}
-                    </option>
-                    <option value="end_time" data-order="desc">
-                      {t("sort_end_time_desc")}
-                    </option>
-                  </select>
+                    options={[
+                      { value: "title_asc", label: t("sort_title_asc") },
+                      { value: "title_desc", label: t("sort_title_desc") },
+                      { value: "create_at_asc", label: t("sort_create_at_asc") },
+                      { value: "create_at_desc", label: t("sort_create_at_desc") },
+                      { value: "start_time_asc", label: t("sort_start_time_asc") },
+                      { value: "start_time_desc", label: t("sort_start_time_desc") },
+                      { value: "end_time_asc", label: t("sort_end_time_asc") },
+                      { value: "end_time_desc", label: t("sort_end_time_desc") },
+                    ]}
+                    placeholder={t("select_sort")}
+                  />
                 </div>
               </div>
               <div className="w-[15%] pb-6 max-sm:w-full">
@@ -1016,20 +1005,21 @@ const OverViewAdmin = () => {
                   <label className={`text-sm font-[700] mb-1 mr-2 block ${tetMode ? 'text-gray-300' : ''}`}>
                     {t("status")}
                   </label>
-                  <select
-                onChange={(e) =>
-                  setAuctionFilterInput((prev) => ({
-                    ...prev,
-                    status: e.target.value === "" ? null : e.target.value,
-                  }))
-                }
-                className={`rounded-lg px-3 py-2 max-sm:w-full ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white' : 'border border-gray-400'}`}
-              >
-                <option value="">{t("select_status")}</option>
-                <option value="0">{t("ongoing_auctions")}</option>
-                <option value="1">{t("upcoming_auctions")}</option>
-                <option value="2">{t("ended_auctions")}</option>
-              </select>
+                  <CustomSelect
+                    value={auctionFilterInput.status || ""}
+                    onChange={(value) =>
+                      setAuctionFilterInput((prev) => ({
+                        ...prev,
+                        status: value === "" ? null : value,
+                      }))
+                    }
+                    options={[
+                      { value: "0", label: t("ongoing_auctions") },
+                      { value: "1", label: t("upcoming_auctions") },
+                      { value: "2", label: t("ended_auctions") },
+                    ]}
+                    placeholder={t("select_status")}
+                  />
                 </div>
               </div>
               
