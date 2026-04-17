@@ -92,11 +92,63 @@ const AuctionHistory = ({ isOpen, onClose }) => {
           
         </div>
         {/* Modal Content */}
-        <div className="flex-1 p-4 sm:p-6 overflow-y-auto max-h-[calc(95vh-120px)]">
+        <div className="flex-1 p-4 sm:p-6 overflow-y-auto overscroll-contain max-h-[calc(95vh-120px)]">
           {loading && <div className={tetMode ? 'text-gray-300' : ''}>Loading data...</div>}
           {error && <div className="text-red-500">{error}</div>}
           {!loading && !error && (
             <>
+              <div className="mb-6 sm:mb-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-red-900/30' : 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'}`}>
+                  <div className={`text-sm font-medium ${tetMode ? 'text-red-400' : 'text-blue-600'}`}>
+                    {t("total_bids")}
+                  </div>
+                  <div className={`text-2xl font-bold ${tetMode ? 'text-red-500' : 'text-blue-700'}`}>
+                    {auctionHistory.length}
+                  </div>
+                </div>
+                <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-green-900/30' : 'bg-gradient-to-br from-green-50 to-green-100 border-green-200'}`}>
+                  <div className={`text-sm font-medium ${tetMode ? 'text-green-400' : 'text-green-600'}`}>
+                    {t("winning_bids")}
+                  </div>
+                  <div className={`text-2xl font-bold ${tetMode ? 'text-green-400' : 'text-green-700'}`}>
+                    {auctionHistory.filter((bid) => bid.is_winner).length}
+                  </div>
+                </div>
+                <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-yellow-900/30' : 'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200'}`}>
+                  <div className={`text-sm font-medium ${tetMode ? 'text-yellow-400' : 'text-orange-600'}`}>
+                    {t("highest_value")}
+                  </div>
+                  <div className={`text-base font-bold space-y-1 ${tetMode ? 'text-yellow-400' : 'text-orange-700'}`}>
+                    {/* Hiển thị max cho từng loại tiền */}
+                    {['USD', 'VND'].map((currency) => {
+                      const bidsOfCurrency = auctionHistory.filter(bid => bid.currency === currency);
+                      if (bidsOfCurrency.length === 0) return null;
+                      const maxBid = Math.max(...bidsOfCurrency.map(bid => bid.bid_amount));
+                      return (
+                        <div key={currency}>
+                          <span className="font-bold">{currency}:</span> {formatCurrency(maxBid, currency)}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-purple-900/30' : 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200'}`}>
+                  <div className={`text-sm font-medium ${tetMode ? 'text-purple-400' : 'text-purple-600'}`}>
+                    {t("success_rate")}
+                  </div>
+                  <div className={`text-2xl font-bold ${tetMode ? 'text-purple-400' : 'text-purple-700'}`}>
+                    {auctionHistory.length > 0
+                      ? Math.round(
+                          (auctionHistory.filter((bid) => bid.is_winner)
+                            .length /
+                            auctionHistory.length) *
+                            100
+                        )
+                      : 0}
+                    %
+                  </div>
+                </div>
+              </div>
               <div className="space-y-4">
                 {auctionHistory
                   .slice(0, displayedItems)
@@ -243,58 +295,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
             </>
           )}
 
-          <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-            <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-red-900/30' : 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'}`}>
-              <div className={`text-sm font-medium ${tetMode ? 'text-red-400' : 'text-blue-600'}`}>
-                {t("total_bids")}
-              </div>
-              <div className={`text-2xl font-bold ${tetMode ? 'text-red-500' : 'text-blue-700'}`}>
-                {auctionHistory.length}
-              </div>
-            </div>
-            <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-green-900/30' : 'bg-gradient-to-br from-green-50 to-green-100 border-green-200'}`}>
-              <div className={`text-sm font-medium ${tetMode ? 'text-green-400' : 'text-green-600'}`}>
-                {t("winning_bids")}
-              </div>
-              <div className={`text-2xl font-bold ${tetMode ? 'text-green-400' : 'text-green-700'}`}>
-                {auctionHistory.filter((bid) => bid.is_winner).length}
-              </div>
-            </div>
-            <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-yellow-900/30' : 'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200'}`}>
-              <div className={`text-sm font-medium ${tetMode ? 'text-yellow-400' : 'text-orange-600'}`}>
-                {t("highest_value")}
-              </div>
-              <div className={`text-base font-bold space-y-1 ${tetMode ? 'text-yellow-400' : 'text-orange-700'}`}>
-                {/* Hiển thị max cho từng loại tiền */}
-                {['USD', 'VND'].map((currency) => {
-                  const bidsOfCurrency = auctionHistory.filter(bid => bid.currency === currency);
-                  if (bidsOfCurrency.length === 0) return null;
-                  const maxBid = Math.max(...bidsOfCurrency.map(bid => bid.bid_amount));
-                  return (
-                    <div key={currency}>
-                      <span className="font-bold">{currency}:</span> {formatCurrency(maxBid, currency)}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-purple-900/30' : 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200'}`}>
-              <div className={`text-sm font-medium ${tetMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                {t("success_rate")}
-              </div>
-              <div className={`text-2xl font-bold ${tetMode ? 'text-purple-400' : 'text-purple-700'}`}>
-                {auctionHistory.length > 0
-                  ? Math.round(
-                      (auctionHistory.filter((bid) => bid.is_winner)
-                        .length /
-                        auctionHistory.length) *
-                        100
-                    )
-                  : 0}
-                %
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
     </div>

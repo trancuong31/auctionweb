@@ -1,5 +1,4 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ArrowUpDown, List } from "lucide-react";
 import { getAll, update, deleteOne, updateSatus } from "../services/api";
 import CreateAuctionForm from "../components/layout/AuctionCreate";
 import CreateCategoryForm from "../components/layout/CategoryCreate";
@@ -59,7 +58,7 @@ const OverViewAdmin = () => {
   const [mode, setMode] = useState("create");
   const { t, i18n } = useTranslation();
   const formRef = useRef();
-  
+
   const [userParam, setUserParam] = useState({
     sort_by: "",
     sort_order: "",
@@ -126,7 +125,6 @@ const OverViewAdmin = () => {
   };
 
   const setModeEdit = (auction) => {
-    console.log("Editing auction:", auction);
     setMode("edit");    
     setDisplayCreateForm(true);
     setAuctionObject(auction);
@@ -148,7 +146,7 @@ const OverViewAdmin = () => {
       lang,
     };
     try {
-      // setIsLoadingSearch(true);
+      setIsLoadingSearch(true);
       const response = await getAll("users", true, param);
       setUserData(response.data.users);
       setTotalPageUser(
@@ -162,7 +160,7 @@ const OverViewAdmin = () => {
         navigate("/login");
       }
     } finally {
-      // setIsLoadingSearch(false);
+      setIsLoadingSearch(false);
       setCurrentIndexPageUser(page - 1);
     }
   };
@@ -175,7 +173,7 @@ const OverViewAdmin = () => {
       lang,
     };
     try {
-      // setIsLoadingSearch(true);
+      setIsLoadingSearch(true);
       const response = await getAll("categories", true, param,{
             lang: sessionStorage.getItem("lang") || "en",
           });
@@ -191,14 +189,14 @@ const OverViewAdmin = () => {
         navigate("/login");
       }
     } finally {
-      // setIsLoadingSearch(false);
+      setIsLoadingSearch(false);
       setCurrentIndexPageCategory(page - 1);
     }
   };
 
   const getPageAuction = async (page = 1) => {
     try {
-      // setIsLoadingSearch(true);
+      setIsLoadingSearch(true);
       const lang = sessionStorage.getItem("lang") || "en";
       const paramWithPage = {
         ...auctionParam,
@@ -217,7 +215,7 @@ const OverViewAdmin = () => {
       );
       console.log(error);
     } finally {
-      // setIsLoadingSearch(false);
+      setIsLoadingSearch(false);
       setCurrentIndexPageAuction(page - 1);
     }
   };
@@ -446,7 +444,11 @@ const OverViewAdmin = () => {
     fetchDataOverview();
   }, []);
 
-  // if (isLoadingPage) return <div className="loader" />;
+  if (isLoadingPage) return (
+    <div className="flex items-center justify-center min-h-[60vh] mt-[160px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
+      <div className="loader"></div>
+    </div>
+  );
   return (
     <>
       <ConfirmDialog
@@ -737,7 +739,9 @@ const OverViewAdmin = () => {
                         }));
                         return;
                       }
-                      const [sort_by, sort_order] = value.split("_");
+                      const lastUnderscoreIndex = value.lastIndexOf("_");
+                      const sort_by = value.substring(0, lastUnderscoreIndex);
+                      const sort_order = value.substring(lastUnderscoreIndex + 1);
                       setUserFilterInput((prev) => ({
                         ...prev,
                         sort_by,
@@ -780,18 +784,18 @@ const OverViewAdmin = () => {
             <table className="min-w-full border-collapse">
               <thead className={tetMode ? 'bg-[#3a3b3c]' : 'bg-gray-200'}>
                 <tr>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("name")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("email")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>#</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("name")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("email")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>
                     {t("contact_phone_label").split(":")}
                   </th>
                   {/* <th className="border px-2 py-1">{t("created_at")}</th> */}
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("role")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("bid_count")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("company")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("status")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("action")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("role")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("bid_count")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("company")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("status")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("action")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -978,7 +982,9 @@ const OverViewAdmin = () => {
                         }));
                         return;
                       }
-                      const [sort_by, sort_order] = value.split("_");
+                      const lastUnderscoreIndex = value.lastIndexOf("_");
+                      const sort_by = value.substring(0, lastUnderscoreIndex);
+                      const sort_order = value.substring(lastUnderscoreIndex + 1);
                       setAuctionFilterInput((prev) => ({
                         ...prev,
                         sort_by,
@@ -1045,16 +1051,16 @@ const OverViewAdmin = () => {
             <table className="min-w-full border-collapse">
               <thead className={tetMode ? 'bg-[#3a3b3c]' : 'bg-gray-200'}>
                 <tr>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("title")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("type")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("auction_type")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("start_time")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("end_time")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("starting_price")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("highest_price")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("status")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("title")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("type")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("auction_type")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("start_time")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("end_time")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("starting_price")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("highest_price")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("status")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
                 </tr>
               </thead>
               <tbody>
@@ -1070,11 +1076,11 @@ const OverViewAdmin = () => {
                         "transition",
                         tetMode ? 'text-gray-300 hover:bg-[#CB0502] hover:text-white' : 'hover:bg-blue-400 hover:text-white',
                         {
-                          "cursor-pointer": auction.status === 1,
+                          "cursor-pointer": auction.status === 1 || auction.status === 0,
                         }
                       )}
                       onClick={
-                        auction.status === 1
+                        auction.status === 1 || auction.status === 0
                           ? () => setModeEdit(auction)
                           : undefined
                       }
@@ -1123,7 +1129,7 @@ const OverViewAdmin = () => {
                           e.stopPropagation();
                           openDetailBid(auction.id);
                         }}
-                        className={`border px-2 py-1 max-w-96 underline cursor-pointer break-words ${tetMode ? 'border-[#4a4b4c] text-[#ff6666]' : 'text-blue-500'}`}
+                        className={`border text-center px-2 py-1 max-w-96 underline cursor-pointer break-words ${tetMode ? 'border-[#4a4b4c] text-[#ff6666]' : 'text-blue-500'}`}
                       >
                         {t("view")}
                       </td>

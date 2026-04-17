@@ -15,7 +15,11 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   const [highestBid, setHighestBid] = useState(0);
   const [lowestBid, setLowestBid] = useState(0);
   const [sortOrder, setSortOrder] = useState("desc");
-  const [voidModal, setVoidModal] = useState({ isOpen: false, bidId: null, userName: "" });
+  const [voidModal, setVoidModal] = useState({
+    isOpen: false,
+    bidId: null,
+    userName: "",
+  });
   const [voidReason, setVoidReason] = useState("");
   const { t, i18n } = useTranslation();
   const { tetMode } = useTetMode();
@@ -77,26 +81,37 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   // xử lý logic hủy user có lượt đấu giá không hợp lệ
   const handleInvalidateBid = async () => {
     if (!voidReason.trim()) {
-      toast.error(t("error.void_reason_required", "Please enter a reason for voiding the bid"));
+      toast.error(
+        t(
+          "error.void_reason_required",
+          "Please enter a reason for voiding the bid",
+        ),
+      );
       return;
     }
     const bid = bids.find((b) => b.id === voidModal.bidId);
     try {
       await updateInvalidateBid("bids", bid.id, true, voidReason);
-      toast.success(t("success.invalidate_bid", "Bid invalidated successfully"));
-      
+      toast.success(
+        t("success.invalidate_bid", "Bid invalidated successfully"),
+      );
+
       // Refresh bids data
       const response = await getOne("auctions", idAuction, false, {
         lang: sessionStorage.getItem("lang") || "en",
       });
-      const validBids = response.data.bids.filter(bid => bid.status !== "INVALID");
+      const validBids = response.data.bids.filter(
+        (bid) => bid.status !== "INVALID",
+      );
       setBids(validBids);
-      
+
       // Close modal and reset
       setVoidModal({ isOpen: false, bidId: null, userName: "" });
       setVoidReason("");
     } catch (error) {
-      toast.error(error.message || t("error.invalidate_bid", "Failed to invalidate bid"));
+      toast.error(
+        error.message || t("error.invalidate_bid", "Failed to invalidate bid"),
+      );
       console.error("Invalidate bid error:", error);
     }
   };
@@ -115,7 +130,9 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
           lang: sessionStorage.getItem("lang") || "en",
         });
         // chỉ hiển thị những bid chưa bị hủy
-        const validBids = response.data.bids.filter(bid => bid.status !== "INVALID");
+        const validBids = response.data.bids.filter(
+          (bid) => bid.status !== "INVALID",
+        );
         setAuction(response.data);
         setBids(validBids);
         const maxBid =
@@ -151,7 +168,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
     >
       <div
         className={
-          `sm:mt-[60px] md:mt-[100px] lg:mt-[55px] rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up ${tetMode ? "bg-[#242526] border border-[#3a3b3c]" : "bg-white"} ` +
+          ` overscroll-contain sm:mt-[60px] md:mt-[100px] lg:mt-[55px] rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up ${tetMode ? "bg-[#242526] border border-[#3a3b3c]" : "bg-white"} ` +
           (isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden")
         }
         onClick={(e) => e.stopPropagation()}
@@ -477,109 +494,118 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
             </div>
           </div>
           {/* table list user tham gia */}
-            <>
-              <div
-                className={`border rounded-xl max-h-60 overflow-y-auto ${tetMode ? "border-[#3a3b3c]" : ""}`}
-              >
-                <table className="table-fixed min-w-full text-sm text-left">
-                  <thead
-                    className={`sticky top-0 z-10 ${tetMode ? "bg-[#3a3b3c] text-gray-200" : "bg-gray-200 text-gray-700"}`}
-                  >
-                    <tr>
-                      <th className="px-4 py-2 font-semibold uppercase">#</th>
-                      <th className="px-4 py-2 font-semibold uppercase whitespace-nowrap">
-                        {t("email")}
-                      </th>
-                      <th className="px-4 py-2 font-semibold uppercase whitespace-nowrap">
-                        {t("user_name")}
-                      </th>
-                      <th
-                        className={`px-4 py-2 font-semibold whitespace-nowrap uppercase cursor-pointer transition-colors duration-200 select-none ${tetMode ? "hover:bg-[#4a4b4c]" : "hover:bg-gray-300"}`}
-                        onClick={handleSortByBidAmount}
-                        title={`Sort ${sortOrder === "desc" ? "ascending" : "descending"}`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span>{t("bid_amount_usd")}</span>
-                          <span className="ml-1 text-lg">
-                            {sortOrder === "desc" ? "↓" : "↑"}
-                          </span>
-                        </div>
-                      </th>
-                      <th className="px-4 py-2 font-semibold uppercase w-[150px]">
-                        {t("attached_file")}
-                      </th>
-                      <th className="px-4 py-2 font-semibold uppercase w-[150px]">
-                        {t("submitted_at")}
-                      </th>
-                      <th className="px-4 py-2 font-semibold uppercase w-[150px]">
-                        {t("additional_notes")}
-                      </th>
-                      {(
-                        auction.status == 0) && ( <th className="px-4 py-2 font-semibold uppercase text-center w-[150px]">
+          <>
+            <div
+              className={`border rounded-xl max-h-60 overflow-y-auto ${tetMode ? "border-[#3a3b3c]" : ""}`}
+            >
+              <table className="table-fixed min-w-full text-sm text-left">
+                <thead
+                  className={`sticky top-0 z-10 ${tetMode ? "bg-[#3a3b3c] text-gray-200" : "bg-gray-200 text-gray-700"}`}
+                >
+                  <tr>
+                    <th className="px-4 py-2 font-semibold uppercase">#</th>
+                    <th className="px-4 py-2 font-semibold uppercase whitespace-nowrap">
+                      {t("email")}
+                    </th>
+                    <th className="px-4 py-2 font-semibold uppercase whitespace-nowrap">
+                      {t("user_name")}
+                    </th>
+                    <th
+                      className={`px-4 py-2 font-semibold whitespace-nowrap uppercase cursor-pointer transition-colors duration-200 select-none ${tetMode ? "hover:bg-[#4a4b4c]" : "hover:bg-gray-300"}`}
+                      onClick={handleSortByBidAmount}
+                      title={`Sort ${sortOrder === "desc" ? "ascending" : "descending"}`}
+                    >
+                      <div className="flex items-center gap-1">
+                        <span>{t("bid_amount_usd")}</span>
+                        <span className="text-lg">
+                          {sortOrder === "desc" ? "↓" : "↑"}
+                        </span>
+                      </div>
+                    </th>
+                    <th className="px-4 py-2 font-semibold uppercase w-[150px]">
+                      {t("attached_file")}
+                    </th>
+                    <th className="px-4 py-2 font-semibold uppercase w-[150px]">
+                      {t("submitted_at")}
+                    </th>
+                    <th className="px-4 py-2 font-semibold uppercase w-[150px]">
+                      {t("additional_notes")}
+                    </th>
+                    {auction.status == 0 && (
+                      <th className="px-4 py-2 font-semibold uppercase text-center w-[150px]">
                         {t("actions")}
-                      </th> 
+                      </th>
                     )}
-                    </tr>
-                  </thead>
-                  <tbody className={tetMode ? "bg-[#18191a] text-gray-300" : ""}>
-                    {!isLoading ? (
-                      bids && bids.length > 0 ? (
-                        bids.map((bid, idx) => (
-                          <tr
-                            key={idx}
-                            className={clsx(
-                              "border-t",
-                              tetMode ? "border-[#3a3b3c]" : "",
-                              bid.is_winner
-                                ? tetMode
-                                  ? "bg-yellow-900/30"
-                                  : "bg-yellow-200"
-                                : tetMode
-                                  ? "bg-[#18191a]"
-                                  : "bg-white",
-                            )}
-                          >
-                            <td className="px-4 py-2">{idx + 1}</td>
-                            <td className="px-4 py-2">{bid.email || "-"}</td>
-                            <td className="px-4 py-2">{bid.user_name || "-"}</td>
-                            <td className="px-4 text-green-500 py-2">
-                              {bid.bid_amount != null
-                                ? bid.bid_amount.toLocaleString(
-                                    auction.currency === "VND" ? "vi-VN" : "en-US",
-                                    {
-                                      style: "currency",
-                                      currency:
-                                        auction.currency === "VND" ? "VND" : "USD",
-                                    },
-                                  )
-                                : "-"}
-                            </td>
-                            <td className="px-4 text-green-500 py-2">
-                              <p className="text-red-600 font-bold text-[14px]">
-                                {bid.file ? (
-                                  <button
-                                    onClick={() =>
-                                      handleDownloadFileUser(bid.user_name, bid.id)
-                                    }
-                                    className={`text-left hover:underline ${tetMode ? "text-[#fbbf24]" : "text-blue-600"}`}
-                                  >
-                                    <p title={bid.file.split("/").pop()}>
-                                      {bid.file.split("/").pop().length > 30
-                                        ? bid.file.split("/").pop().slice(0, 20) +
-                                          "..."
-                                        : bid.file.split("/").pop()}
-                                    </p>
-                                  </button>
-                                ) : (
-                                  <span className="text-gray-400 italic">
-                                    {t("no_file")}
-                                  </span>
-                                )}
-                              </p>
-                            </td>
-                            <td className="px-4 py-2">
-                              {bid.created_at
-                                ? new Date(bid.created_at).toLocaleString("en-US", {
+                  </tr>
+                </thead>
+                <tbody className={tetMode ? "bg-[#18191a] text-gray-300" : ""}>
+                  {!isLoading ? (
+                    bids && bids.length > 0 ? (
+                      bids.map((bid, idx) => (
+                        <tr
+                          key={idx}
+                          className={clsx(
+                            "border-t",
+                            tetMode ? "border-[#3a3b3c]" : "",
+                            bid.is_winner
+                              ? tetMode
+                                ? "bg-yellow-900/30"
+                                : "bg-yellow-200"
+                              : tetMode
+                                ? "bg-[#18191a]"
+                                : "bg-white",
+                          )}
+                        >
+                          <td className="px-4 py-2">{idx + 1}</td>
+                          <td className="px-4 py-2">{bid.email || "-"}</td>
+                          <td className="px-4 py-2">{bid.user_name || "-"}</td>
+                          <td className="px-4 text-green-500 py-2">
+                            {bid.bid_amount != null
+                              ? bid.bid_amount.toLocaleString(
+                                  auction.currency === "VND"
+                                    ? "vi-VN"
+                                    : "en-US",
+                                  {
+                                    style: "currency",
+                                    currency:
+                                      auction.currency === "VND"
+                                        ? "VND"
+                                        : "USD",
+                                  },
+                                )
+                              : "-"}
+                          </td>
+                          <td className="px-4 text-green-500 py-2">
+                            <p className="text-red-600 font-bold text-[14px]">
+                              {bid.file ? (
+                                <button
+                                  onClick={() =>
+                                    handleDownloadFileUser(
+                                      bid.user_name,
+                                      bid.id,
+                                    )
+                                  }
+                                  className={`text-left hover:underline ${tetMode ? "text-[#fbbf24]" : "text-blue-600"}`}
+                                >
+                                  <p title={bid.file.split("/").pop()}>
+                                    {bid.file.split("/").pop().length > 30
+                                      ? bid.file.split("/").pop().slice(0, 20) +
+                                        "..."
+                                      : bid.file.split("/").pop()}
+                                  </p>
+                                </button>
+                              ) : (
+                                <span className="text-gray-400 italic">
+                                  {t("no_file")}
+                                </span>
+                              )}
+                            </p>
+                          </td>
+                          <td className="px-4 py-2">
+                            {bid.created_at
+                              ? new Date(bid.created_at).toLocaleString(
+                                  "en-US",
+                                  {
                                     year: "numeric",
                                     month: "2-digit",
                                     day: "2-digit",
@@ -587,110 +613,138 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                                     minute: "2-digit",
                                     second: "2-digit",
                                     hour12: false,
-                                  })
-                                : "-"}
-                            </td>
-                            <td className="px-4 py-2 w-[300px] align-top">
-                              <div className="max-h-[80px] overflow-y-auto break-words whitespace-normal pr-1">
-                                {bid.note || "N/A"}
-                              </div>
-                            </td>
-                            {(auction.status == 0) && (
+                                  },
+                                )
+                              : "-"}
+                          </td>
+                          <td className="px-4 py-2 w-[300px] align-top">
+                            <div className="max-h-[80px] overflow-y-auto break-words whitespace-normal pr-1">
+                              {bid.note || "N/A"}
+                            </div>
+                          </td>
+                          {auction.status == 0 && (
                             <td className="px-4 py-2 text-center">
                               <button
-                                onClick={() => setVoidModal({ isOpen: true, bidId: bid.id, userName: bid.user_name })}
+                                onClick={() =>
+                                  setVoidModal({
+                                    isOpen: true,
+                                    bidId: bid.id,
+                                    userName: bid.user_name,
+                                  })
+                                }
                                 className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${tetMode ? "bg-red-900/30 hover:bg-red-900/50 text-red-400" : "bg-red-100 hover:bg-red-200 text-red-600"}`}
                                 title={t("void_bid", "Void this bid")}
                               >
                                 <Ban size={18} />
                               </button>
                             </td>
-                            )}
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td
-                            colSpan={8}
-                            className="italic text-gray-400 text-center py-3"
-                          >
-                            {t("no_data")}
-                          </td>
+                          )}
                         </tr>
-                      )
+                      ))
                     ) : (
                       <tr>
-                        <td colSpan={8} className="text-center py-4">
-                          <div className="loader my-10" />
+                        <td
+                          colSpan={8}
+                          className="italic text-gray-400 text-center py-3"
+                        >
+                          {t("no_data")}
                         </td>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </>
+                    )
+                  ) : (
+                    <tr>
+                      <td colSpan={8} className="text-center py-4">
+                        <div className="loader my-10" />
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
         </div>
       </div>
 
       {/* Void Bid Modal */}
-      {voidModal.isOpen && (
+      <div
+        className={
+          "fixed inset-0 flex items-center justify-center z-[2100] bg-black bg-opacity-60 transition-opacity duration-300 " +
+          (voidModal.isOpen ? "opacity-100 visible" : "opacity-0 invisible")
+        }
+        style={{ pointerEvents: voidModal.isOpen ? "auto" : "none" }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setVoidModal({ isOpen: false, bidId: null, userName: "" });
+          setVoidReason("");
+        }}
+      >
         <div
-          className="fixed inset-0 flex items-center justify-center z-[2100] bg-black bg-opacity-60"
-          onClick={(e) => {
-            e.stopPropagation()
-            setVoidModal({ isOpen: false, bidId: null, userName: "" });
-            setVoidReason("");
-          }}
+          className={
+            `rounded-xl shadow-2xl w-full max-w-md mx-4 flex flex-col fade-slide-up ${tetMode ? "bg-[#242526]" : "bg-white"} ` +
+            (voidModal.isOpen
+              ? "fade-slide-up-visible"
+              : "fade-slide-up-hidden")
+          }
+          onClick={(e) => e.stopPropagation()}
         >
           <div
-            className={`rounded-xl shadow-2xl w-full max-w-md mx-4 ${tetMode ? "bg-[#242526]" : "bg-white"}`}
-            onClick={(e) => e.stopPropagation()}
+            className={`p-4 rounded-t-xl ${tetMode ? "bg-gradient-to-r from-[#CB0502] to-[#ff4444]" : "bg-gradient-to-r from-red-500 to-red-600"}`}
           >
-            <div
-              className={`p-4 rounded-t-xl ${tetMode ? "bg-gradient-to-r from-[#CB0502] to-[#ff4444]" : "bg-gradient-to-r from-red-500 to-red-600"}`}
+            <h3 className="text-white text-lg font-bold flex items-center gap-2">
+              <Ban size={20} />
+              {t("void_bid", "Void Bid")}
+            </h3>
+          </div>
+          <div className="p-6 space-y-4">
+            <p
+              className={`text-sm ${tetMode ? "text-gray-300" : "text-gray-700"}`}
             >
-              <h3 className="text-white text-lg font-bold flex items-center gap-2">
-                <Ban size={20} />
-                {t("void_bid", "Void Bid")}
-              </h3>
+              {t(
+                "void_bid_confirm",
+                "Are you sure you want to void the bid from",
+              )}{" "}
+              <span className="font-semibold">
+                {voidModal.userName || "..."}
+              </span>
+              ?
+            </p>
+            <div>
+              <label
+                className={`block text-sm font-medium mb-2 ${tetMode ? "text-gray-300" : "text-gray-700"}`}
+              >
+                {t("reason", "Reason")} <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                value={voidReason}
+                onChange={(e) => setVoidReason(e.target.value)}
+                placeholder={t(
+                  "enter_void_reason",
+                  "Enter reason for voiding this bid...",
+                )}
+                className={`w-full px-3 py-2 rounded-lg border-2 outline-none transition-all resize-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-400 focus:border-[#CB0502]" : "bg-white border-gray-300 focus:border-red-500"}`}
+                rows={4}
+              />
             </div>
-            <div className="p-6 space-y-4">
-              <p className={`text-sm ${tetMode ? "text-gray-300" : "text-gray-700"}`}>
-                {t("void_bid_confirm", "Are you sure you want to void the bid from")} <span className="font-semibold">{voidModal.userName}</span>?
-              </p>
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${tetMode ? "text-gray-300" : "text-gray-700"}`}>
-                  {t("reason", "Reason")} <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  value={voidReason}
-                  onChange={(e) => setVoidReason(e.target.value)}
-                  placeholder={t("enter_void_reason", "Enter reason for voiding this bid...")}
-                  className={`w-full px-3 py-2 rounded-lg border-2 outline-none transition-all resize-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-400 focus:border-[#CB0502]" : "bg-white border-gray-300 focus:border-red-500"}`}
-                  rows={4}
-                />
-              </div>
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={() => {
-                    setVoidModal({ isOpen: false, bidId: null, userName: "" });
-                    setVoidReason("");
-                  }}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${tetMode ? "bg-[#3a3b3c] hover:bg-[#4a4b4c] text-gray-300" : "bg-gray-200 hover:bg-gray-300 text-gray-700"}`}
-                >
-                  {t("cancel", "Cancel")}
-                </button>
-                <button
-                  onClick={handleInvalidateBid}
-                  className={`px-4 py-2 rounded-lg font-medium text-white transition-all ${tetMode ? "bg-gradient-to-r from-[#CB0502] to-[#ff4444] hover:from-[#ff4444] hover:to-[#CB0502]" : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"}`}
-                >
-                  {t("confirm_void", "Confirm Void")}
-                </button>
-              </div>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setVoidModal({ isOpen: false, bidId: null, userName: "" });
+                  setVoidReason("");
+                }}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${tetMode ? "bg-[#3a3b3c] hover:bg-[#4a4b4c] text-gray-300" : "bg-gray-200 hover:bg-gray-300 text-gray-700"}`}
+              >
+                {t("cancel", "Cancel")}
+              </button>
+              <button
+                onClick={handleInvalidateBid}
+                className={`px-4 py-2 rounded-lg font-medium text-white transition-all ${tetMode ? "bg-gradient-to-r from-[#CB0502] to-[#ff4444] hover:from-[#ff4444] hover:to-[#CB0502]" : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"}`}
+              >
+                {t("confirm_void", "Confirm Void")}
+              </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

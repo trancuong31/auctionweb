@@ -1,5 +1,6 @@
 {
   "login": "로그인",
+  "no_changes_update": "수정할 변경 사항이 없습니다.",
   "email": "이메일",
   "password": "비밀번호",
   "remember_me": "계정 저장",

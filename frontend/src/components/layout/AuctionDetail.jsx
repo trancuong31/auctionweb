@@ -136,7 +136,7 @@ const AuctionDetail = () => {
 
   const getAuction = async () => {
     try {
-      const response = await getOne("auctions", id, false, {
+      const response = await getOne("client/auctions", id, false, {
         lang: sessionStorage.getItem("lang") || "en",
       });
       setAuction(response.data);
@@ -282,7 +282,11 @@ const AuctionDetail = () => {
     );
   };
 
-  if (loading) return <div className="loader"></div>;
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-[60vh] mt-[130px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
+      <div className="loader"></div>
+    </div>
+  );
   if (!auction) return <p>{t("no_data")}</p>;
 
   return (

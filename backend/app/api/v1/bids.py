@@ -100,7 +100,7 @@ def create_bid(
             raise HTTPException(status_code=403, detail=_("User not invited to bid", request))
         
         # Kiểm tra user đã đặt bid cho auction này chưa
-        existing_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id, Bid.user_id == user_id).first()
+        existing_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id, Bid.user_id == user_id, Bid.status == BidStatus.VALID.value).first()
         
         # khoảng cách giá cũ và giá mới tối thiểu phải >= bước giá của acution_id
         if existing_bid and abs(float(bid_in.bid_amount) - float(existing_bid.bid_amount)) < float(auction.step_price):
@@ -118,7 +118,8 @@ def create_bid(
             file=bid_in.file,
             created_at=datetime.now(),
             address=bid_in.address,
-            note=bid_in.note
+            note=bid_in.note,
+            status= BidStatus.VALID.value
         )
         db.add(bid)
         if auction.currency == "USD":
