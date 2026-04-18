@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import AnimatedCounter from "../common/AnimatedNumber";
 import { useNavigate } from "react-router-dom";
 import { useTetMode } from "../contexts/TetModeContext";
+import { useAuth } from "../contexts/AuthContext";
 import {
   faUsers,
   faGavel,
@@ -30,6 +31,7 @@ import clsx from "clsx";
 const OverViewAdmin = () => {
   const navigate = useNavigate();
   const { tetMode } = useTetMode();
+  const { openAuthModal } = useAuth();
   const [currentIndexPageUser, setCurrentIndexPageUser] = useState(0);
   const [currentIndexPageCategory, setCurrentIndexPageCategory] = useState(0);
   const [currentIndexPageAuction, setCurrentIndexPageAuction] = useState(0);
@@ -157,7 +159,8 @@ const OverViewAdmin = () => {
     } catch (error) {
       const status = error?.response?.status;
       if (status === 401) {
-        navigate("/login");
+        navigate("/");
+        openAuthModal("login");
       }
     } finally {
       setIsLoadingSearch(false);
@@ -186,7 +189,8 @@ const OverViewAdmin = () => {
     } catch (error) {
       const status = error?.response?.status;
       if (status === 401) {
-        navigate("/login");
+        navigate("/");
+        openAuthModal("login");
       }
     } finally {
       setIsLoadingSearch(false);

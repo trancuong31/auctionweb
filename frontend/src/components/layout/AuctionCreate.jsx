@@ -870,13 +870,33 @@ const CreateAuctionForm = ({
                       {t("starting_price")}
                     </label>
                     <div className="relative">
-                      <input
-                        {...register("starting_price", { valueAsNumber: true })}
-                        type="number"
-                        min="0"
-                        disabled={isOngoingAuction}
-                        placeholder="0"
-                        className={`w-full px-4 py-3 pl-10 rounded-xl border-2 outline-none transition-all text-sm ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:border-[#CB0502] focus:ring-4 focus:ring-red-900/30" : "border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"}`}
+                      <Controller
+                        name="starting_price"
+                        control={control}
+                        render={({ field: { onChange, value, ref } }) => {
+                          // Format số thêm dấu chấm (vd: 1000000 -> 1.000.000)
+                          const displayValue = (value !== null && value !== undefined && value !== "")
+                            ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                            : "";
+
+                          return (
+                            <input
+                              ref={ref}
+                              type="text" // Chuyển thành text để format được dấu chấm
+                              disabled={isOngoingAuction}
+                              placeholder="0"
+                              value={displayValue}
+                              onChange={(e) => {
+                                // Lọc bỏ mọi ký tự không phải số
+                                const rawValue = e.target.value.replace(/\D/g, "");
+                                // Đổi lại thành Number để lưu vào form (gửi API), rỗng thì lưu 0
+                                const numericValue = rawValue ? parseInt(rawValue, 10) : 0;
+                                onChange(numericValue);
+                              }}
+                              className={`w-full px-4 py-3 pl-10 rounded-xl border-2 outline-none transition-all text-sm ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:border-[#CB0502] focus:ring-4 focus:ring-red-900/30" : "border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"}`}
+                            />
+                          );
+                        }}
                       />
                       <svg
                         className={`w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 ${tetMode ? "text-gray-500" : "text-gray-400"}`}
@@ -920,13 +940,30 @@ const CreateAuctionForm = ({
                       {t("step_price")}
                     </label>
                     <div className="relative">
-                      <input
-                        {...register("step_price", { valueAsNumber: true })}
-                        type="number"
-                        min="0"
-                        disabled={isOngoingAuction}
-                        placeholder="0"
-                        className={`w-full px-4 py-3 pl-10 rounded-xl border-2 outline-none transition-all text-sm ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:border-[#CB0502] focus:ring-4 focus:ring-red-900/30" : "border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"}`}
+                      <Controller
+                        name="step_price"
+                        control={control}
+                        render={({ field: { onChange, value, ref } }) => {
+                          const displayValue = (value !== null && value !== undefined && value !== "")
+                            ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                            : "";
+
+                          return (
+                            <input
+                              ref={ref}
+                              type="text"
+                              disabled={isOngoingAuction}
+                              placeholder="0"
+                              value={displayValue}
+                              onChange={(e) => {
+                                const rawValue = e.target.value.replace(/\D/g, "");
+                                const numericValue = rawValue ? parseInt(rawValue, 10) : 0;
+                                onChange(numericValue);
+                              }}
+                              className={`w-full px-4 py-3 pl-10 rounded-xl border-2 outline-none transition-all text-sm ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:border-[#CB0502] focus:ring-4 focus:ring-red-900/30" : "border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"}`}
+                            />
+                          );
+                        }}
                       />
                       <svg
                         className={`w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 ${tetMode ? "text-gray-500" : "text-gray-400"}`}

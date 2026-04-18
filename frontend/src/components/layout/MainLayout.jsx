@@ -3,6 +3,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import NavBar from "./NavBar";
 import VoidBidWarningModal from "./VoidBidWarningModal";
+import AuthModal from "./AuthModal";
 import { useTetMode } from "../../contexts/TetModeContext";
 
 const MainLayout = () => {
@@ -20,8 +21,10 @@ const MainLayout = () => {
       </main>
       <Footer />
       <VoidBidWarningModal />
+      <AuthModal />
     </div>
   );
 };
 
 export default MainLayout;
+

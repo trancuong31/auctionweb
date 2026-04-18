@@ -16,7 +16,7 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
   const [error, setError] = useState(null);
   const { t, i18n } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
-  const { user } = useAuth();
+  const { user, openAuthModal } = useAuth();
   const { tetMode } = useTetMode();
   const schema = z.object({
       username: z
@@ -85,7 +85,8 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
       .catch((err) => {
         toast.error(err.response?.data?.detail || err.message || "Error load account info");
         if (err.response?.status === 401) {
-          navigate("/login");
+          navigate("/");
+          openAuthModal("login");
           return;
         }
       })

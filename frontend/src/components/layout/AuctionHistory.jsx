@@ -4,6 +4,7 @@ import axiosClient from "../../services/axiosClient";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTetMode } from "../../contexts/TetModeContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const AuctionHistory = ({ isOpen, onClose }) => {
   const [auctionHistory, setAuctionHistory] = useState([]);
@@ -13,6 +14,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const { tetMode } = useTetMode();
+  const { openAuthModal } = useAuth();
 
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
@@ -29,7 +31,8 @@ const AuctionHistory = ({ isOpen, onClose }) => {
       .then((res) => setAuctionHistory(res.data))
       .catch((err) => {
         if (err.response?.status === 401) {
-          navigate("/login");
+          navigate("/");
+          openAuthModal("login");
           return;
         }
         setError(
