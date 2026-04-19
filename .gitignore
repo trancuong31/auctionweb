@@ -32,3 +32,4 @@ dist-ssr
 *.sw?
 # bỏ qua các file  .md
 *.md
+!README.md
