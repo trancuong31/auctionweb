@@ -14,7 +14,6 @@ import {
   CheckCircle,
   ClockFading,
   AlarmClockCheck,
-  ClockIcon,
   Banknote,
   ArrowUp01,
   Boxes,
@@ -328,6 +327,8 @@ const AuctionDetail = () => {
         username={getUser()?.username}
         auctionId={auction.id}
         currency={auction.currency || "USD"}
+        stepPrice={auction.step_price}
+        startingPrice={auction.starting_price}
         onClose={() => setIsOpen(false)}
       />
       <AnimatedContent>
@@ -463,7 +464,7 @@ const AuctionDetail = () => {
               <p
                 className={`p-[16px] pb-0 text-sm font-medium ${tetMode ? "text-[#CB0502]" : "text-blue-600"}`}
               >
-                {t("deadline")}
+                {auction.status === 1 ? t("start_time") : t("deadline")}
               </p>
 
               {/* Inline CSS for animations */}
