@@ -31,6 +31,8 @@ const CreateAuctionForm = ({
   const [participantQuery, setParticipantQuery] = useState("");
   const MAX_FILE_SIZE =
     Number(import.meta.env.VITE_MAX_FILE_SIZE) || 100 * 1024 * 1024;
+  const MAX_IMAGE_SIZE =
+    Number(import.meta.env.VITE_MAX_IMAGE_SIZE) || 5 * 1024 * 1024;
   const { t, i18n } = useTranslation();
   const { tetMode } = useTetMode();
   const [originalParticipantIds, setOriginalParticipantIds] = useState([]);
@@ -50,7 +52,19 @@ const CreateAuctionForm = ({
     step_price: z.number().optional(),
     image_url: z
       .array(z.union([z.instanceof(File), z.string()]))
-      .min(2, t("validate_auction.image_url_min")),
+      .min(1, t("validate_auction.image_url_min"))
+      .refine(
+        (files) =>
+          files.every((file) => {
+            if (file instanceof File) {
+              return file.size <= MAX_IMAGE_SIZE;
+            }
+            return true;
+          }),
+        {
+          message: t("validate_auction.image_max_size"),
+      }
+    ),
     file_exel: z
       .any()
       .optional()
@@ -273,9 +287,9 @@ const CreateAuctionForm = ({
     }
 
     setIsSubmitting(true);
-    const arrLinkImg = await handlerUploadImgs(formData.image_url);
-    const linkExcel = await handleUpLoadExcel();
     try {
+      const arrLinkImg = await handlerUploadImgs(formData.image_url);
+      const linkExcel = await handleUpLoadExcel();
       const data = {
         ...formData,
         image_url: arrLinkImg,
@@ -876,7 +890,7 @@ const CreateAuctionForm = ({
                         render={({ field: { onChange, value, ref } }) => {
                           // Format số thêm dấu chấm (vd: 1000000 -> 1.000.000)
                           const displayValue = (value !== null && value !== undefined && value !== "")
-                            ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                            ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                             : "";
 
                           return (
@@ -945,7 +959,7 @@ const CreateAuctionForm = ({
                         control={control}
                         render={({ field: { onChange, value, ref } }) => {
                           const displayValue = (value !== null && value !== undefined && value !== "")
-                            ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                            ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                             : "";
 
                           return (

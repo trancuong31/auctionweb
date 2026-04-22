@@ -372,7 +372,7 @@ function ModalAuction({
                 render={({ field: { onChange, value, ref } }) => {
                   const displayValue =
                     value !== null && value !== undefined && value !== ""
-                      ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                      ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                       : "";
 
                   const handleIncrement = () => {

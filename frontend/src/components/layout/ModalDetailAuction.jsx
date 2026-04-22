@@ -343,7 +343,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     className={`font-bold text-lg ${tetMode ? "text-[#fbbf24]" : "text-black-600"}`}
                   >
                     {auction.starting_price?.toLocaleString(
-                      auction.currency === "VND" ? "vi-VN" : "en-US",
+                      "en-US",
                       {
                         style: "currency",
                         currency: auction.currency === "VND" ? "VND" : "USD",
@@ -364,7 +364,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     className={`font-bold text-lg ${tetMode ? "text-[#fbbf24]" : "text-black-700"}`}
                   >
                     {auction.step_price?.toLocaleString(
-                      auction.currency === "VND" ? "vi-VN" : "en-US",
+                      "en-US",
                       {
                         style: "currency",
                         currency: auction.currency === "VND" ? "VND" : "USD",
@@ -471,7 +471,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                   {t("highest_bid")}:{" "}
                 </span>
                 {highestBid?.toLocaleString(
-                  auction.currency === "VND" ? "vi-VN" : "en-US",
+                  "en-US",
                   {
                     style: "currency",
                     currency: auction.currency === "VND" ? "VND" : "USD",
@@ -484,7 +484,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                   {t("lowest_bid")}:{" "}
                 </span>
                 {lowestBid?.toLocaleString(
-                  auction.currency === "VND" ? "vi-VN" : "en-US",
+                  "en-US",
                   {
                     style: "currency",
                     currency: auction.currency === "VND" ? "VND" : "USD",
@@ -562,9 +562,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                           <td className="px-4 text-green-500 py-2">
                             {bid.bid_amount != null
                               ? bid.bid_amount.toLocaleString(
-                                  auction.currency === "VND"
-                                    ? "vi-VN"
-                                    : "en-US",
+                                  "en-US",
                                   {
                                     style: "currency",
                                     currency:

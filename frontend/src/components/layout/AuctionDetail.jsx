@@ -802,7 +802,7 @@ const AuctionDetail = () => {
                 >
                   {auction.starting_price && auction.starting_price !== 0
                     ? auction.starting_price.toLocaleString(
-                        auction.currency === "VND" ? "vi-VN" : "en-US",
+                        "en-US",
                         {
                           style: "currency",
                           currency: auction.currency === "VND" ? "VND" : "USD",
@@ -831,7 +831,7 @@ const AuctionDetail = () => {
                   {auction.step_price !== null &&
                   auction.step_price !== undefined
                     ? auction.step_price.toLocaleString(
-                        auction.currency === "VND" ? "vi-VN" : "en-US",
+                        "en-US",
                         {
                           style: "currency",
                           currency: auction.currency === "VND" ? "VND" : "USD",
