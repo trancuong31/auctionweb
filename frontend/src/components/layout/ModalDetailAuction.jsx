@@ -27,11 +27,31 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
     try {
       const res = await fetch(`/api/v1/download/excel/by-auction/${id}`);
       if (!res.ok) throw new Error("Dowload file fail!");
+      
+      let filename = `auction-${id}`;
+      const disposition = res.headers.get("content-disposition");
+      const contentType = res.headers.get("content-type");
+
+      if (disposition && disposition.indexOf("filename=") !== -1) {
+        const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, "");
+        }
+      } else {
+        if (contentType === "application/pdf") {
+          filename += ".pdf";
+        } else if (contentType && (contentType.includes("excel") || contentType.includes("spreadsheetml"))) {
+          filename += ".xlsx";
+        } else {
+          filename += ".bin";
+        }
+      }
+
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `auction-${id}.xlsx`;
+      a.download = filename;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
@@ -47,11 +67,31 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
     try {
       const res = await fetch(`/api/v1/download/excel/${id}`);
       if (!res.ok) throw new Error("Dowload file fail!");
+
+      let filename = `bid-${userName}-${id}`;
+      const disposition = res.headers.get("content-disposition");
+      const contentType = res.headers.get("content-type");
+
+      if (disposition && disposition.indexOf("filename=") !== -1) {
+        const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, "");
+        }
+      } else {
+        if (contentType === "application/pdf") {
+          filename += ".pdf";
+        } else if (contentType && (contentType.includes("excel") || contentType.includes("spreadsheetml"))) {
+          filename += ".xlsx";
+        } else {
+          filename += ".bin";
+        }
+      }
+
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `bid-${userName}-${id}.xlsx`;
+      a.download = filename;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {

@@ -44,6 +44,23 @@ function ModalAuction({
       .refine(
         (file) => {
           if (!file || !(file instanceof File)) return true;
+          const isValidFile =
+            file.type ===
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+            file.type === "application/vnd.ms-excel" ||
+            file.name.endsWith(".xlsx") ||
+            file.name.endsWith(".xls") ||
+            file.type === "application/pdf" ||
+            file.name.toLowerCase().endsWith(".pdf");
+          return isValidFile;
+        },
+        {
+          message: t("validate_auction.file_exel_instance"),
+        }
+      )
+      .refine(
+        (file) => {
+          if (!file || !(file instanceof File)) return true;
           return file.size <= MAX_FILE_SIZE;
         },
         {
@@ -487,7 +504,7 @@ function ModalAuction({
                       {...field}
                       id="excelFile"
                       type="file"
-                      accept=".xlsx,.xls"
+                      accept="application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx,.xls,.pdf"
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];

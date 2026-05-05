@@ -18,6 +18,7 @@ import os
 from app.models.AuctionParticipant import AuctionParticipant
 from sqlalchemy.exc import SQLAlchemyError
 from app.services.auction_result_service import sync_winner_for_auction
+import mimetypes
 
 router = APIRouter()
 
@@ -361,9 +362,13 @@ def download_excel_by_auction(request: Request, id: str, db: Session = Depends(g
     headers = {
         "Content-Length": str(file_size)
     }
+    mime_type, _ = mimetypes.guess_type(file_path)
+    if not mime_type:
+        mime_type = 'application/octet-stream'
+
     return FileResponse(
         path=file_path,
         filename=filename,
         headers=headers,
-        media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        media_type=mime_type
     )

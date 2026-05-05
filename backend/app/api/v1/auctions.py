@@ -23,6 +23,7 @@ from app.enums import UserRole, BidStatus
 from pydantic import field_validator
 from zoneinfo import ZoneInfo
 from fastapi import APIRouter
+import mimetypes
 from app.i18n import _
 from datetime import datetime, timedelta
 from app.models.Category import Category
@@ -609,19 +610,19 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
             content={"detail": _("Internal server error: {error}", request).format(error=str(e))}
         )
 
-#admin upload excel khi thêm auction và user đính kèm file
+#admin upload file khi thêm auction và user đính kèm file
 @router.post("/upload/excel")
 def upload_excel(request: Request, file: UploadFile = File(...)):
-    allowed_exts = {".xls", ".xlsx"}
+    allowed_exts = {".xls", ".xlsx", ".pdf"}
     max_size = 100 * 1024 * 1024  # 100MB
     if not file.filename:
         return JSONResponse(status_code=400, content={"detail": _("No filename provided", request)})
     ext = os.path.splitext(file.filename)[1].lower()
     if ext not in allowed_exts:
-        return JSONResponse(status_code=400, content={"detail": _("Invalid excel file type", request)})
+        return JSONResponse(status_code=400, content={"detail": _("Invalid file type. Only Excel and PDF are allowed.", request)})
     contents = file.file.read()
     if len(contents) > max_size:
-        return JSONResponse(status_code=400, content={"detail": _("Excel file too large (max 100MB)", request)})
+        return JSONResponse(status_code=400, content={"detail": _("File too large (max 100MB)", request)})
     if not os.path.exists(UPLOAD_EXCEL_DIR):
         os.makedirs(UPLOAD_EXCEL_DIR)
     
@@ -645,15 +646,13 @@ def upload_excel(request: Request, file: UploadFile = File(...)):
             content={"detail": _("Internal server error: {error}", request).format(error=str(e))}
         )
 
-#user down excel auction_id
+#user down file auction_id
 @router.get("/download/excel/by-auction/{auction_id}")
 def download_excel_by_auction(request: Request, auction_id: str, db: Session = Depends(get_db)):
     auction = db.query(Auction).filter(Auction.id == auction_id).first()
     if not auction or not auction.file_exel:
         raise HTTPException(status_code=404, detail=_("Auction or file not found", request))
-    # lấy filename = 'auction_xe_123.xlsx'
     filename = os.path.basename(auction.file_exel)
-    # Tạo đường dẫn thực tới file
     file_path = os.path.join(BASE_DIR, 'uploads', 'excels', filename)
     if not os.path.isfile(file_path):
         raise HTTPException(status_code=404, detail=_("File not found on server", request))
@@ -663,11 +662,17 @@ def download_excel_by_auction(request: Request, auction_id: str, db: Session = D
     headers = {
         "Content-Length": str(file_size)
     }
+
+    # Tự động xác định media_type dựa trên extension
+    mime_type, _ = mimetypes.guess_type(file_path)
+    if not mime_type:
+        mime_type = 'application/octet-stream'
+
     return FileResponse(
         path=file_path,
         filename=filename,
         headers=headers,
-        media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        media_type=mime_type
     )
 
 @router.get("/auctions/search", response_model=AuctionSearchResponse)

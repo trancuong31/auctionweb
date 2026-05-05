@@ -71,13 +71,15 @@ const CreateAuctionForm = ({
       .refine(
         (file) => {
           if (!file || !(file instanceof File)) return true;
-          const isExcel =
+          const isValidFile =
             file.type ===
               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
             file.type === "application/vnd.ms-excel" ||
             file.name.endsWith(".xlsx") ||
-            file.name.endsWith(".xls");
-          return isExcel;
+            file.name.endsWith(".xls") ||
+            file.type === "application/pdf" ||
+            file.name.toLowerCase().endsWith(".pdf");
+          return isValidFile;
         },
         {
           message: t("validate_auction.file_exel_instance"),
@@ -450,14 +452,16 @@ const CreateAuctionForm = ({
 
     const file = e.dataTransfer.files[0];
     if (file) {
-      const isExcel =
+      const isValidFile =
         file.type ===
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
         file.type === "application/vnd.ms-excel" ||
         file.name.endsWith(".xlsx") ||
-        file.name.endsWith(".xls");
+        file.name.endsWith(".xls") ||
+        file.type === "application/pdf" ||
+        file.name.toLowerCase().endsWith(".pdf");
 
-      if (!isExcel) {
+      if (!isValidFile) {
         toast.error(t("validate_auction.file_exel_instance"));
         return;
       }
@@ -1562,7 +1566,7 @@ const CreateAuctionForm = ({
                 </h3>
               </div>
 
-              {/* Excel File Upload */}
+              {/* File Upload */}
               <div
                 className={
                   isOngoingAuction ? "pointer-events-none opacity-60" : ""
@@ -1700,7 +1704,7 @@ const CreateAuctionForm = ({
                             {...field}
                             id="filePicker"
                             type="file"
-                            accept=".xlsx,.xls"
+                            accept="application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx,.xls,.pdf"
                             className="hidden"
                             key={inputKey}
                             onChange={(e) => {
