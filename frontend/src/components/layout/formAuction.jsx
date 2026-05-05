@@ -153,7 +153,7 @@ function ModalAuction({
     >
       <div
         className={clsx(
-          `rounded-2xl shadow-2xl w-full max-w-md sm:max-w-3xl lg:max-w-4xl transform transition-all duration-300 fade-slide-up ${tetMode ? "bg-[#242526] border border-[#3a3b3c]" : "bg-white"}`,
+          `rounded-2xl shadow-2xl w-full max-w-md sm:max-w-3xl lg:max-w-3xl transform transition-all duration-300 fade-slide-up ${tetMode ? "bg-[#242526] border border-[#3a3b3c]" : "bg-white"}`,
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden",
         )}
         onClick={(e) => e.stopPropagation()}

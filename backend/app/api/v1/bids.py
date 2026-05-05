@@ -150,7 +150,7 @@ def create_bid(
                 bid_in_bid_amount=bid_in.bid_amount,
                 auction_title=auction.title
             )
-            message_ko = "{auction_title} 경매에 {bid_in_bid_amount:,.0f}$의 입찰을 성공적으로 완료하였습니다.".format(
+            message_ko = "{auction_title} 입찰에 {bid_in_bid_amount:,.0f}$의 입찰을 성공적으로 완료하였습니다.".format(
                 bid_in_bid_amount=bid_in.bid_amount,
                 auction_title=auction.title
             )
@@ -163,7 +163,7 @@ def create_bid(
                 bid_in_bid_amount=bid_in.bid_amount,
                 auction_title=auction.title
             )
-            message_ko = "{auction_title} 경매에 {bid_in_bid_amount:,.0f}₫의 입찰을 성공적으로 완료하였습니다.".format(
+            message_ko = "{auction_title} 입찰에 {bid_in_bid_amount:,.0f}₫의 입찰을 성공적으로 완료하였습니다.".format(
                 bid_in_bid_amount=bid_in.bid_amount,
                 auction_title=auction.title
             )
