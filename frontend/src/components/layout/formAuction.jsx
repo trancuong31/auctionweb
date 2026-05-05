@@ -50,6 +50,10 @@ function ModalAuction({
             file.type === "application/vnd.ms-excel" ||
             file.name.endsWith(".xlsx") ||
             file.name.endsWith(".xls") ||
+            file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+            file.type === "application/msword" ||
+            file.name.endsWith(".doc") ||
+            file.name.endsWith(".docx") ||
             file.type === "application/pdf" ||
             file.name.toLowerCase().endsWith(".pdf");
           return isValidFile;
@@ -504,7 +508,7 @@ function ModalAuction({
                       {...field}
                       id="excelFile"
                       type="file"
-                      accept="application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx,.xls,.pdf"
+                      accept="application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx,.xls,.pdf,.doc,.docx"
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];

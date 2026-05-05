@@ -42,6 +42,8 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
           filename += ".pdf";
         } else if (contentType && (contentType.includes("excel") || contentType.includes("spreadsheetml"))) {
           filename += ".xlsx";
+        } else if (contentType && (contentType.includes("word") || contentType.includes("document"))) {
+          filename += ".docx";
         } else {
           filename += ".bin";
         }
@@ -82,6 +84,8 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
           filename += ".pdf";
         } else if (contentType && (contentType.includes("excel") || contentType.includes("spreadsheetml"))) {
           filename += ".xlsx";
+        } else if (contentType && (contentType.includes("word") || contentType.includes("document"))) {
+          filename += ".docx";
         } else {
           filename += ".bin";
         }

@@ -657,14 +657,14 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
 #admin upload file khi thêm auction và user đính kèm file
 @router.post("/upload/excel")
 def upload_excel(request: Request, file: UploadFile = File(...)):
-    allowed_exts = {".xls", ".xlsx", ".pdf"}
+    allowed_exts = {".xls", ".xlsx", ".pdf", ".doc", ".docx"}
     max_size = 100 * 1024 * 1024  # 100MB
     if not file.filename:
         return JSONResponse(status_code=400, content={"detail": _("No filename provided", request)})
     safe_name = _safe_filename(file.filename)
     ext = os.path.splitext(safe_name)[1].lower()
     if ext not in allowed_exts:
-        return JSONResponse(status_code=400, content={"detail": _("Invalid file type. Only Excel and PDF are allowed.", request)})
+        return JSONResponse(status_code=400, content={"detail": _("Invalid file type. Only Excel, PDF and Word are allowed.", request)})
     if not os.path.exists(UPLOAD_EXCEL_DIR):
         os.makedirs(UPLOAD_EXCEL_DIR)
     

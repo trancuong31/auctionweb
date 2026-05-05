@@ -77,6 +77,10 @@ const CreateAuctionForm = ({
             file.type === "application/vnd.ms-excel" ||
             file.name.endsWith(".xlsx") ||
             file.name.endsWith(".xls") ||
+            file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+            file.type === "application/msword" ||
+            file.name.endsWith(".docx") ||
+            file.name.endsWith(".doc") ||
             file.type === "application/pdf" ||
             file.name.toLowerCase().endsWith(".pdf");
           return isValidFile;
@@ -458,6 +462,11 @@ const CreateAuctionForm = ({
         file.type === "application/vnd.ms-excel" ||
         file.name.endsWith(".xlsx") ||
         file.name.endsWith(".xls") ||
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        file.type === "application/msword" ||
+        file.name.toLowerCase().endsWith(".docx") ||
+        file.name.toLowerCase().endsWith(".doc") ||
         file.type === "application/pdf" ||
         file.name.toLowerCase().endsWith(".pdf");
 
@@ -1704,7 +1713,7 @@ const CreateAuctionForm = ({
                             {...field}
                             id="filePicker"
                             type="file"
-                            accept="application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx,.xls,.pdf"
+                            accept="application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx,.xls,.pdf,.doc,.docx"
                             className="hidden"
                             key={inputKey}
                             onChange={(e) => {
