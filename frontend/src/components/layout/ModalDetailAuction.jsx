@@ -159,7 +159,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    i18n.changeLanguage(savedLang);
+    if (savedLang) i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   useEffect(() => {
