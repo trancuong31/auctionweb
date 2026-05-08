@@ -7,6 +7,7 @@ from app.models.User import User
 from app.models.Translation import Translation
 from app.core.auth import get_current_user_id_from_token
 from app.i18n import _
+from app.enums import UserRole
 router = APIRouter()
 
 class TranslationIn(BaseModel):
@@ -47,49 +48,55 @@ def get_translations(
         "data": result
     }
 
-# @router.post("/translations/create", response_model=TranslationOut)
-# def create_translation(
-#     request: Request,
-#     data: TranslationIn,
-#     db: Session = Depends(get_db),
-#     current_user: User = Depends(get_current_user)
-# ):
-#     if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
-#         raise HTTPException(
-#             status_code=403,
-#             detail=_("You don't have permison create translations!", request)
-#         )
-#     translation = Translation(
-#         key=data.key,
-#         vi=data.vi,
-#         en=data.en,
-#         kr=data.kr,
-#         event_user=data.event_user
-#     )
-#     db.add(translation)
-#     db.commit()
-#     db.refresh(translation)
-#     return translation
+@router.post("/translations/create", response_model=TranslationOut)
+def create_translation(
+    request: Request,
+    data: TranslationIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(
+            status_code=403,
+            detail=_("You don't have permison create translations!", request)
+        )
+    existing_translation = db.query(Translation).filter(Translation.key == data.key).first()
+    if existing_translation:
+        raise HTTPException(
+            status_code=400,
+            detail=_("Key already exists", request)
+        )
+    translation = Translation(
+        key=data.key,
+        vi=data.vi,
+        en=data.en,
+        kr=data.kr,
+        event_user=data.event_user
+    )
+    db.add(translation)
+    db.commit()
+    db.refresh(translation)
+    return translation
 
-# @router.put("/translations/update", response_model=TranslationOut)
-# def update_translation(
-#     request: Request,
-#     data: TranslationIn,
-#     db: Session = Depends(get_db),
-#     current_user: User = Depends(get_current_user)
-# ):
-#     if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
-#         raise HTTPException(
-#             status_code=403,
-#             detail=_("You don't have permison update translations!", request)
-#         )
-#     translation = db.query(Translation).filter(Translation.key == data.key).first()
-#     if not translation:
-#         raise HTTPException(status_code=404, detail=_("Translation not found", request))
-#     translation.vi = data.vi
-#     translation.en = data.en
-#     translation.kr = data.kr
-#     translation.event_user = data.event_user
-#     db.commit()
-#     db.refresh(translation)
-#     return translation
+@router.put("/translations/update", response_model=TranslationOut)
+def update_translation(
+    request: Request,
+    data: TranslationIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(
+            status_code=403,
+            detail=_("You don't have permison update translations!", request)
+        )
+    translation = db.query(Translation).filter(Translation.key == data.key).first()
+    if not translation:
+        raise HTTPException(status_code=404, detail=_("Translation not found", request))
+    translation.vi = data.vi
+    translation.en = data.en
+    translation.kr = data.kr
+    translation.event_user = data.event_user
+    db.commit()
+    db.refresh(translation)
+    return translation

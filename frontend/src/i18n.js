@@ -42,10 +42,12 @@ const setCachedTranslations = (lang, data) => {
 };
 
 // Hàm phụ để fetch dữ liệu từ Database (kèm cache logic)
-const fetchDBTranslations = async (lang) => {
-    // 1. Kiểm tra cache trước
-    const cachedData = getCachedTranslations(lang);
-    if (cachedData) return cachedData;
+const fetchDBTranslations = async (lang, ignoreCache = false) => {
+    // 1. Kiểm tra cache trước (nếu không yêu cầu ignore)
+    if (!ignoreCache) {
+        const cachedData = getCachedTranslations(lang);
+        if (cachedData) return cachedData;
+    }
 
     // 2. Ngăn chặn spam call nếu đang fetch ngôn ngữ này rồi
     if (fetchingLangs.has(lang)) return {};
@@ -72,8 +74,8 @@ const initI18n = async () => {
     const currentLang = sessionStorage.getItem('lang') || 'en';
     lastFetchedLang = currentLang;
     
-    // Tải bản dịch từ DB (hoặc cache) cho ngôn ngữ hiện tại
-    const dbTranslations = await fetchDBTranslations(currentLang);
+    // Luôn fetch mới từ DB khi reload app (ignoreCache = true)
+    const dbTranslations = await fetchDBTranslations(currentLang, true);
 
     // Merge JSON local + DB
     const resources = {
